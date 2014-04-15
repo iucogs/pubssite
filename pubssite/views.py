@@ -5,17 +5,17 @@ from sqlalchemy.exc import DBAPIError
 
 from .models import *
 
-@view_config(route_name='citation_by_id', renderer='string')
+@view_config(route_name='citation_by_id', renderer='pubs_json')
 def citation_by_id(request):
    # response.content_type = 'application/json'
     id = int(request.matchdict.get('id', -1))
-    citation = Session.query(Citation).get(id).json
+    citation = Session.query(Citation).get(id)
     
     if not citation:
         return HTTPNotFound()
-    return {'citation': citation}
+    return {'citation': citation.json}
 
-@view_config(route_name='citations_by_owner', renderer='json')
+@view_config(route_name='citations_by_owner', renderer='pubs_json')
 def citations_by_owner(request):
    # response.content_type = 'application/json'
     owner = str(request.matchdict.get('owner', -1))
