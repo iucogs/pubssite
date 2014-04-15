@@ -105,15 +105,24 @@ member_of_collection = Table('member_of_collection', Base.metadata,
 class Collection(Base):
     __tablename__ = 'collections'
     __table_args__ = {'autoload' : True}
-    
+   
     collection_id = Column(Integer, primary_key=True)
     collection_name = Column(String)
-   
+    owner = Column(Integer)
+    
     # TODO: Fix bug so that owners are actually referenced by user_id
     # user_id = Column(Integer, ForeignKey('users.id'))
 
     citations = relationship("Citation", secondary=member_of_collection,
         backref='collections')
+
+    @property
+    def json(self):
+        attrs = ['owner', 'collection_id', 'collection_name']
+        struct = {}
+        for attr in attrs:
+            struct[attr] = getattr(self, attr, None)
+        return struct
 
     def __repr__(self):
         return "<Collection %d: %s (%s)>" %\

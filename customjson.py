@@ -25,7 +25,7 @@ class ExtJsonEncoder(JSONEncoder):
         if isinstance(c, Decimal):
             return float(c)
 
-        return simplejson.JSONEncoder.default(self, c)
+        return JSONEncoder.default(self, c)
 
 def dumps(*args): 
     '''
