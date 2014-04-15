@@ -49,5 +49,5 @@ def collections_by_owner(request):
 
     if not collections:
         return HTTPNotFound()
-    return {'collections', collections}
+    return {'collections': [collection.json for collection in collections]}
 
