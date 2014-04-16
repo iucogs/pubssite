@@ -20,6 +20,7 @@ class PubsJSONRenderer:
                 request = system.get('request') 
                 if request is not None: 
                         if not hasattr(request, 'response_content_type'): 
-                                request.response_content_type = 'application/json' 
+                                request.response_content_type = 'application/json'
+                                request.headerlist.append(('Access-Control-Allow-Origin', '*'))
                 return customjson.dumps(value) 
 
