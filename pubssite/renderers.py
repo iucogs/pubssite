@@ -21,6 +21,6 @@ class PubsJSONRenderer:
                 if request is not None: 
                         if not hasattr(request, 'response_content_type'): 
                                 request.response_content_type = 'application/json'
-                                request.headerlist.append(('Access-Control-Allow-Origin', '*'))
+                                request.response.headerlist.append(('Access-Control-Allow-Origin', '*'))
                 return customjson.dumps(value) 
 
