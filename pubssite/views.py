@@ -13,7 +13,7 @@ def citation_by_id(request):
     
     if not citation:
         return HTTPNotFound()
-    return {'citation': citation.json}
+    return citation.json
 
 @view_config(route_name='citations_by_owner', renderer='pubs_json')
 def citations_by_owner(request):
@@ -22,7 +22,7 @@ def citations_by_owner(request):
 
     if not citations:
         return HTTPNotFound()
-    return {'citations': [citation.json for citation in citations]}
+    return [citation.json for citation in citations]
 
 @view_config(route_name='citations_by_collection', renderer='pubs_json')
 def citations_by_collection(request):
@@ -31,7 +31,7 @@ def citations_by_collection(request):
 
     if not collection:
         return HTTPNotFound()
-    return {'citations': [citation.json for citation in collection.citations]}
+    return [citation.json for citation in collection.citations]
 
 @view_config(route_name='collection_by_id', renderer='pubs_json')
 def collection_by_id(request):
@@ -40,7 +40,7 @@ def collection_by_id(request):
 
     if not collection:
         return HTTPNotFound()
-    return {'collection': collection.json}
+    return collection.json
 
 @view_config(route_name='collections_by_owner', renderer='pubs_json')
 def collections_by_owner(request):
@@ -49,5 +49,5 @@ def collections_by_owner(request):
 
     if not collections:
         return HTTPNotFound()
-    return {'collections': [collection.json for collection in collections]}
+    return [collection.json for collection in collections]
 
