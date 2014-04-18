@@ -6,6 +6,14 @@ from sqlalchemy.exc import DBAPIError
 
 from .models import *
 
+## SITE VIEWS ##
+
+@view_config(route_name='home', renderer='pubssite:templates/test.mako')
+def home(request):
+    return {'ok': 'ok'}
+
+## CITATION API VIEWS ##
+
 @view_config(route_name='citation_by_id', renderer='pubs_json')
 def citation_by_id(request):
     id = int(request.matchdict.get('id', -1))
@@ -32,6 +40,8 @@ def citations_by_collection(request):
     if not collection:
         return HTTPNotFound()
     return [citation.json for citation in collection.citations]
+
+## COLLECTION API VIEWS ##
 
 @view_config(route_name='collection_by_id', renderer='pubs_json')
 def collection_by_id(request):
