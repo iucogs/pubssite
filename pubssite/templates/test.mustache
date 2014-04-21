@@ -4,14 +4,25 @@
 <meta charset="UTF-8">
 <title>Test</title>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-
+<script src="../js/mustache.js"></script>
 </head>
 <body>
 
 <script>
+
 $(document).ready(function () { 
   $(document.body).append('hello here is some citation <br />');
   
+  var person = { 
+    firstname: "Don",
+    lastname: "Johnson",
+    title: "Herr Doktor Professor" };
+
+  var template = "<h1>Greetings, {{title}} {{firstname}} {{lastname}}</h1>";
+  $(document.body).append(Mustache.to_html(template, person));
+
+  
+
   get_citations = function(id) {
     $.getJSON("http://nupubs.cogs.indiana.edu/collection/citations/" + id, function(data) {
       alert("gotta dem citations blong colection");

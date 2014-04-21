@@ -8,7 +8,7 @@ from .models import *
 
 ## SITE VIEWS ##
 
-@view_config(route_name='home', renderer='pubssite:templates/test.mako')
+@view_config(route_name='home', renderer='test.mustache')
 def home(request):
     return {'ok': 'ok'}
 

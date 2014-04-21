@@ -9,7 +9,8 @@ def main(global_config, **settings):
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     config = Configurator(settings=settings)
-    
+   
+    config.add_renderer('.mustache', 'pubssite.renderers.pystache_renderer_factory')
     config.add_renderer('pubs_json', 'pubssite.renderers.PubsJSONRenderer')
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
