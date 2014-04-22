@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Test</title>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-<script src="../js/mustache.js"></script>
+<script src="/static/mustache.js"></script>
 </head>
 <body>
 
@@ -13,15 +13,19 @@
 $(document).ready(function () { 
   $(document.body).append('hello here is some citation <br />');
   
-  var person = { 
+  var person = {
+    title: "Herr Doktor Professor", 
     firstname: "Don",
-    lastname: "Johnson",
-    title: "Herr Doktor Professor" };
-
-  var template = "<h1>Greetings, {{title}} {{firstname}} {{lastname}}</h1>";
-  $(document.body).append(Mustache.to_html(template, person));
-
+    lastname: "Johnson"
+   };
   
+  console.log(person);
+  var template = "<h1>Greetings, {{title}} {{firstname}} {{lastname}}</h1>";
+  console.log(template);
+  var user = Mustache.render(template, person);
+  console.log(user);
+  $(document.body).html(user);
+  $(document.body).append(Mustache.render("{{title}} {{lastname}}", person)) 
 
   get_citations = function(id) {
     $.getJSON("http://nupubs.cogs.indiana.edu/collection/citations/" + id, function(data) {
@@ -42,7 +46,7 @@ $(document).ready(function () {
     var items = [];
     $.each(data, function (i, item) {
       items.push("<option value='" + item.collection_id + "'>" + item.collection_name + "</option>" );
-    });
+   });
     console.log(data);
     console.log(items);
     $("#menu").append("<select id='collections' onchange=\" if(this.selectedIndex) get_citations(this.value);\">" + items.join("") + "</select>");
