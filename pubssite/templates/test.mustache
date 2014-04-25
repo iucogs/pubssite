@@ -3,55 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <title>Test</title>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-<script src="/static/mustache.js"></script>
+<script type="text/javascript" src="/static/mustache.js"></script> 
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+<script type="text/javascript" src="/static/loader.js"></script> 
 </head>
 <body>
 
 <script>
 
 $(document).ready(function () { 
-  $(document.body).append('hello here is some citation <br />');
-  
-  var person = {
-    "title" : "Herr Doktor Professor", 
-    "firstname": "Don",
-    "lastname": "Johnson"
-   };
-  
-  console.log(person);
-  var template = "<h1>Greetings, {{title}} {{firstname}} {{lastname}}</h1>";
-  console.log(template);
-  var user = Mustache.render(template, person);
-  console.log(user);
-  $(document.body).html(user);
-  $(document.body).append(Mustache.render("{{title}} {{lastname}}", person)) 
-
-  get_citations = function(id) {
-    $.getJSON("http://nupubs.cogs.indiana.edu/collection/citations/" + id, function(data) {
-      alert("gotta dem citations blong colection");
-      var items = [];
-      $.each(data, function (i, item) {
-        items.push("<li id='" + item.citation_id + "'>" + item.title + "</li>");
-      });
-      $("#citations").empty()
-      $("#citations").append("Citations: <br /> <ul>" + items.join("") + "</ul>");
-    });
-  };
-  $(document.body).append("<div id='menu'></div>");
-  $(document.body).append("<div id='citations'>Citations <br /></div>");
-
-  $.getJSON("http://nupubs.cogs.indiana.edu/collection/owner/pjcraig", function(data) {
-    alert("success");
-    var items = [];
-    $.each(data, function (i, item) {
-      items.push("<option value='" + item.collection_id + "'>" + item.collection_name + "</option>" );
-   });
-    console.log(data);
-    console.log(items);
-    $("#menu").append("<select id='collections' onchange=\" if(this.selectedIndex) get_citations(this.value);\">" + items.join("") + "</select>");
-  });
-    
+ 
+$.getScript("/static/loader.js", function() {  
+  render_test();
+  render_citations();
+  }); 
+ 
   
 });
 </script>
