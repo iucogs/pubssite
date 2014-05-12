@@ -16,13 +16,15 @@ def main(global_config, **settings):
     config.add_route('home', '/')
 
     # Citation routes
-    config.add_route('citation_by_id', '/citation/{id:\d+}')
+    config.add_route('citation_by_id', '/citation/{id:[0-9]+(,[0-9]+)*}')
     config.add_route('citations_by_owner', '/citation/owner/{owner:.*}')
     config.add_route('citations_by_collection', '/collection/citations/{id:\d+}')
+    config.add_route('citation_delete', '/citation/delete/{id:\d+}')
 
     # Collection routes
     config.add_route('collection_by_id', 'collection/{id:\d+}')
     config.add_route('collections_by_owner', '/collection/owner/{owner:.*}')
+    config.add_route('collection_delete', '/collection/delete/{id:\d+}')
 
     config.scan()
     return config.make_wsgi_app()

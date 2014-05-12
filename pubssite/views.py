@@ -14,14 +14,39 @@ def home(request):
 
 ## CITATION API VIEWS ##
 
-@view_config(route_name='citation_by_id', renderer='pubs_json')
-def citation_by_id(request):
+#uc
+@view_config(route_name='citation_delete', request_method='DELETE')
+def delete_citation(request):
     id = int(request.matchdict.get('id', -1))
     citation = Session.query(Citation).get(id)
-    
-    if not citation:
-        return HTTPNotFound()
-    return citation.json
+    if citation:
+        Session.delete(citation)
+        Session.commit()
+        return HTTPFound('Citation deleted')
+    else:
+        return HTTPNotFound('citation not found')
+
+#uc
+@view_config(route_name='citation_by_id', renderer='pubs_json')
+def citation_by_id(request):
+    id = str(request.matchdict.get('id', -1))
+    citations = []
+
+    if "," not in id:
+        citation = Session.query(Citation).get(id)
+        if not citation:
+            return HTTPNotFound("Citation not found!")
+        else:
+            return citation.json
+    else:        
+        ids = id.split(",")
+        for citation_id in ids:
+            citation = Session.query(Citation).get(id)
+            if not citation:
+                return HTTPNotFound("Citation " + citation_id + " not found!")
+            else:
+                citations.append(citation.json) 
+        return citations
 
 @view_config(route_name='citations_by_owner', renderer='pubs_json')
 def citations_by_owner(request):
@@ -42,6 +67,18 @@ def citations_by_collection(request):
     return [citation.json for citation in collection.citations]
 
 ## COLLECTION API VIEWS ##
+
+#uc
+@view_config(route_name='collection_delete', request_method='DELETE')
+def delete_collection(request):
+    id = int(request.matchdict.get('id', -1))
+    collection = Session.query(Collection).get(id)
+    if collection:
+        Session.delete(collection)
+        Session.commit()
+        return HTTPFound('Citation deleted')
+    else:
+        return HTTPNotFound('collection not found')
 
 @view_config(route_name='collection_by_id', renderer='pubs_json')
 def collection_by_id(request):

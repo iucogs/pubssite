@@ -349,8 +349,8 @@ Theiner, G., Allen, C. &amp; Goldstone, R. L. (2010). Recognizing group cognitio
     $(document).ready(function () {
       $.getScript("/static/js/citations.js", function () {
         populate_collections();
-
-        $('#collections-list a:first').tab('show')
+        $('#collections-list').tab();
+        $('#collections-list a:first').tab('show');
 
         });
       });
