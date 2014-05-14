@@ -116,12 +116,124 @@
             </ul>
         </div>
   
-      <div id="citations-content" class="tab-content">
+       
 
 
-      </div>
+        <table id="citations-table" class="table table-hover table-condensed table-striped">
+<!--          <tbody>
+            <tr>
+              <td class="citation-actions"><input type="checkbox" /></td>
+              <td>
+                Vigo, R. &amp; Allen, C. F. (2009). How to Reason Without Words: Inference as Categorization. Cognitive Processing, 10(1), 77-88. Retrieved from: http://www.springerlink.com/content/n542807222025413/. doi: 10.1007/s10339-008-0220-4
+              </td>
+              <td class="citation-actions"><i class="icon-share-alt"></i>
+                  <i class="icon-download-alt"></i>
+                  <i class="icon-pencil"></i>
+                  <i class="icon-remove"></i></td>
+            </tr>
+            <tr>
+              <td class="citation-actions"><input type="checkbox" /></td>
+              <td>
+Wallach, W. &amp; Allen, C. (2009). Moral Machines: Teaching Robots Right from Wrong. Oxford: Oxford University Press. Retrieved from: http://www.oup.com/us/catalog/general/subject/Philosophy/EthicsMoralPhilosophy/AppliedEthics/?view=usa&ci=9780199737970. 
+              </td>
+              <td class="citation-actions"><i class="icon-share-alt"></i>
+                  <i class="icon-download-alt"></i>
+                  <i class="icon-pencil"></i>
+                  <i class="icon-remove"></i></td>
+            </tr>
+            <tr>
+              <td class="citation-actions"><input type="checkbox" /></td>
+              <td>
+Allen, C. &amp; Bekoff, M. (1997). Species of mind. Cambridge, MA: MIT Press.
+              </td>
+              <td class="citation-actions"><i class="icon-share-alt"></i>
+                  <i class="icon-download-alt"></i>
+                  <i class="icon-pencil"></i>
+                  <i class="icon-remove"></i></td>
+            </tr>
+            <tr>
+              <td class="citation-actions"><input type="checkbox" /></td>
+              <td>
+Allen, C. (2006). Transitive inference in animals: Reasoning or conditioned associations? In S. Hurley &amp; M. Nudds (Eds.) Rational Animals?. 175-185. Oxford: Oxford University Press.
+              </td>
+              <td class="citation-actions"><i class="icon-share-alt"></i>
+                  <i class="icon-download-alt"></i>
+                  <i class="icon-pencil"></i>
+                  <i class="icon-remove"></i></td>
+            </tr>
+            <tr>
+              <td class="citation-actions"><input type="checkbox" /></td>
+              <td>
+Allen, C. (2004). Is Anyone a Cognitive Ethologist? Biology &amp; Philosophy, 19(4), 589-607. doi: 10.1007/sBIPH-004-0527-1
+              </td>
+              <td class="citation-actions"><i class="icon-share-alt"></i>
+                  <i class="icon-download-alt"></i>
+                  <i class="icon-pencil"></i>
+                  <i class="icon-remove"></i></td>
+            </tr>
+            <tr>
+              <td class="citation-actions"><input type="checkbox" /></td>
+              <td>
+Allen, C. F. (2004). Animal Pain. Noûs, 38(4), 617-643. doi: 10.1111/j.0029-4624.2004.00486.x
+              </td>
+              <td class="citation-actions"><i class="icon-share-alt"></i>
+                  <i class="icon-download-alt"></i>
+                  <i class="icon-pencil"></i>
+                  <i class="icon-remove"></i></td>
+            </tr>
+            <tr>
+              <td class="citation-actions"><input type="checkbox" /></td>
+              <td>
+Bekoff, M., Allen, C. &amp; Burghardt, G. (Eds.) (2002). The Cognitive Animal. Cambridge, MA: MIT Press.
+              </td>
+              <td class="citation-actions"><i class="icon-share-alt"></i>
+                  <i class="icon-download-alt"></i>
+                  <i class="icon-pencil"></i>
+                  <i class="icon-remove"></i></td>
+            </tr>
+            <tr>
+              <td class="citation-actions"><input type="checkbox" /></td>
+              <td>
+Allen, C., Varner, G. &amp; Zinser, J. (2000). Prolegomena to any future artificial moral agent. Journal of Experimental and Theoretical Artificial Intelligence, 12, 251-261. doi: 10.1080/09528130050111428
+              </td>
+              <td class="citation-actions"><i class="icon-share-alt"></i>
+                  <i class="icon-download-alt"></i>
+                  <i class="icon-pencil"></i>
+                  <i class="icon-remove"></i></td>
+            </tr>
+            <tr>
+              <td class="citation-actions"><input type="checkbox" /></td>
+              <td>
+Allen, C., Bekoff, M. &amp; Lauder, G. (Eds.) (1998). Nature's Purposes: analyses of function and design in biology. Cambridge, MA: MIT Press.
+              </td>
+              <td class="citation-actions"><i class="icon-share-alt"></i>
+                  <i class="icon-download-alt"></i>
+                  <i class="icon-pencil"></i>
+                  <i class="icon-remove"></i></td>
+            </tr>
+            <tr>
+              <td class="citation-actions"><input type="checkbox" /></td>
+              <td>
+Cummins, D. &amp; Allen, C. (Eds.) (1998). The Evolution of Mind. New York: Oxford University Press.
+              </td>
+              <td class="citation-actions"><i class="icon-share-alt"></i>
+                  <i class="icon-download-alt"></i>
+                  <i class="icon-pencil"></i>
+                  <i class="icon-remove"></i></td>
+            </tr>
+            <tr>
+              <td class="citation-actions"><input type="checkbox" /></td>
+              <td>
+Theiner, G., Allen, C. &amp; Goldstone, R. L. (2010). Recognizing group cognition. Cognitive Systems Research, 11, 378-395. doi: 10.1016/j.cogsys.2010.07.002
+              </td>
+              <td class="citation-actions"><i class="icon-share-alt"></i>
+                  <i class="icon-download-alt"></i>
+                  <i class="icon-pencil"></i>
+                  <i class="icon-remove"></i></td>
+            </tr>
+          </tbody> --->
 
-
+        </table>      
         </div>
     </div> <!-- tab-content -->
   </div>
@@ -237,8 +349,8 @@
     $(document).ready(function () {
       $.getScript("/static/js/citations.js", function () {
         populate_collections();
-        $('#collections-list').tab();
-        $('#collections-list a:first').tab('show');
+
+        $('#collections-list a:first').tab('show')
 
         });
       });

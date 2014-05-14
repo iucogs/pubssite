@@ -22,21 +22,21 @@ populate_citations_table = function (collections) {
   $.each(collections, function (index, collection) {
    $.getJSON("http://nupubs.cogs.indiana.edu/collection/citations/" + collection.collection_id, function(data) {
     alert("loading the citations...");
-    alert(citations);
-    alert(data);
- // citations.push("<div class=\"tab-pane\">< id=\"#" + collection.collection_id + "\">" + 
- //                  "<tr id='" + item.citation_id + "'><td class = \"citation-actions\"><input type=\"checkbox\" /></td>" + 
- //                  "<td>" + item.title + "</td>" + 
- //                  "<td class=\"citation actions\"> <i class=\"icon-share-alt\"></i> <i class=\"icon-download-alt\"></i> <i class=\"icon-pencil\"></i> <i class=\"icon-remove\"></i></td></tr></div>");
-    $.each(data, function(index, citation) {
-    citations.push('<tr id=' + citation.citation_id + '><td class="citation-actions"><input time="checkbox"></td>' +
-                   '<td>' + citation.title + '</td></tr>');
-    });
-    var table = '<div class="tab-pane" id=#' + collection.collection_id + '><table><tbody>' + 
-                citations.join("") + "</tbody></table></div>";
+    citations.push("<div class=\"tab-pane\">< id=\"#" + collection.collection_id + "\">" +
     
-    alert("Table: " + table);
-    $('#citations-content').append(table);
-     });
+                   "<tr id='" + item.citation_id + "'><td class = \"citation-actions\"><input type=\"checkbox\" /></td>" + 
+                   "<td>" + item.title + "</td>" + 
+                   "<td class=\"citation actions\"> <i class=\"icon-share-alt\"></i> <i class=\"icon-download-alt\"></i> <i class=\"icon-pencil\"></i> <i class=\"icon-remove\"></i></td></tr></div>");
+
+    console.log(collections); 
+    $(document).append("<div class=\"tab-content\">" + citations.join("") + "</div>")
+
+    
+    });
+
+  
+   
+    
+    
     });
   };
