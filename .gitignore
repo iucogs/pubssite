@@ -1,6 +1,7 @@
 *.pyc
 *.swp
 
+build
 sandbox
 pubsenv
 *.egg-info
