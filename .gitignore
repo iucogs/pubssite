@@ -7,3 +7,4 @@ pubsenv
 *.egg-info
 pubs.ini
 .pubs-site.git
+dispatch.wsgi
