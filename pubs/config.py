@@ -7,7 +7,7 @@ import os
 import os.path
 
 config_paths = [os.path.abspath("pubs.ini"), 
-                os.path.expanduser("~/.config/inpho/pubs.ini")]
+                os.path.abspath("/var/pubs/pubssite/pubs.ini")]
 
 config_path = None
 for path in config_paths:

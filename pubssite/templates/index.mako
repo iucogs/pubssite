@@ -236,6 +236,7 @@
 
     $(document).ready(function () {
       $.getScript("/static/js/citations.js", function () {
+        alert("change made");
         populate_collections();
         $('#collections-list').tab();
         $('#collections-list a:first').tab('show');
