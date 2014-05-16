@@ -19,6 +19,7 @@ populate_collections = function() {
 // take it back down to n. also maybe use detach so the citations are cached.
 populate_citations_table = function (collections) {
   var citations = [];
+  var tables = [];
   console.log(collections); 
   $.each(collections, function (index, collection) {
    $.getJSON("http://nupubs.cogs.indiana.edu/collection/citations/" + collection.collection_id, function(data) {
@@ -28,9 +29,10 @@ populate_citations_table = function (collections) {
     });
     var table = '<div class="tab-pane" id=#' + collection.collection_id + '><table><tbody>' + 
                 citations.join("") + "</tbody></table></div>";
-    
-    console.log("Table: " + table);
+    tables.push(table);
+    //console.log("Table: " + table);
     $('#citations-content').append(table);
      });
     });
+    $('#collections-content').append('<div class="tab-content">' + tables.join("") + '</div>');
   };
