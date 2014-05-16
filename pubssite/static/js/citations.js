@@ -7,7 +7,8 @@ populate_collections = function() {
     });
   console.log(data);
   console.log(collections); 
-  $("#collections-content").append("<ul id=\"collections-list\" class=\"nav nav-tabs\" data-tabs=\"tabs\">" + collections.join("") +"</ul>");
+  $("#collections-content").append("<ul id=\"collections-list\" class=\"nav nav-tabs\" data-toggle=\"tab\">" + collections.join("") +"</ul>");
+  $("#collections-list").first().addClass('active');
   populate_citations_table(data); 
   }); 
 
@@ -21,21 +22,14 @@ populate_citations_table = function (collections) {
   console.log(collections); 
   $.each(collections, function (index, collection) {
    $.getJSON("http://nupubs.cogs.indiana.edu/collection/citations/" + collection.collection_id, function(data) {
-    alert("loading the citations...");
-    alert(citations);
-    alert(data);
- // citations.push("<div class=\"tab-pane\">< id=\"#" + collection.collection_id + "\">" + 
- //                  "<tr id='" + item.citation_id + "'><td class = \"citation-actions\"><input type=\"checkbox\" /></td>" + 
- //                  "<td>" + item.title + "</td>" + 
- //                  "<td class=\"citation actions\"> <i class=\"icon-share-alt\"></i> <i class=\"icon-download-alt\"></i> <i class=\"icon-pencil\"></i> <i class=\"icon-remove\"></i></td></tr></div>");
-    $.each(data, function(index, citation) {
+     $.each(data, function(index, citation) {
     citations.push('<tr id=' + citation.citation_id + '><td class="citation-actions"><input time="checkbox"></td>' +
                    '<td>' + citation.title + '</td></tr>');
     });
     var table = '<div class="tab-pane" id=#' + collection.collection_id + '><table><tbody>' + 
                 citations.join("") + "</tbody></table></div>";
     
-    alert("Table: " + table);
+    console.log("Table: " + table);
     $('#citations-content').append(table);
      });
     });
