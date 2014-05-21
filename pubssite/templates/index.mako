@@ -72,7 +72,7 @@
     </ul>
 
     -->
-    <div class=""> <!-- TODO: fix tab-content class -->
+    <div class="main-view"> <!-- TODO: fix tab-content class -->
       <div class="tab-pane active" id="tab-all">
 
 
@@ -116,12 +116,7 @@
             </ul>
         </div>
   
-      <div id="citations-content" class="tab-content">
-
-
-      </div>
-
-
+     
         </div>
     </div> <!-- tab-content -->
   </div>
@@ -236,15 +231,13 @@
 
     $(document).ready(function () {
       $.getScript("/static/js/citations.js", function () {
-        populate_collections();
-        $('#collections-list').tab();
-        $('#collections-list a:first').tab('show');
-        console.log($('#collections-list'));
-        console.log($('#collections-content'));
-        });
+        page_init();
       });
+    });
+    $('#collections-list').tab();
+    console.log($('#collections-list'));
+    console.log($('#collections-content'));
 
-    
 
     $("#citations-table").sortable({ items: "tr" });
     
