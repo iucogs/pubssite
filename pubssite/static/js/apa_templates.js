@@ -1,4 +1,4 @@
-var apa templates = {"": "{{#authors}}{{authors}}{{/authors}} {{^authors}}<b>[UNKNOWN AUTHOR(S)].</b> {{/authors}} \
+var apa_templates = {"": "{{#authors}}{{authors}}{{/authors}} {{^authors}}<b>[UNKNOWN AUTHOR(S)].</b> {{/authors}} \
                           {{#year}} ({{year}}). {{/year}}{{^year}} <b>[UNKNOWN YEAR].</b> {{/year}} \
                           {{#title}}{{title}}. {{/title}}{{^title}} <b>[UNKNOWN TITLE].</b> {{/title}} \
                           {{#editor}} In {{apaEds}},{{/editor}}{{^editor}}<b>[UNKNOWN EDITOR],</b> {{/editor}} \
