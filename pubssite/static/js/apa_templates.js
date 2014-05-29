@@ -16,20 +16,20 @@ var apa templates = {"": "{{#authors}}{{authors}}{{/authors}} {{^authors}}<b>[UN
                           {{#location}} {{location}}:{{/location}}{{^location}} <b>[UNKNOWN LOCATION]:</b> {{/location}} \
                           {{#publisher}} {{publisher}}.{{/publisher}}{{^publisher}} <b>[UNKNOWN PUBLISHER].</b>{{/publisher}}",
 
-                     "book": "{{#authorKnown}}{{apaAuthors}}{{/authorKnown}}{{^authorKnown}}<b>[UNKNOWN AUTHOR].</b>{{/authorKnown}} \
+                     "book": "{{#authors}}{{authors}}{{/authors}}{{^authors}}<b>[UNKNOWN AUTHOR].</b>{{/authors}} \
                               {{#year}} ({{year}}). {{/year}}{{^year}}<b>[UNKNOWN YEAR]. </b>{{/year}} \
                               {{#title}}<i>{{title}}</i>. {{/title}}{{^title}} <b>[UNKNOWN TITLE]. </b>{{/title}} \
                               {{#location}}{{location}}: {{/location}}{{^location}}<b>[UNKNOWN LOCATION]:</b> {{/location}} \
                               {{#publisher}}{{publisher}}.{{/publisher}}{{^publisher}}<b>[UNKNOWN PUBLISHER].</b>{{/publisher}}",
 
-                     "article": "{{#authorKnown}}{{apaAuthors}}{{/authorKnown}} {{^authorKnown}}<b>[UNKNOWN AUTHOR].</b>{{/authorKnown}} \
+                     "article": "{{#authors}}{{authors}}{{/authors}} {{^authors}}<b>[UNKNOWN AUTHOR].</b>{{/authors}} \
                                  {{#year}} ({{year}}). {{/year}}{{^year}} <b>[UNKNOWN YEAR].</b> {{/year}} \
                                  {{#title}}{{title}}.{{/title}}{{^title}}<b>[UNKNOWN TITLE]. </b>{{/title}} \
                                  {{#journal}} <i>{{journal}},{{/journal}}{{^journal}} <b>[UNKNOWN JOURNAL]</b> {{/journal}} \
                                  {{#volume}} {{volume}}</i>{{#number}}({{number}}){{/number}}, {{/volume}}{{^volume}}<b>[UNKNOWN VOLUME]</b> {{/volume}} \
                                  {{#pages}} {{pages}}{{/pages}}.{{^pages}}<b>[UNKNOWN PAGES].</b>{{/pages}}",
 
-                     "inbook": "{{#authorKnown}}{{apaAuthors}}{{/authorKnown}} {{^authorKnown}}<b>[UNKNOWN AUTHOR].</b> {{/authorKnown}} \
+                     "inbook": "{{#authors}}{{authors}}{{/authors}} {{^authors}}<b>[UNKNOWN AUTHOR].</b> {{/authors}} \
                                 {{#year}} ({{year}}). {{/year}}{{^year}} <b>[UNKNOWN YEAR].</b> {{/year}} \
                                 {{#title}}{{title}}. {{/title}}{{^title}} <b>[UNKNOWN TITLE].</b> {{/title}} \
                                 {{#editor}} In {{apaEds}},{{/editor}}{{^editor}}<b>[UNKNOWN EDITOR],</b> {{/editor}} \
@@ -38,32 +38,32 @@ var apa templates = {"": "{{#authors}}{{authors}}{{/authors}} {{^authors}}<b>[UN
                                 {{#location}} {{location}}:{{/location}}{{^location}} <b>[UNKNOWN LOCATION]:</b> {{/location}} \
                                 {{#publisher}} {{publisher}}.{{/publisher}}{{^publisher}} <b>[UNKNOWN PUBLISHER].</b>{{/publisher}}",
 
-                     "translated_book": "{{#authorKnown}}{{apaAuthors}}{{/authorKnown}}{{^authorKnown}}<b>[UNKNOWN AUTHOR].</b> {{/authorKnown}} \
+                     "translated_book": "{{#authors}}{{authors}}{{/authors}}{{^authors}}<b>[UNKNOWN AUTHOR].</b> {{/authors}} \
                                          {{#year}} ({{year}}). {{/year}}{{^year}} <b>[UNKNOWN YEAR].</b> {{/year}} \
                                          {{#title}}<i>{{title}}</i>. {{/title}}{{^title}}<b>[UNKNOWN TITLE].</b> {{/title}} \
                                          {{#translator}}({{apaTrans}}, Trans.){{/translator}}{{^translator}}<b>[UNKNOWN TRANSLATOR].</b>{{/translator}} \
                                          {{#location}} {{location}}: {{/location}}{{^location}} <b>[UNKNOWN LOCATION]:</b> {{/location}} \ 
                                          {{#publisher}}{{publisher}}.{{/publisher}}{{^publisher}}<b>[UNKNOWN PUBLISHER].{{/publisher}}</b>",
 
-                     "edited_book": "{{#authorKnown}}{{apaAuthors}} {{/authorKnown}}{{^authorKnown}}[UNKNOWN AUTHOR]{{/authorKnown}} \
+                     "edited_book": "{{#authors}}{{authors}} {{/authors}}{{^authors}}[UNKNOWN AUTHOR]{{/authors}} \
                                      {{#year}} ({{year}}). {{/year}}{{^year}}<b>[UNKNOWN YEAR]. </b>{{/year}} \
                                      {{#title}}<i>{{title}}</i>. {{/title}}{{^title}} <b>[UNKNOWN TITLE]. </b>{{/title}} \
                                      {{#location}} {{location}}:{{/location}}{{^location}} <b>[UNKNOWN LOCATION]:</b> {{/location}} \
                                      {{#publisher}} {{publisher}}.{{/publisher}}{{^publisher}} <b>[UNKNOWN PUBLISHER].</b>{{/publisher}}",
 
-                     "web_published": "{{#authorKnown}}{{apaAuthors}}{{/authorKnown}}{{^authorKnown}}<b>[UNKNOWN AUTHOR].</b> {{/authorKnown}} \
+                     "web_published": "{{#authors}}{{authors}}{{/authors}}{{^authors}}<b>[UNKNOWN AUTHOR].</b> {{/authors}} \
                                        {{#title}} <i>{{title}}.</i> {{/title}}{{^title}} <b>[UNKNOWN TITLE].</b> {{/title}} \
                                        {{#year}} ({{year}}). {{/year}}{{^year}} <b>[UNKNOWN YEAR].</b> {{/year}} \
                                        Retrieved from: {{#url}}{{url}}{{/url}}{{^url}}[UNKNOWN URL]{{/url}}",
 
-                     "proceedings": "{{#authorKnown}}{{apaAuthors}}{{/authorKnown}}{{^authorKnown}}<b>[UNKNOWN AUTHOR].</b> {{/authorKnown}} \
+                     "proceedings": "{{#authors}}{{authors}}{{/authors}}{{^authors}}<b>[UNKNOWN AUTHOR].</b> {{/authors}} \
                                      {{#year}} ({{year}}). {{/year}}{{^year}}<b>[UNKNOWN YEAR]. </b>{{/year}} \
                                      {{#title}}<i>{{title}}</i>. {{/title}}{{^title}} <b>[UNKNOWN TITLE]. </b>{{/title}} \
                                      {{#pages}} {{pages}}{{/pages}}.{{^pages}}<b>[UNKNOWN PAGES].</b>{{/pages}} \
                                      {{#location}} {{location}}:{{/location}}{{^location}} <b>[UNKNOWN LOCATION]:</b> {{/location}} \
                                      {{#publisher}} {{publisher}}.{{/publisher}}{{^publisher}} <b>[UNKNOWN PUBLISHER].</b>{{/publisher}}",
 
-                     "misc": "{{#authorKnown}}{{apaAuthors}}{{/authorKnown}}{{^authorKnown}}<b>[UNKNOWN AUTHOR].</b>{{/authorKnown}} \
+                     "misc": "{{#authors}}{{authors}}{{/authors}}{{^authors}}<b>[UNKNOWN AUTHOR].</b>{{/authors}} \
                               {{#year}} ({{year}}). {{/year}}{{^year}} <b>[UNKNOWN YEAR].</b> {{/year}} \
                               {{#title}}{{title}}. {{/title}}{{^title}} <b>[UNKNOWN TITLE].</b> {{/title}}"
                     };
