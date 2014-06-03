@@ -1,4 +1,4 @@
-var current_citations = {};
+var current_corpus = {};
 
 function page_init() { 
   $.getJSON("http://nupubs.cogs.indiana.edu/collection/owner/pjcraig", function(data) {
@@ -13,8 +13,7 @@ function populate_collections(collections) {
   console.log("yeah");
   $.each(collections, function (i, item) {
     collections_html.push("<li>" + "<a href='#" + item.collection_id + "' data-toggle=\"tab\">" + item.collection_name + "</a></li>");
-    //id ='" + item.collection_id +"'
-    });
+  });
   $("#collections-content").append("<ul id=\"collections-list\" class=\"nav nav-tabs\" data-tabs=\"tabs\">" + collections_html.join("") +'</ul><div class="tab-content" id="citations-content"></div>' );
   $("#collections-list li").first().addClass('active'); 
   $('#collections-list').tab();
@@ -35,7 +34,7 @@ function populate_citations_table(collections) {
       });
     table = '<div class="tab-pane" id="' + collection.collection_id + '"><table class="table table-hover table-condensed table-striped"><tbody>' + 
              citations.join("") + "</tbody></table></div>";
-    current_citations[collection.collection_id] = data;
+    current_corupus[collection] = data;
     $('.tab-content').append(table);
     });
   }); 

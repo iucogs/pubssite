@@ -226,6 +226,9 @@
   <script src="/static/js/bootstrap-modalmanager.js"></script>
   <script src="/static/js/bootstrap-modal.js"></script>
   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  <script src="/static/js/apa_templates.js"></script>
+  <script src="/static/js/mla_templates.js"></script>
+  
   <script src="/static/js/citations.js"></script>
   <script>
 
