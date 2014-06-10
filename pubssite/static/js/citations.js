@@ -1,13 +1,13 @@
-var current_corpus = {};
+var current_citations = {};
+var current_collections = [];
 var current_format = "apa";
 
 function page_init() { 
   $.getJSON("http://nupubs.cogs.indiana.edu/collection/owner/pjcraig", function(data) {
     populate_collections(data);
-    populate_citations(data);
+    get_citations(data);
     render_citations(current_format);
     $('#collections-list').tab(); 
-    console.log("Here: " + current_corpus);
   });
 }
 
@@ -15,7 +15,7 @@ function populate_collections(collections) {
   var collections_html = [];
   $.each(collections, function (i, item) {
     collections_html.push("<li>" + "<a href='#" + item.collection_id + "' data-toggle=\"tab\">" + item.collection_name + "</a></li>");
-    current_corpus[item] = [];
+    current_collections.push(item);
   });
   $("#collections-content").append("<ul id=\"collections-list\" class=\"nav nav-tabs\" data-tabs=\"tabs\">" + collections_html.join("") +'</ul><div class="tab-content" id="citations-content"></div>' );
   $("#collections-list li").first().addClass('active'); 
@@ -23,21 +23,17 @@ function populate_collections(collections) {
 }
 
 
-function populate_citations(collections) { 
+function get_citations(collections) { 
   $.each(collections, function (index, collection) {
     $.getJSON("http://nupubs.cogs.indiana.edu/collection/citations/" + collection.collection_id, function(data) {
-      current_corpus[collection] = data;
-      console.log(collection);
-      console.log(data);
-      console.log(current_corpus);
+      current_citations[collection.collection_id] = data;
     });
   });
-  console.log("terminado");
 }
 
 function render_citations(format) {
-  citations = [];
-  
+  var template;
+
   switch(format) {
     case 'apa':
       template = apa_templates;  
@@ -49,17 +45,20 @@ function render_citations(format) {
   } 
   
   console.log('Format:' + format); 
-  $.each(current_corpus, function(collection, citation) {
-    citations.push('<tr id=' + citation.citation_id + '><td class="citation-actions"><input type="checkbox"></td>' +
-                   '<td>' + Mustache.render(template[citation.pubtype]) + '</td>' +
-                   '<td class="citation actions"><i class="icon-share-alt"></i>' +
-                   '<i class="icon-download-alt"></i><i class="icon-pencil"></i><i class="icon-remove"></i></td></tr>');
-    });
+  $.each(current_citations, function(collection, citation_list) {
+    $.each(citation_list, function (citation, index) { 
+      citations = [];
+      console.log(citation);
+      citations.push('<tr id=' + citation.citation_id + '><td class="citation-actions"><input type="checkbox"></td>' +
+                     '<td>' + Mustache.render(template[citation.pubtype]) + '</td>' +
+                     '<td class="citation actions"><i class="icon-share-alt"></i>' +
+                     '<i class="icon-download-alt"></i><i class="icon-pencil"></i><i class="icon-remove"></i></td></tr>');
+    
+      table = '<div class="tab-pane" id="' + collection.collection_id + '"><table class="table table-hover table-condensed table-striped"><tbody>' + 
+              citations.join("") + "</tbody></table></div>";
   
-  table = '<div class="tab-pane" id="' + collection.collection_id + '"><table class="table table-hover table-condensed table-striped"><tbody>' + 
-            citations.join("") + "</tbody></table></div>";
-  
-  $('.tab-content').append(table);
+      $('.tab-content').append(table);
 
-  
+    });
+  });
 }
