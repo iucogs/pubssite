@@ -38,8 +38,7 @@ var apa_templates = {"": "{{#authors}}{{authors}}{{/authors}} {{^authors}}<b>[UN
                                 {{#location}} {{location}}:{{/location}}{{^location}} <b>[UNKNOWN LOCATION]:</b> {{/location}} \
                                 {{#publisher}} {{publisher}}.{{/publisher}}{{^publisher}} <b>[UNKNOWN PUBLISHER].</b>{{/publisher}}",
 
-                     "translated_book": "{{#authors}}{{authors}}{{/authors}}{{^authors}}<b>[UNKNOWN AUTHOR].</b> {{/authors}} \
-                                         {{#year}} ({{year}}). {{/year}}{{^year}} <b>[UNKNOWN YEAR].</b> {{/year}} \
+                     "translated_book": "{{#authors}}{{authors}}{{/authors}}{{^authors}}<b>[UNKNOWN AUTHOR].</b> {{/authors}} \                                         {{#year}} ({{year}}). {{/year}}{{^year}} <b>[UNKNOWN YEAR].</b> {{/year}} \
                                          {{#title}}<i>{{title}}</i>. {{/title}}{{^title}}<b>[UNKNOWN TITLE].</b> {{/title}} \
                                          {{#translator}}({{apaTrans}}, Trans.){{/translator}}{{^translator}}<b>[UNKNOWN TRANSLATOR].</b>{{/translator}} \
                                          {{#location}} {{location}}: {{/location}}{{^location}} <b>[UNKNOWN LOCATION]:</b> {{/location}} \ 
