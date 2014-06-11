@@ -1,8 +1,19 @@
 var current_citations = {};
 var current_collections = [];
+var templates = {};
 var current_format = "apa";
 
 function page_init() { 
+  // grab templates
+  $.getScript("/static/js/apa_templates.js", function () {
+    templates["apa"] = apa_templates; 
+  });
+
+  $.getScript("/static/js/mla_templates.js", function () { 
+    templates["mla"] = mla_templates;
+  });
+
+  // grab citations and collections
   $.getJSON("http://nupubs.cogs.indiana.edu/collection/owner/pjcraig", function(data) {
     populate_collections(data);
     get_citations(data);
