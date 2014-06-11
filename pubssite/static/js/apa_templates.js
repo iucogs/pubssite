@@ -42,7 +42,7 @@ var apa_templates = {"": "{{#authors}}{{authors}}{{/authors}} {{^authors}}<b>[UN
                                          {{#year}} ({{year}}). {{/year}}{{^year}} <b>[UNKNOWN YEAR].</b> {{/year}} \
                                          {{#title}}<i>{{title}}</i>. {{/title}}{{^title}}<b>[UNKNOWN TITLE].</b> {{/title}} \
                                          {{#translator}}({{apaTrans}}, Trans.){{/translator}}{{^translator}}<b>[UNKNOWN TRANSLATOR].</b>{{/translator}} \
-                                         {{#location}} {{location}}: {{/location}}{{^location}} <b>[UNKNOWN LOCATION]:</b> {{/location}} \ 
+                                         {{#location}} {{location}}: {{/location}}{{^location}} <b>[UNKNOWN LOCATION]:</b> {{/location}} \
                                          {{#publisher}}{{publisher}}.{{/publisher}}{{^publisher}}<b>[UNKNOWN PUBLISHER].{{/publisher}}</b>",
 
                      "edited_book": "{{#authors}}{{authors}} {{/authors}}{{^authors}}[UNKNOWN AUTHOR]{{/authors}} \
