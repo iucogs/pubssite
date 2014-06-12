@@ -17,9 +17,11 @@ function page_init() {
   $.getJSON("http://nupubs.cogs.indiana.edu/collection/owner/pjcraig", function(data) {
     populate_collections(data);
     get_citations(data);
-    render_citations(current_format);
     $('#collections-list').tab(); 
   });
+
+  render_citations(current_format);
+
 }
 
 function populate_collections(collections) {
@@ -43,25 +45,17 @@ function get_citations(collections) {
 }
 
 function render_citations(format) {
-  var template;
+  var template = templates[current_format];
+  var current_citation_list;
 
-  switch(format) {
-    case 'apa':
-      template = apa_templates;  
-      break;
-
-    case 'mla':
-      template = mla_templates;
-      break;
-  } 
-  
   console.log('Format:' + format); 
   $.each(current_citations, function(collection, citation_list) {
-    $.each(citation_list, function (citation, index) { 
+    current_citation_list = citation_list;
+    $.each(current_citation_list, function (index, citation) { 
       citations = [];
-      console.log(citation);
+      console.log(Mustache.render(template[citation.pubtype], citation);
       citations.push('<tr id=' + citation.citation_id + '><td class="citation-actions"><input type="checkbox"></td>' +
-                     '<td>' + Mustache.render(template[citation.pubtype]) + '</td>' +
+                     '<td>' + Mustache.render(template[citation.pubtype], citation) + '</td>' +
                      '<td class="citation actions"><i class="icon-share-alt"></i>' +
                      '<i class="icon-download-alt"></i><i class="icon-pencil"></i><i class="icon-remove"></i></td></tr>');
     
