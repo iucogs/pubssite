@@ -16,12 +16,10 @@ function page_init() {
   // grab citations and collections
   $.getJSON("http://nupubs.cogs.indiana.edu/collection/owner/pjcraig", function(data) {
     populate_collections(data);
-    get_citations(data);
-    $('#collections-list').tab(); 
+    get_citations(data); 
   });
-
-  render_citations(current_format);
-
+    $('#collections-list').tab(); 
+   
 }
 
 function populate_collections(collections) {
@@ -39,7 +37,7 @@ function populate_collections(collections) {
 function get_citations(collections) { 
   $.each(collections, function (index, collection) {
     $.getJSON("http://nupubs.cogs.indiana.edu/collection/citations/" + collection.collection_id, function(data) {
-      current_citations[collection.collection_id] = data;
+      current_citations[collection.collection_id] = data; 
     });
   });
 }
@@ -48,22 +46,20 @@ function render_citations(format) {
   var template = templates[current_format];
   var current_citation_list;
 
-  console.log('Format:' + format); 
   $.each(current_citations, function(collection, citation_list) {
     current_citation_list = citation_list;
+    citations = [];
     $.each(current_citation_list, function (index, citation) { 
-      citations = [];
-      console.log(Mustache.render(template[citation.pubtype], citation);
       citations.push('<tr id=' + citation.citation_id + '><td class="citation-actions"><input type="checkbox"></td>' +
                      '<td>' + Mustache.render(template[citation.pubtype], citation) + '</td>' +
                      '<td class="citation actions"><i class="icon-share-alt"></i>' +
                      '<i class="icon-download-alt"></i><i class="icon-pencil"></i><i class="icon-remove"></i></td></tr>');
     
-      table = '<div class="tab-pane" id="' + collection.collection_id + '"><table class="table table-hover table-condensed table-striped"><tbody>' + 
-              citations.join("") + "</tbody></table></div>";
-  
-      $('.tab-content').append(table);
-
     });
+  table = '<div class="tab-pane" id="' + collection + '"><table class="table table-hover table-condensed table-striped"><tbody>' + 
+           citations.join("") + "</tbody></table></div>";
+  $('.tab-content').append(table);
+  citations = [];
+
   });
 }
