@@ -62,17 +62,7 @@
   </div>
   <div class="container" id="collections-content">
  
-   
-   <!-- <ul class="nav nav-tabs">
-      <li class="active"><a href="#tab-all" data-toggle="tab"><i class="icon-home"></i> My Citations</a></li>
-      <li><a href="#tab-unverified" data-toggle="tab">My Unreviewed Citations</a></li>
-      <li><a href="#tab3" data-toggle="tab">JCDL 2013</a></li>
-      <li><a href="#tab4" data-toggle="tab"><em><i class="icon-user"></i> SEP</em> : Artificial Intelligence</a></li>
-      <li><a href="#tab-new" data-toggle="tab"><i class="icon-plus"></i></a></li>
-    </ul>
-
-    -->
-    <div class="main-view"> <!-- TODO: fix tab-content class -->
+   <div class="main-view"> <!-- TODO: fix tab-content class -->
       <div class="tab-pane active" id="tab-all">
 
 
@@ -222,6 +212,7 @@
 
    
   <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script src="/static/js/mustache.js"></script>
   <script src="/static/js/bootstrap.min.js"></script>
   <script src="/static/js/bootstrap-modalmanager.js"></script>
   <script src="/static/js/bootstrap-modal.js"></script>
@@ -242,21 +233,13 @@
     console.log($('#collections-content'));
 
 
-    $("#citations-table").sortable({ items: "tr" });
+  
+    $(document).on('ajaxStop', function () { 
+      render_citations();
+      $("#citations-table").sortable({ items: "tr" });
+    });
     
-  /*  var pubs = pubs | {};
-    pubs.citation_url = function(id) {
-      return 'http://pubs2.cogs.indiana.edu/citation?IDs=' + id;
-      }
 
-    var printRow = function(data, elt) {
-    }
-    $.getJSON('http://pubs2.cogs.indiana.edu/collection?IDs=444', function(data) {
-        $.each(data.citation_ids, function(i, id) {
-           $.getJSON(pubs.citation_url(id), printRow);
-          });
-      });
-    */
 
   </script>
 </body>
