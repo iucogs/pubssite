@@ -50,6 +50,7 @@ function render_citations(format) {
     current_citation_list = citation_list;
     citations = [];
     $.each(current_citation_list, function (index, citation) { 
+      citations.authors = render_apa_authors(citations.authors);
       citations.push('<tr id=' + citation.citation_id + '><td class="citation-actions"><input type="checkbox"></td>' +
                      '<td>' + Mustache.render(template[citation.pubtype], citation) + '</td>' +
                      '<td class="citation actions"><i class="icon-share-alt"></i>' +

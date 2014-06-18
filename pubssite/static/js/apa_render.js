@@ -21,5 +21,6 @@ function render_apa_authors(authors_array) {
         
         formatted_author_array.push(temp_auth);
     });
+    return formatted_author_array.join(",");
     console.log(formatted_author_array);
 }
