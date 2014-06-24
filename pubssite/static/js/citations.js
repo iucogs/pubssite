@@ -5,6 +5,8 @@ var current_format = "apa";
 
 // only here temporarily
 function render_apa_authors(authors_array) {
+    
+    // This block handles rendering authors names and returns 
     auth_string = "";
     formatted_author_array = [];
     $.each(authors_array, function (index, author) {
@@ -24,14 +26,34 @@ function render_apa_authors(authors_array) {
             temp_auth += firstname.substring(0, 1) + ". ";    
         });
         
+        //remove trailing space
+        temp_auth = temp_auth.slice(0, -1);
+        
         formatted_author_array.push(temp_auth);
     });
-    return formatted_author_array.join(",");
-    console.log(formatted_author_array);
+    
+    
+    // This block handles the actual APA-defined layout for a given number of
+    // authors.
+    num_authors = formatted_author_array.length;
+
+    if (num_authors > 3) {
+      return formatted_author_array[0] + ", et al.";
+    } else if (num_authors == 3) {
+      return formatted_author_array[0] + ", " + formatted_author_array[1] + " & " + formatted_author_array[2];
+    } else if (num_authors == 2) {
+      return formatted_author_array[0] + ", " + formatted_author_array[1];
+    } else {
+      return formatted_author_array[0];
+    }
 }
 
+// This function draws the collections/citations tables and populates the global
+// variables current_citations, current_collections and templates. It is very
+// important. Do try to return it in one piece, 007.
 function page_init() { 
-  // grab templates
+  // grab templates and stores them in global object templates. follow the path in the get
+  // for the file containing the templates if they need to be changed.
   $.getScript("/static/js/apa_templates.js", function () {
     templates["apa"] = apa_templates; 
   });
@@ -45,13 +67,15 @@ function page_init() {
     populate_collections(data);
     get_citations(data); 
   });
-    $('#collections-list').tab(); 
-   
+  $('#collections-list').tab(); 
 }
+
+// this populates the collections tabs at the top of the page
+// TODO: dropdown w/ all users' collections
 
 function populate_collections(collections) {
   var collections_html = [];
-  $.each(collections, function (i, item) {
+    $.each(collections, function (i, item) {
     collections_html.push("<li>" + "<a href='#" + item.collection_id + "' data-toggle=\"tab\">" + item.collection_name + "</a></li>");
     current_collections.push(item);
   });
@@ -60,7 +84,7 @@ function populate_collections(collections) {
   $('#collections-list').tab();
 }
 
-
+// populates current_citations for rendering by render_citations below
 function get_citations(collections) { 
   $.each(collections, function (index, collection) {
     $.getJSON("http://nupubs.cogs.indiana.edu/collection/citations/" + collection.collection_id, function(data) {
@@ -69,6 +93,8 @@ function get_citations(collections) {
   });
 }
 
+// this draws the citations table along with the option buttons on the side.
+// Very dangerous to edit. You go first.
 function render_citations(format) {
   var template = templates[current_format];
   var current_citation_list;
@@ -82,12 +108,10 @@ function render_citations(format) {
                      '<td>' + Mustache.render(template[citation.pubtype], citation) + '</td>' +
                      '<td class="citation actions"><i class="icon-share-alt"></i>' +
                      '<i class="icon-download-alt"></i><i class="icon-pencil"></i><i class="icon-remove"></i></td></tr>');
-    
     });
   table = '<div class="tab-pane" id="' + collection + '"><table class="table table-hover table-condensed table-striped"><tbody>' + 
            citations.join("") + "</tbody></table></div>";
   $('.tab-content').append(table);
   citations = [];
-
   });
 }
