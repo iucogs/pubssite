@@ -3,11 +3,40 @@ var current_collections = [];
 var templates = {};
 var current_format = "apa";
 
+
+//TODO: Add support for Jr., II, etc
+function render_mla_authors(authors_array) {
+    // this first block takes the authors and puts them into standard MLA formatted strings.
+    temp_auth_array = [];
+    $.each(authors_array, function (index, author) {
+        temp_auth = "";
+        temp_auth = author.lastname + ", ";
+        
+        // checks for middle initial
+        if (author.firstname.split(" ") > 1) 
+            temp_auth += author.firstname.split(" ")[0] + " " + author.firstname.split(" ")[1].substring(0, 1) + ".";
+        else
+            temp_auth += author.firstname;
+        
+        temp_auth_array.push(temp_auth);
+    });
+    
+    // this block renders the authors in correct MLA format and returns them.
+    auth_string = "";
+    $.each(temp_auth_array, function(index, author) {
+       if (index == temp_auth_array.length-1)
+           auth_string += "and " + author;
+       else
+           auth_string += author + ", ";
+    });
+    
+    return auth_string;
+}
+
 // only here temporarily
 function render_apa_authors(authors_array) {
     
     // This block handles rendering authors names and returns 
-    auth_string = "";
     formatted_author_array = [];
     $.each(authors_array, function (index, author) {
         initials_array = [];
