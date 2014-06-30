@@ -26,7 +26,6 @@ def delete_citation(request):
     else:
         return HTTPNotFound('citation not found')
 
-#uc
 @view_config(route_name='citation_by_id', renderer='pubs_json')
 def citation_by_id(request):
     id = str(request.matchdict.get('id', -1))
@@ -52,7 +51,8 @@ def citation_by_id(request):
 def citations_by_owner(request):
     owner = str(request.matchdict.get('owner', -1))
     citations = Session.query(Citation).filter(Citation.owner == owner).all()
-
+    
+    Session.commit()
     if not citations:
         return HTTPNotFound()
     return [citation.json for citation in citations]
@@ -61,14 +61,13 @@ def citations_by_owner(request):
 def citations_by_collection(request):
     id = int(request.matchdict.get('id', -1))
     collection = Session.query(Collection).get(id)
-
+    Session.commit() 
     if not collection:
         return HTTPNotFound()
     return [citation.json for citation in collection.citations]
 
 ## COLLECTION API VIEWS ##
 
-#uc
 @view_config(route_name='collection_delete', request_method='DELETE')
 def delete_collection(request):
     id = int(request.matchdict.get('id', -1))
@@ -76,7 +75,7 @@ def delete_collection(request):
     if collection:
         Session.delete(collection)
         Session.commit()
-        return HTTPFound('Citation deleted')
+        return HTTPFound('collection deleted')
     else:
         return HTTPNotFound('collection not found')
 
@@ -84,7 +83,7 @@ def delete_collection(request):
 def collection_by_id(request):
     id = int(request.matchdict.get('id', -1))
     collection = Session.query(Collection).get(id)
-
+    Session.commit()
     if not collection:
         return HTTPNotFound()
     return collection.json
@@ -93,7 +92,7 @@ def collection_by_id(request):
 def collections_by_owner(request):
     owner = str(request.matchdict.get('owner', -1))
     collections = Session.query(Collection).filter(Collection.owner == owner).all()
-
+    Session.commit()
     if not collections:
         return HTTPNotFound()
     return [collection.json for collection in collections]
