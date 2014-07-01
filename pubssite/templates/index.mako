@@ -32,12 +32,40 @@
       vertical-align: middle;
     }
   </style>
-  
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script src="/static/js/mustache.js"></script>
+  <script src="/static/js/bootstrap.min.js"></script>
+  <script src="/static/js/bootstrap-modalmanager.js"></script>
+  <script src="/static/js/bootstrap-modal.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  <script src="/static/js/apa_templates.js"></script>
+  <script src="/static/js/mla_templates.js"></script>
+  <script src='/static/js/citations.js'></script>
+
+ 
 
 </head>
 
 <body>
+    <script>
 
+    $(document).ready(function () {
+      $.getScript("/static/js/citations.js", function () {
+        page_init();
+      });
+    });
+    $('#collections-list').tab();
+    console.log($('#collections-list'));
+    console.log($('#collections-content'));
+
+
+  
+    $(document).on('ajaxStop', function () { 
+      render_citations();
+      $("#citations-table").sortable({ items: "tr" });
+    });
+  </script>
+ 
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container">
@@ -94,7 +122,7 @@
    </div>
     
         <!-- CITATIONS -->
-
+<!---
         <div class="dropdown" align="left">
           Display format:     
           <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#">APA <i class="icon-caret-alt"></i> </a> 
@@ -105,8 +133,18 @@
               <li>Bibtex</li>
             </ul>
         </div>
-  
-     
+  --->
+
+        <div align="left">
+          Display format:
+          <select id="format-control" onchange="render_citations(this.value)">
+            <option value="apa">APA</option>
+            <option value="mla">MLA</option>
+            <option value="bibtex">Bibtex</option>
+            <option value="endnote">Endnote</option>
+          </select>
+        </div>
+
         </div>
     </div> <!-- tab-content -->
   </div>
@@ -211,38 +249,9 @@
 
 
    
-  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
-  <script src="/static/js/mustache.js"></script>
-  <script src="/static/js/bootstrap.min.js"></script>
-  <script src="/static/js/bootstrap-modalmanager.js"></script>
-  <script src="/static/js/bootstrap-modal.js"></script>
-  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-  <script src="/static/js/apa_templates.js"></script>
-  <script src="/static/js/mla_templates.js"></script>
-  
-  <script src="/static/js/citations.js"></script>
-  <script>
+    <script src="/static/js/citations.js"></script>
 
-    $(document).ready(function () {
-      $.getScript("/static/js/citations.js", function () {
-        page_init();
-      });
-    });
-    $('#collections-list').tab();
-    console.log($('#collections-list'));
-    console.log($('#collections-content'));
-
-
-  
-    $(document).on('ajaxStop', function () { 
-      render_citations();
-      $("#citations-table").sortable({ items: "tr" });
-    });
-    
-
-
-  </script>
-</body>
+  </body>
 
 </html>
 

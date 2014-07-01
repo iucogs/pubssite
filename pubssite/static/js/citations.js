@@ -23,6 +23,10 @@ function render_mla_authors(authors_array) {
     
     // this block renders the authors in correct MLA format and returns them.
     auth_string = "";
+    
+    if (temp_auth_array.length == 1) {
+      return temp_auth_array[0];
+    }
     $.each(temp_auth_array, function(index, author) {
        if (index == temp_auth_array.length-1)
            auth_string += "and " + author;
@@ -125,22 +129,46 @@ function get_citations(collections) {
 // this draws the citations table along with the option buttons on the side.
 // Very dangerous to edit. You go first.
 function render_citations(format) {
+  // since render_citations can be called without an argument, we use this to
+  // initially render the citations APA style
+  if (format) {
+    current_format = format;
+  } else { 
+    current_format = 'apa';
+  }
+  $("#citations-content").empty();
   var template = templates[current_format];
   var current_citation_list;
 
   $.each(current_citations, function(collection, citation_list) {
-    current_citation_list = citation_list;
-    citations = [];
-    $.each(current_citation_list, function (index, citation) { 
-      citation.authors = render_apa_authors(citation.authors); 
-      citations.push('<tr id=' + citation.citation_id + '><td class="citation-actions"><input type="checkbox"></td>' +
-                     '<td>' + Mustache.render(template[citation.pubtype], citation) + '</td>' +
+    if (citation_list) {
+      current_citation_list = citation_list;
+      citations = [];
+      $.each(current_citation_list, function (index, citation) { 
+        // copies the citation into a new object so we can preserve the original's
+        // author array
+        var temp_cit = $.extend({}, citation);
+    
+        if (current_format == 'apa' || format == '') {
+          temp_cit.authors = render_apa_authors(temp_cit.authors);
+        } else if (current_format == 'mla') { 
+        temp_cit.authors = render_mla_authors(temp_cit.authors);
+        }
+  
+      citations.push('<tr id=' + temp_cit.citation_id + '><td class="citation-actions"><input type="checkbox"></td>' +
+                     '<td>' + Mustache.render(template[citation.pubtype], temp_cit) + '</td>' +
                      '<td class="citation actions"><i class="icon-share-alt"></i>' +
                      '<i class="icon-download-alt"></i><i class="icon-pencil"></i><i class="icon-remove"></i></td></tr>');
-    });
-  table = '<div class="tab-pane" id="' + collection + '"><table class="table table-hover table-condensed table-striped"><tbody>' + 
-           citations.join("") + "</tbody></table></div>";
-  $('.tab-content').append(table);
-  citations = [];
+      });
+  
+      table = '<div class="tab-pane" id="' + collection + '"><table class="table table-hover table-condensed table-striped"><tbody>' + 
+               citations.join("") + "</tbody></table></div>";
+      $('.tab-content').append(table);
+      citations = [];
+    } else { 
+      table = '<div class="tab-pane" id="' + collection + '"><table class="table table-hover table-condensed table-striped"><tbody>' + 
+               "This collection has no citations." + "</tbody></table></div>";
+      $('.tab-content').append(table);
+    }
   });
 }
