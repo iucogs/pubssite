@@ -109,7 +109,7 @@ function page_init() {
 function populate_collections(collections) {
   var collections_html = [];
     $.each(collections, function (i, item) {
-    collections_html.push("<li>" + "<a href='#" + item.collection_id + "' data-toggle=\"tab\">" + item.collection_name + "</a></li>");
+    collections_html.push('<li>' + "<a href='#" + item.collection_id + "' data-toggle=\"tab\">" + item.collection_name + "</a></li>");
     current_collections.push(item);
   });
   $("#collections-content").append("<ul id=\"collections-list\" class=\"nav nav-tabs\" data-tabs=\"tabs\">" + collections_html.join("") +'</ul><div class="tab-content" id="citations-content"></div>' );
@@ -171,4 +171,7 @@ function render_citations(format) {
       $('.tab-content').append(table);
     }
   });
+  // set the current tab's associated citations as active
+  var id = $("#collections-list li.active").find("a").attr("href").substr(1, "href".length); 
+  $(".tab-pane#" + id).addClass("active");
 }
