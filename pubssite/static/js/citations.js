@@ -97,7 +97,7 @@ function page_init() {
 
   // grab citations and collections
   $.getJSON("http://nupubs.cogs.indiana.edu/collection/owner/pjcraig", function(data) {
-    populate_collections(data);
+    populate_collections_new(data);
     get_citations(data); 
   });
   $('#collections-list').tab(); 
@@ -105,6 +105,22 @@ function page_init() {
 
 // this populates the collections tabs at the top of the page
 // TODO: dropdown w/ all users' collections
+function populate_collections_new(collections) {
+  var collections_html = [];
+  $.each(collections, function (index, collection) {
+    current_collections.push(collection);
+    if (index == 0) 
+      collections_html.push('<li>' + "<a href='#" + collection.collection_id + "' data-toggle=\"tab\">" + collection.collection_name + ' <i class="icon-remove"></i></a></li><li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Select another collection <b class="caret"></b></a><ul class="dropdown-menu">');
+    else
+      collections_html.push('<li class><a href="#' + collection.collection_id + '" data-toggle="tab">' + collection.collection_name + '</a></li>');
+  });
+  collections_html.push('</ul></li>');
+  $("#collections-content").append("<ul id=\"collections-list\" class=\"nav nav-tabs\" data-tabs=\"tabs\">" + collections_html.join("") +'</ul><div class="tab-content" id="citations-content"></div>' );
+  $("#collections-list li").first().addClass('active'); 
+  $('#collections-list').tab();
+  console.log(collections_html.join(""));
+}
+
 
 function populate_collections(collections) {
   var collections_html = [];
