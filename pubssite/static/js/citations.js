@@ -110,15 +110,30 @@ function populate_collections_new(collections) {
   $.each(collections, function (index, collection) {
     current_collections.push(collection);
     if (index == 0) 
-      collections_html.push('<li>' + "<a href='#" + collection.collection_id + "' data-toggle=\"tab\">" + collection.collection_name + ' <i class="icon-remove"></i></a></li><li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Select another collection <b class="caret"></b></a><ul class="dropdown-menu">');
+      collections_html.push('<li>' + "<a href='#" + collection.collection_id + "' data-toggle=\"tab\">" + collection.collection_name + ' <i class="icon-remove"></i></a></li><li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Select another collection <b class="caret"></b></a><ul id="collections-select" class="dropdown-menu">');
     else
-      collections_html.push('<li class><a href="#' + collection.collection_id + '" data-toggle="tab">' + collection.collection_name + '</a></li>');
+      collections_html.push('<li class><a href="#' + collection.collection_id + '" data-toggle="tab">' + collection.collection_name + ' <i class="icon-remove" style="display: none;"></i></a></li>');
   });
   collections_html.push('</ul></li>');
   $("#collections-content").append("<ul id=\"collections-list\" class=\"nav nav-tabs\" data-tabs=\"tabs\">" + collections_html.join("") +'</ul><div class="tab-content" id="citations-content"></div>' );
   $("#collections-list li").first().addClass('active'); 
   $('#collections-list').tab();
-  console.log(collections_html.join(""));
+
+  remove_collection_tab_onclick();
+
+  $('#collections-select li a').click(function () {
+    $(this).find(".icon-remove").show();
+    $(this).parent().prependTo('#collections-list');
+    remove_collection_tab_onclick();
+  });
+}
+
+function remove_collection_tab_onclick() { 
+ $('#collections-list li a i.icon-remove').click(function () {   
+    $(this).parent().parent().removeClass("active");
+    $(this).parent().parent().prependTo("#collections-select");
+    $(this).hide();
+  });
 }
 
 
