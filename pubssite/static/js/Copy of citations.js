@@ -32,7 +32,8 @@ function render_mla_authors(authors_array) {
            auth_string += "and " + author;
        else
            auth_string += author + ", ";
-    });    
+    });
+    
     return auth_string;
 }
 
@@ -105,7 +106,6 @@ function page_init() {
 // this populates the collections tabs at the top of the page
 // TODO: dropdown w/ all users' collections
 function populate_collections_new(collections) {
-	alert('populate');
   var collections_html = [];
   $.each(collections, function (index, collection) {
     current_collections.push(collection);
@@ -125,27 +125,25 @@ function populate_collections_new(collections) {
 }
 
 function add_collection_tab_onclick() {
-	alert('add onclick listener to element in dropdown list');
   $('#collections-select li a').click(function () { // formally in collection select list  // when click on a element
-	  alert('doing onclick to move from dropdown to open tab');
-    $(this).find(".icon-remove").show(); //
-    var select_list = $('#collections-select').parent();
-    $(this).parent().insertBefore(select_list);
+    $(this).find(".icon-remove").show(); // show x
+    var select_list = $('#collections-select').parent();  // parent is tab that holds the dropdown list.  select_list is the li element.  It is the tab containing the dropdown list
+    $(this).parent().insertBefore(select_list); // $(this).parent() is a tab element that the dropdown list.  
     $(this).off('click'); 
- //   remove_collection_tab_onclick();
+    remove_collection_tab_onclick();
   });
 }
 
 function remove_collection_tab_onclick() {  // open tabs
-  alert('add onclick listener to x in tab');
-  $('#collections-list li a i.icon-remove').click(function () {   
-	  alert('doing onclick to close tab -- and move to dropdown $(this): ' + $(this));
-	  console.log($(this))
-    var tab = $(this).parent().parent();
-    tab.off('click'); 
-    tab.removeClass("active");
-    $(this).hide();
-    $(this).parent().parent().prependTo("#collections-select");
+ $('#collections-list li a i.icon-remove').click(function () {   
+   var tab = $(this).parent().parent();
+   tab.off('click'); 
+   tab.removeClass("active");
+   $(this).hide();
+   //$("#collections-select").append(tab);
+   //$(this).parent().parent().prependTo("#collections-select");
+
+   add_collection_tab_onclick();
   });
 }
 
