@@ -55,14 +55,12 @@
       });
     });
     $('#collections-list').tab();
-    console.log($('#collections-list'));
-    console.log($('#collections-content'));
-
-
   
     $(document).on('ajaxStop', function () { 
       render_citations();
-      $("#citations-table").sortable({ items: "tr" });
+      //$("#citations-table").sortable({ items: "tr" });
+      $("table.citation").sortable({items: "tr"});
+    
     });
   </script>
  

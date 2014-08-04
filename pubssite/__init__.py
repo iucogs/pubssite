@@ -20,6 +20,10 @@ def main(global_config, **settings):
     config.add_route('citations_by_owner', '/citation/owner/{owner:.*}')
     config.add_route('citations_by_collection', '/collection/citations/{id:\d+}')
     config.add_route('citation_delete', '/citation/delete/{id:\d+}')
+    # TODO: Let's try to find a regex to make sure we're getting JSON objects
+    # sent to these next two
+    config.add_route('citation_update', '/citation/')
+    #config.add_route('citation_add', '/citation/')
 
     # Collection routes
     config.add_route('collection_by_id', 'collection/{id:\d+}')

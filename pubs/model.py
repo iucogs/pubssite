@@ -7,7 +7,7 @@ import pubs.config
 
 # Create the database engine from config file
 url = pubs.config.get('sqlalchemy', 'url')
-engine = create_engine(url, echo=False, pool_recycle=30) 
+engine = create_engine(url, echo=False, pool_recycle=5) 
 
 # configure the declarative syntax base
 Base = declarative_base()
@@ -73,6 +73,10 @@ class Citation(Base):
         primaryjoin=citation_id==similar_to.c.citation_id1,
         secondaryjoin=citation_id==similar_to.c.citation_id2
         )
+
+    def __init__(self, citation_dict=None):
+        self.__dict__.update(citation_dict)
+
 
     def __repr__(self):
         return "<Citation %d: %s (%s)>" %\
@@ -147,3 +151,4 @@ class User(Base):
         return "<User %d: %s>" %\
             (self.id, self.username)
 
+Session.close()

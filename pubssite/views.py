@@ -1,3 +1,4 @@
+import rython
 from pyramid.response import Response
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound
@@ -5,6 +6,11 @@ from pyramid.httpexceptions import HTTPNotFound, HTTPFound
 from sqlalchemy.exc import DBAPIError
 
 from .models import *
+
+# parser setup
+ctx = rython.RubyContext(requires=["rubygems", "anystyle/parser"])
+parser = ctx("Anystyle.parser")
+
 
 ## SITE VIEWS ##
 
@@ -14,7 +20,13 @@ def home(request):
 
 ## CITATION API VIEWS ##
 
-#uc
+@view_config(route_name='citation_update', request_method='PUT')
+def citation_update(request):
+    citation = Citation(json_loads(request))
+    Session.merge(citation)
+    Session.commit()
+    return citation.json
+
 @view_config(route_name='citation_delete', request_method='DELETE')
 def delete_citation(request):
     id = int(request.matchdict.get('id', -1))

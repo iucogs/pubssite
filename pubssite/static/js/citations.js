@@ -206,7 +206,7 @@ function render_citations(format) {
       });
             
 
-      table = '<div class="tab-pane" id="' + collection + '"><table class="table table-hover table-condensed table-striped"><tbody>' + 
+      table = '<div class="tab-pane" id="' + collection + '"><table class="table table-hover table-condensed table-striped citation"><tbody>' + 
                citations.join("") + "</tbody></table></div>";
       $('.tab-content').append(table);
       citations = [];
