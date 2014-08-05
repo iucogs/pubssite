@@ -63,7 +63,7 @@
     
     });
   </script>
- 
+<!-- navbar begin --> 
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container">
@@ -86,6 +86,8 @@
       </div>  
     </div>
   </div>
+  <!-- navbar end -->
+  
   <div class="container" id="collections-content">
  
    <div class="main-view"> <!-- TODO: fix tab-content class -->

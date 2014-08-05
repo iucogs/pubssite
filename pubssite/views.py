@@ -18,6 +18,11 @@ parser = ctx("Anystyle.parser")
 def home(request):
     return {'ok': 'ok'}
 
+@view_config(route_name='login', renderer='templates/login.mako')
+def login(request):
+    return {'ok': 'ok'}
+
+
 ## CITATION API VIEWS ##
 
 @view_config(route_name='citation_update', request_method='PUT')

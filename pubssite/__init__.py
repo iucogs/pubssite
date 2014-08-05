@@ -13,7 +13,10 @@ def main(global_config, **settings):
     config.add_renderer('.mustache', 'pubssite.renderers.pystache_renderer_factory')
     config.add_renderer('pubs_json', 'pubssite.renderers.PubsJSONRenderer')
     config.add_static_view('static', 'static', cache_max_age=3600)
+    
+    # TODO: change login to / after auth setup
     config.add_route('home', '/')
+    config.add_route('login', '/login')
 
     # Citation routes
     config.add_route('citation_by_id', '/citation/{id:[0-9]+(,[0-9]+)*}')
