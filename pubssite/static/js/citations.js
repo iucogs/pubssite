@@ -104,6 +104,8 @@ function page_init() {
 
 // this populates the collections tabs at the top of the page
 // TODO: dropdown w/ all users' collections
+
+// TODO: Ruth - sort citations by year, author, etc.  
 function populate_collections_new(collections) {
 //	alert('populate');
   var collections_html = [];
@@ -202,7 +204,7 @@ function render_citations(format) {
       citations.push('<tr id=' + temp_cit.citation_id + '><td class="citation-actions"><input type="checkbox"></td>' +
                      '<td>' + Mustache.render(template[citation.pubtype], temp_cit) + '</td>' +
                      '<td class="citation actions"><i class="icon-share-alt"></i>' +
-					 '<a href="#editPane" role="button" data-toggle="modal"><i class="icon-pencil"></i></a>' +
+					 '<a href="#editPane" role="button" data-toggle="modal" onclick="populateEditPane(' + temp_cit.citation_id + ');"><i class="icon-pencil"></i></a>' +
                   	'<i class="icon-download-alt"> </i><i class="icon-remove"></i></td></tr>');
       });
             
@@ -219,4 +221,9 @@ function render_citations(format) {
   // set the current tab's associated citations as active
   var id = $("#collections-list li.active").find("a").attr("href").substr(1, "href".length); 
   $(".tab-pane#" + id).addClass("active");
+}
+
+// need to sort and rethink citation and collection data structures before preceding.
+function populateEditPane(citation_id) {
+	alert(JSON.stringify(current_citations[629]));
 }
