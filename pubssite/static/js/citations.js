@@ -105,7 +105,7 @@ function page_init() {
 // this populates the collections tabs at the top of the page
 // TODO: dropdown w/ all users' collections
 function populate_collections_new(collections) {
-	alert('populate');
+//	alert('populate');
   var collections_html = [];
   $.each(collections, function (index, collection) {
     current_collections.push(collection);
@@ -125,9 +125,9 @@ function populate_collections_new(collections) {
 }
 
 function add_collection_tab_onclick() {
-	alert('add onclick listener to element in dropdown list');
+//	alert('add onclick listener to element in dropdown list');
   $('#collections-select li a').click(function () { // formally in collection select list  // when click on a element
-	  alert('doing onclick to move from dropdown to open tab');
+	//  alert('doing onclick to move from dropdown to open tab');
     $(this).find(".icon-remove").show(); //
     var select_list = $('#collections-select').parent();
     $(this).parent().insertBefore(select_list);
@@ -137,9 +137,9 @@ function add_collection_tab_onclick() {
 }
 
 function remove_collection_tab_onclick() {  // open tabs
-  alert('add onclick listener to x in tab');
+ // alert('add onclick listener to x in tab');
   $('#collections-list li a i.icon-remove').click(function () {   
-	  alert('doing onclick to close tab -- and move to dropdown $(this): ' + $(this));
+	//  alert('doing onclick to close tab -- and move to dropdown $(this): ' + $(this));
 	  console.log($(this))
     var tab = $(this).parent().parent();
     tab.off('click'); 
@@ -202,10 +202,10 @@ function render_citations(format) {
       citations.push('<tr id=' + temp_cit.citation_id + '><td class="citation-actions"><input type="checkbox"></td>' +
                      '<td>' + Mustache.render(template[citation.pubtype], temp_cit) + '</td>' +
                      '<td class="citation actions"><i class="icon-share-alt"></i>' +
-                     '<i class="icon-download-alt"></i><i class="icon-pencil"></i><i class="icon-remove"></i></td></tr>');
+					 '<a href="#editPane" role="button" data-toggle="modal"><i class="icon-pencil"></i></a>' +
+                  	'<i class="icon-download-alt"> </i><i class="icon-remove"></i></td></tr>');
       });
             
-
       table = '<div class="tab-pane" id="' + collection + '"><table class="table table-hover table-condensed table-striped citation"><tbody>' + 
                citations.join("") + "</tbody></table></div>";
       $('.tab-content').append(table);
