@@ -79,9 +79,9 @@
           <li><a class="dropdown-toggle" data-toggle="dropdown" href="#">Signed in as [placeholder] <b class="caret"></b></a>
               <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                 <li><a href="#">My Account</a></li>
-                <li><a href="#">Sign out</a></li>
               </ul>
-          </li>    
+          </li>  
+		  <li><a href="#">Sign out</a></li>
         </ul>    
       </div>  
     </div>
