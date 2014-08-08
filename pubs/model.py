@@ -41,6 +41,9 @@ class Author(Base):
         return "<Author %d: %s %s>" %\
             (self.author_id, self.firstname, self.lastname)
 
+    def toString(self):
+        return self.lastname + ", " + self.firstname + ", "
+
     @property
     def json(self):
         return {'author_id' : self.author_id,
@@ -95,7 +98,8 @@ class Citation(Base):
         struct = { 'authors' : [a.json for a in self.authors] }
         for attr in attrs:
             struct[attr] = getattr(self, attr, None)
-
+        
+        struct["auth_string"] = " ".join([a.toString() for a in self.authors]) 
         return struct
 
 
