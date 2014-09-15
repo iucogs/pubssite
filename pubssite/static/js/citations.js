@@ -1,7 +1,10 @@
 var current_citations = {};
 var current_collections = [];
 var templates = {};
+
+var current_collection = "";
 var current_format = "apa";
+var sort_order = "auth_string";
 
 
 //TODO: Add support for Jr., II, etc
@@ -142,7 +145,7 @@ function remove_collection_tab_onclick() {  // open tabs
  // alert('add onclick listener to x in tab');
   $('#collections-list li a i.icon-remove').click(function () {   
 	//  alert('doing onclick to close tab -- and move to dropdown $(this): ' + $(this));
-	  console.log($(this))
+//	  console.log($(this))
     var tab = $(this).parent().parent();
     tab.off('click'); 
     tab.removeClass("active");
@@ -186,6 +189,9 @@ function render_citations(format) {
   var template = templates[current_format];
   var current_citation_list;
 
+
+//console.log(current_citations[629]);
+
   $.each(current_citations, function(collection, citation_list) {
     if (citation_list) {
       current_citation_list = citation_list;
@@ -198,7 +204,7 @@ function render_citations(format) {
         if (current_format == 'apa' || format == '') {
           temp_cit.authors = render_apa_authors(temp_cit.authors);
         } else if (current_format == 'mla') { 
-        temp_cit.authors = render_mla_authors(temp_cit.authors);
+          temp_cit.authors = render_mla_authors(temp_cit.authors);
         }
   
       citations.push('<tr id=' + temp_cit.citation_id + '><td class="citation-actions"><input type="checkbox"></td>' +
@@ -226,4 +232,21 @@ function render_citations(format) {
 // need to sort and rethink citation and collection data structures before preceding.
 function populateEditPane(citation_id) {
 	alert(JSON.stringify(current_citations[629]));
+}
+
+function updateSortOrder(new_sort_order) {
+	sort_order = new_sort_order;
+	current_citations[629].sort(dynamicSort(new_sort_order));
+	render_citations(new_sort_order);
+}
+
+function updateCurrentFormat(new_current_format) {
+	current_format = new_current_format;
+	render_citations(new_current_format);
+}
+
+function dynamicSort(property) {
+   return function(a, b) {
+       return (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+   }
 }
