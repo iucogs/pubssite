@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Table
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import sessionmaker, relationship, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
 
 import pubs.config
@@ -14,8 +14,8 @@ Base = declarative_base()
 Base.metadata.bind = engine
 
 # configure the default Session
-Session = sessionmaker(bind=engine)
-Session = Session()
+Session = scoped_session(sessionmaker())
+Session.configure(bind=engine)
 
 # Author-related tables
 author_of = Table('author_of', Base.metadata,
