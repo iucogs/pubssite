@@ -1,16 +1,37 @@
+from pyramid.authentication import AuthTktAuthenticationPolicy
+from pyramid.authorization import ACLAuthorizationPolicy
+#from .security import groupfinder
 from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
-
+from pyramid.request import Request
+from pyramid.request import Response
 from .models import DBSession
+from pyramid.events import NewRequest
+
+def add_cors_headers_response_callback(event):
+    def cors_headers(request, response):
+        response.headers.update({
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST,GET,DELETE,PUT,OPTIONS',
+        'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Max-Age': '1728000',
+        })
+    event.request.add_response_callback(cors_headers)
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
+    authn_policy = AuthTktAuthenticationPolicy('iu_cas')
+    authz_policy = ACLAuthorizationPolicy()
     config = Configurator(settings=settings)
-   
-    config.add_renderer('.mustache', 'pubssite.renderers.pystache_renderer_factory')
+
+    config.set_authentication_policy(authn_policy)
+    config.set_authorization_policy(authz_policy)
+    config.add_subscriber(add_cors_headers_response_callback, NewRequest)
+
     config.add_renderer('pubs_json', 'pubssite.renderers.PubsJSONRenderer')
     config.add_static_view('static', 'static', cache_max_age=3600)
     
@@ -23,13 +44,14 @@ def main(global_config, **settings):
     config.add_route('citations_by_owner', '/citation/owner/{owner:.*}')
     config.add_route('citations_by_collection', '/collection/citations/{id:\d+}')
     config.add_route('citation_delete', '/citation/delete/{id:\d+}')
+    config.add_route('citation_update', '/citation/')
+
     # TODO: Let's try to find a regex to make sure we're getting JSON objects
     # sent to these next two
-    config.add_route('citation_update', '/citation/')
-    #config.add_route('citation_add', '/citation/')
+        #config.add_route('citation_add', '/citation/')
 
     # Collection routes
-    config.add_route('collection_by_id', 'collection/{id:\d+}')
+    config.add_route('collection_by_id', '/collection/{id:\d+}')
     config.add_route('collections_by_owner', '/collection/owner/{owner:.*}')
     config.add_route('collection_delete', '/collection/delete/{id:\d+}')
 
