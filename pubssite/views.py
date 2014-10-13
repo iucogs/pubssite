@@ -7,7 +7,7 @@ from pprint import pprint
 from pyramid.response import Response
 from pyramid.view import (notfound_view_config, view_config, forbidden_view_config,)
 from pyramid.security import (remember, forget,)
-from .security import USERS
+#from .security import USERS
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound
 from sqlalchemy.sql import exists
 from sqlalchemy.exc import DBAPIError
