@@ -48,7 +48,7 @@ def main(global_config, **settings):
 
     # TODO: Let's try to find a regex to make sure we're getting JSON objects
     # sent to these next two
-        #config.add_route('citation_add', '/citation/')
+    config.add_route('citation_add', '/citation/')
 
     # Collection routes
     config.add_route('collection_by_id', '/collection/{id:\d+}')
