@@ -16,7 +16,9 @@ requires = [
     'zope.sqlalchemy',
     'waitress',
     'wtforms',
-    'webhelpers'
+    'webhelpers',
+    'requests',
+    'rython'
     ]
 
 setup(name='pubssite',

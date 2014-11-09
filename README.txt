@@ -8,6 +8,8 @@ Getting Started
 
 - $venv/bin/python setup.py develop
 
+- gem install --user-install anystyle-parser
+
 - $venv/bin/populate_pubssite development.ini
 
 - $venv/bin/pserve development.ini
