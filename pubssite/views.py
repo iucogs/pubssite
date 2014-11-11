@@ -12,6 +12,7 @@ from pyramid.httpexceptions import HTTPNotFound, HTTPFound
 from sqlalchemy.sql import exists
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy import update
+from sqlalchemy import insert
 from sqlalchemy import and_
 from .models import *
 
@@ -97,12 +98,16 @@ def citation_add(request):
     return citation
 
 # this one updates a citation and the authors associated with it.
-# INPUT: request object containing a JSON encoded citation in the JSON body
+# INPUT: request object containing a JSON encoded citation in the JSON body of
+# the request
 # OUTPUT: the citation's updated JSON
 #TODO: add permission user
+#TODO: change new_citation to updated_citation or something. Y'know. For
+#clarity.
 @view_config(route_name='citation_update', request_method='PUT', renderer='pubs_json')
 def citation_update(request):
     new_citation = request.json_body
+    current_citation = Session.query(Citation).get(new_citation['citation_id'])
     new_cit_authors = new_citation['authors'] 
     # following try/catch clean up the citation dict for update, making the
     # incoming dict isomorphic to the table mapping.
@@ -119,49 +124,39 @@ def citation_update(request):
     # update citation fields like title, year, etc.
     Session.execute(update(Citation).where(Citation.citation_id == new_citation['citation_id']).values(new_citation))
     
-    # list of tuples of the citation's current author list containing their
-    # author_ids
-    current_authors = [auth[0] for auth in Session.query(author_of).filter(author_of.c.citation_id == new_citation['citation_id']).all()]
+    # list of tuples of the citation's current authors
+    current_authors = [auth for auth in current_citation.authors]
     
     # iterate over the new authors to see if we're updating or adding a new
     # author
+    # Worth noting: we use the lastname/firstname filter because occasionally the author won't have
+    # an author_id if said author is new.
     for author in new_cit_authors:
         author_exists = Session.query(Author).filter(and_(Author.lastname.like(author['lastname']), Author.firstname.like(author['firstname']))).all()                
         if author_exists:
-            log.debug("author exists: ")
-            log.debug(author_exists)
-            log.debug(author['lastname'] + ' exists')
-            if author['author_id'] in current_authors:
+            if author.get('author_id', None) in [current_author.author_id for current_author in current_authors]:
                 pass
             else:
-                Session.execute(update(author_of).where(author_of.c.citation_id == new_citation['citation_id'] and 
-                author_of.c.author_id == author['author_id']).values(citation_id=new_citation['citation_id'], 
-                author_id=author['author_id']))
+                author_to_add = Session.query(Author).filter(and_(Author.lastname.like(author['lastname']), Author.firstname.like(author['firstname']))).first()          
+                current_citation.authors.append(author_to_add)
                               
         else:
             new_author = Author(author['firstname'], author['lastname'])
-            #new_author = Author('Donny', 'Belasko')
-            log.debug("This is the new author.")
-            log.debug(author)
             Session.add(new_author)
-            Session.commit()
-            new_author_id = Session.query(Author).filter(Author.lastname == author['lastname'] and Author.firstname == author['firstname'])
-            
-            Session.execute(update(author_of).where(author_of.c.citation_id == new_citation['citation_id'] and 
-            author_of.c.author_id == author['author_id']).values(citation_id = new_citation['citation_id'], author_id = new_author_id))
+            Session.commit() 
+            new_author = Session.query(Author).filter(and_(Author.lastname.like(new_author.lastname), Author.firstname.like(new_author.firstname))).first()          
+            current_citation.authors.append(new_author)
     
     # Removes authors no longer part of the citation
     for current_author in current_authors:
-        if current_author not in [author['author_id'] for author in new_cit_authors]:
-            Session.execute(remove(author_of).where(author_of.c.citation_id == new_citation['citation_id'] and 
-            author_of.c.author_id == current_author))
+        if current_author.author_id not in [author.get('author_id', []) for author in new_cit_authors]:
+            current_citation.authors.remove(current_author)
     
     Session.commit()
-    log.debug(new_cit_authors)
     updated_cit = Session.query(Citation).get(new_citation['citation_id'])
     return updated_cit.json
 
-# deletes a citation?????????????
+# deletes a citation
 # INPUT: A request object containing the citation id of the citation to be
 # deleted
 # OUTPUT: A response indicating the success of the operation
