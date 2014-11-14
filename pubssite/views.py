@@ -39,25 +39,20 @@ def notfound(request):
 # this returns the site.
 @view_config(route_name='home', renderer='templates/index.mako')
 def home(request):
-    log.debug('home')
-    log.debug(pprint(vars(request)))
-    log.debug('end home')
-    log.debug(request.authenticated_userid)
-    log.debug(request.unauthenticated_userid)
-    #if logged_in is False:
-    #return HTTPFound(request.route_path('login'))
-    return {'ok': 'ok'}
+    if not request.authenticated_userid:
+        return HTTPFound(request.route_path('login'))
+    return {'user': request.authenticated_userid}
 
 # authenticates a user. or probably will at some point in the future, we hope.
 # INPUT: a request object containing the CAS ticket
 # OUTPUT: authenticated user credential object including permission
 # TODO: ret auth user obj
+# TODO: matching cas url
 @view_config(route_name='login', renderer='templates/login.mako')
 def login(request):
-    if 'casticket' in request.GET:
-        ticket = request.GET['casticket']
-            
-        payload = {'cassvc': 'IU', 'casticket': ticket}
+    if 'casticket' in request.params:
+        ticket = request.params['casticket']
+        payload = {'cassvc': 'IU', 'casticket': ticket, 'casurl':'http://nupubs.cogs.indiana.edu'}
         user = str(requests.get("https://cas.iu.edu/cas/validate", params=payload).text)
         if "no" in user:
             return {'no way pal': 'get lost ok?'}
@@ -69,14 +64,9 @@ def login(request):
 
         if pubs_username is None:
             return {'no way pal': 'get lost ok?'}
+
         else:
-            log.debug('login success.')
-            log.debug(pubs_username)
-            log.debug('remember')
-            log.debug(remember(request, pubs_username))
-            log.debug('rldl')
             headers = remember(request, pubs_username)
-           # log.debug(headers)
             return HTTPFound(request.route_path('home'), headers=headers)
 
     else:
