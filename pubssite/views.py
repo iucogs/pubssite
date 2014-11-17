@@ -41,6 +41,7 @@ def notfound(request):
 def home(request):
     if not request.authenticated_userid:
         return HTTPFound(request.route_path('login'))
+    request.response.set_cookie('user', request.authenticated_userid)    
     return {'user': request.authenticated_userid}
 
 # authenticates a user. or probably will at some point in the future, we hope.
