@@ -1,6 +1,7 @@
 var current_citations = {};
 var current_collections = [];
 var templates = {};
+var user = $.cookie("user");
 
 var current_collection = "";
 var current_format = "apa";
@@ -92,13 +93,11 @@ function page_init() {
   $.getScript("/static/js/apa_templates.js", function () {
     templates["apa"] = apa_templates; 
   });
-
   $.getScript("/static/js/mla_templates.js", function () { 
     templates["mla"] = mla_templates;
   });
-
   // grab citations and collections
-  $.getJSON("http://nupubs.cogs.indiana.edu/collection/owner/pjcraig", function(data) {
+  $.getJSON("http://nupubs.cogs.indiana.edu/collection/owner/" + user, function(data) {
     populate_collections_new(data);
     get_citations(data); 
   });
@@ -132,7 +131,7 @@ function populate_collections_new(collections) {
 function add_collection_tab_onclick() {
 //	alert('add onclick listener to element in dropdown list');
   $('#collections-select li a').click(function () { // formally in collection select list  // when click on a element
-	//  alert('doing onclick to move from dropdown to open tab');
+	  alert('doing onclick to move from dropdown to open tab');
     $(this).find(".icon-remove").show(); //
     var select_list = $('#collections-select').parent();
     $(this).parent().insertBefore(select_list);
@@ -141,11 +140,11 @@ function add_collection_tab_onclick() {
   });
 }
 
+
 function remove_collection_tab_onclick() {  // open tabs
- // alert('add onclick listener to x in tab');
+  alert('add onclick listener to x in tab');
   $('#collections-list li a i.icon-remove').click(function () {   
-	//  alert('doing onclick to close tab -- and move to dropdown $(this): ' + $(this));
-//	  console.log($(this))
+	  alert('doing onclick to close tab -- and move to dropdown $(this): ' + $(this));
     var tab = $(this).parent().parent();
     tab.off('click'); 
     tab.removeClass("active");
