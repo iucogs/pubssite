@@ -18,7 +18,8 @@ requires = [
     'wtforms',
     'webhelpers',
     'requests',
-    'rython'
+    'rython',
+    'redis'
     ]
 
 setup(name='pubssite',
