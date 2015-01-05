@@ -11,8 +11,8 @@ reference for project contributors**
 * [Add/parse a citation](#citation_parse)
 * [Update a citation](#citation_update)
 * [Retreive one or more citations by their IDs](#citation_by_id)
-* [Retreieve citations by their owner](#citation_by_owner)
-* [Retreieve citations by their collection](#citation_by_collection)
+* [Retrieve citations by their owner](#citation_by_owner)
+* [Retrieve citations by their collection](#citation_by_collection)
 
 #### Collection functions
    
