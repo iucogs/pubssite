@@ -9,7 +9,7 @@ reference for project contributors**
 #### Citation functions
 
 * [Add/parse a citation](#citation_parse)
-* [Update a citation](#citation_update)
+<!--- * [Update a citation](#citation_update) -->
 * [Retreive one or more citations by their IDs](#citation_by_id)
 * [Retrieve citations by their owner](#citation_by_owner)
 * [Retrieve citations by their collection](#citation_by_collection)
