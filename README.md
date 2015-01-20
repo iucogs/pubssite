@@ -30,7 +30,7 @@ Notes: Our project currently is using the excellent
 improve its accuracy.
    
 <!--- <a name="citation_update"></a>
-**Update a citation**   
+Update a citation   
 URL: `http://nupubs.cogs.indiana.edu/citation/`   
 Method: `PUT`   
 Input: An updated JSON encoded citation in the JSON body of the request
