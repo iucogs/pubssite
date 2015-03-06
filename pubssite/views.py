@@ -2,7 +2,6 @@ import requests
 import rython
 import logging
 import json
-from pprint import pprint
 
 from pyramid.response import Response
 from pyramid.view import (notfound_view_config, view_config, forbidden_view_config,)
@@ -11,10 +10,9 @@ from pyramid.security import (remember, forget,)
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound
 from sqlalchemy.sql import exists
 from sqlalchemy.exc import DBAPIError
-from sqlalchemy import update
-from sqlalchemy import insert
-from sqlalchemy import and_
+from sqlalchemy import (update, insert, and_,)
 from .models import *
+from .citation_format import *
 
 # Dev note: flushes at the beginning of get views are for consistency between
 # developer versions.
@@ -84,9 +82,41 @@ def logout(request):
 
 @view_config(route_name='citation_add', request_method='POST', renderer='pubs_json')
 def citation_add(request):
-    citation = str(request.body)
-    citation = parser.parse(citation)
-    return citation
+    raw = str(request.body)
+    citation = parser.parse(raw)[0]
+    
+    try:
+        auth_string = citation.pop('author')
+        authors = author_parse(auth_string)
+    except:
+        authors = [] 
+
+    formatted_citation = citation_format(citation, raw)
+    citation = Citation(formatted_citation)
+    
+    
+    citation_exists = Session.query(Citation).filter(Citation.raw.like(citation.raw))
+    if citation_exists.first() is not None:
+        return citation_exists.first().json
+    
+
+    # abstract and keywords are text columns and cannot have default values.
+    # not my fault, I didn't write mySQL.
+    if citation.abstract is None:
+        citation.abstract = ''
+    else:
+        pass
+
+    if citation.keywords is None:
+        citation.keywords = ''
+
+    
+    for author in authors:
+        citation.authors.append(author)
+    
+    #Session.commit()
+
+    return citation.json 
 
 # this one updates a citation and the authors associated with it.
 # INPUT: request object containing a JSON encoded citation in the JSON body of
@@ -123,13 +153,12 @@ def citation_update(request):
     # Worth noting: we use the lastname/firstname filter because occasionally the author won't have
     # an author_id if said author is new.
     for author in new_cit_authors:
-        author_exists = Session.query(Author).filter(and_(Author.lastname.like(author['lastname']), Author.firstname.like(author['firstname']))).all()                
-        if author_exists:
+        author_exists = Session.query(Author).filter(and_(Author.lastname.like(author['lastname']), Author.firstname.like(author['firstname'])))                
+        if author_exists.all():
             if author.get('author_id', None) in [current_author.author_id for current_author in current_authors]:
                 pass
             else:
-                author_to_add = Session.query(Author).filter(and_(Author.lastname.like(author['lastname']), Author.firstname.like(author['firstname']))).first()          
-                current_citation.authors.append(author_to_add)
+                current_citation.authors.append(author_exists.first())
                               
         else:
             new_author = Author(author['firstname'], author['lastname'])
@@ -219,6 +248,19 @@ def citations_by_collection(request):
     if not collection:
         return HTTPNotFound()
     return [citation.json for citation in collection.citations]
+
+# returns an authors 10 most recent citations, listed by year
+# INPUT: request object containing a username
+# OUTPUT: a JSON array of the author's 10 most recent citations sorted by year
+# descending
+@view_config(route_name='author_most_recent', renderer='pubs_json')
+def author_most_recent(request):
+    return {"helo":"ok"}
+    owner = str(request.matchdict.get('owner', -1))
+    citations = Session.query(Citation).filter(Citation.owner == owner).order_by(desc(Citation.year)).limit(10)
+    if not citations:
+        return HTTPNotFound()
+    return [citation.json for citation in citations]
 
 ## COLLECTION API VIEWS ##
 

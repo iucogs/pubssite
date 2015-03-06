@@ -78,7 +78,7 @@
         <br />
         <p>This is the Indiana University Cognitive Science Program's citations tracker. Please sign in below.</p>
         <br />
-        <p><a  href="https://cas.iu.edu/cas/login?cassvc=IU&casurl=http://nupubs.cogs.indiana.edu" class="btn btn-primary btn-large">Sign in here</a></p> 
+        <p><a href="https://cas.iu.edu/cas/login?cassvc=IU&casurl=http://nupubs.cogs.indiana.edu/login" class="btn btn-primary btn-large">Sign in here</a></p> 
       </div>
     </div>  
   </div>
