@@ -101,8 +101,19 @@ function page_init() {
     populate_collections_new(data);
    })
    .done(function() {
-    var rep_pubs = $.grep(current_collections, function(e) {return e.collection_name === "My Representative Publications"}); 
-   });
+    var rep_pubs = $.grep(current_collections, function(e) {return e.collection_name === "My Representative Publications"});
+    if (rep_pubs[0]) get_collection_citations(rep_pubs[0].collection_id);
+    else get_collection_citations(current_collections[0]);
+    
+    // add loading listeners
+    $("#collections-list .dropdown ul li a").each(function (index) {
+      var id = $(this).attr("href").substr(1, "href".length); 
+      $(this).on("click.load_citations", function () {     
+        get_collection_citations(id);
+        $(this).off("click.load_citations");
+      });
+    });
+  });
   $('#collections-list').tab(); 
 }
 
@@ -179,9 +190,15 @@ function get_citations(collections) {
 function get_collection_citations(collection_id) {
   $.getJSON("http://nupubs.cogs.indiana.edu/collection/citations/" + collection_id, function (data) {
     current_citations[collection_id] = data;
+  })
+  .done(function () { 
+    render_citations(current_format);
   });
 }
 
+
+// TODO: refactor this into a function that renders one collection at at time
+// and appends to the citations-content table instead of emptying it each time.
 
 // this draws the citations table along with the option buttons on the side.
 // Very dangerous to edit. You go first.
@@ -196,9 +213,6 @@ function render_citations(format) {
   $("#citations-content").empty();
   var template = templates[current_format];
   var current_citation_list;
-
-
-//console.log(current_citations[629]);
 
   $.each(current_citations, function(collection, citation_list) {
     if (citation_list) {
