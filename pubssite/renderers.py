@@ -27,12 +27,4 @@ class PubsJSONRenderer:
                                 request.response.headerlist.append(('Access-Control-Allow-Origin', '*'))
                 return customjson.dumps(value) 
 
-def pystache_renderer_factory(info):
-    template = os.path.join(abspath_from_asset_spec('pubssite:templates', False),
-                            info.name)
-    f = open(template) 
-    s = f.read() 
-    f.close() 
-    def _render(value, system):
-        return pystache.render(s, value)
-    return _render
+
