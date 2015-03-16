@@ -1,3 +1,8 @@
+from pyramid.security import ( 
+    Allow,
+    Everyone,
+    )
+
 from sqlalchemy import (
     Column,
     Integer,

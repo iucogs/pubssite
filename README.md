@@ -9,7 +9,6 @@ reference for project contributors**
 #### Citation functions
 
 * [Add/parse a citation](#citation_parse)
-<!--- * [Update a citation](#citation_update) -->
 * [Retreive one or more citations by their IDs](#citation_by_id)
 * [Retrieve citations by their owner](#citation_by_owner)
 * [Retrieve citations by their collection](#citation_by_collection)
@@ -42,11 +41,11 @@ Output: A single JSON-encoded citation or a list of JSON-encoded citations
    
 <a name="citation_by_owner"></a>
 **Retrieve a list of citations belonging to a given user**   
-URL: `http://nupubs.cogs.indiana.edu/citations/owner/[owner]`   
+URL: `http://nupubs.cogs.indiana.edu/citation/owner/[owner]`   
 Method: `GET`   
 Input: String representing a nupubs user. e.g.   
    
-`http://nupubs.cogs.indiana.edu/citations/owner/pjcraig`   
+`http://nupubs.cogs.indiana.edu/citation/owner/pjcraig`   
    
 Output: A list containing JSON-encoded citations belonging to the nupubs user   
    
@@ -76,7 +75,7 @@ URL: `http://nupubs.cogs.indiana.edu/collection/owner/[owner]`
 Method: `GET`   
 Input: A nupubs user. e.g.
    
-`http://nupubs.cogs.indiana.edu/collections/owner/pjcraig`   
+`http://nupubs.cogs.indiana.edu/collection/owner/pjcraig`   
    
 Output: A list of JSON-encoded collections   
 

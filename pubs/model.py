@@ -21,7 +21,7 @@ Session.configure(bind=engine)
 author_of = Table('author_of', Base.metadata,
     Column('author_id', Integer, ForeignKey('authors.author_id')),
     Column('citation_id', Integer, ForeignKey('citations.citation_id')),
-    Column('poisiton_num', Integer)
+    Column('position_num', Integer)
     )
 
 class Author(Base):
@@ -32,7 +32,7 @@ class Author(Base):
     lastname = Column(String)
     verified = Column(Boolean)
 
-    def __init__(firstname, lastname, verified=False):
+    def __init__(self, firstname, lastname, verified=False):
         self.firstname = firstname
         self.lastname = lastname
         self.verified = verified

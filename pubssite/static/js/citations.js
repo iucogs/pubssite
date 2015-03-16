@@ -176,6 +176,13 @@ function get_citations(collections) {
   });
 }
 
+function get_collection_citations(collection_id) {
+  $.getJSON("http://nupubs.cogs.indiana.edu/collection/citations/" + collection_id, function (data) {
+    current_citations[collection_id] = data;
+  });
+}
+
+
 // this draws the citations table along with the option buttons on the side.
 // Very dangerous to edit. You go first.
 function render_citations(format) {

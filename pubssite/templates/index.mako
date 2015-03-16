@@ -33,6 +33,7 @@
     }
   </style>
   <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script src='/static/js/jquery.cookie.js'></script>  
   <script src="/static/js/mustache.js"></script>
   <script src="/static/js/bootstrap.min.js"></script>
   <script src="/static/js/bootstrap-modalmanager.js"></script>
@@ -42,7 +43,7 @@
   <script src="/static/js/mla_templates.js"></script>
   <script src='/static/js/citations.js'></script>
 
- 
+
 
 </head>
 
@@ -115,6 +116,7 @@
             </ul>
           </div>
           <a href="#editPane" role="button" class="btn" data-toggle="modal"><i class="icon-pencil"></i></a>
+          <a href="#pastePane" role="button" class="btn" data-toggle="modal">Paste citations</a>
           <a class="btn"><i class="icon-remove"></i></a>
         </div>
         </h2>
@@ -151,6 +153,16 @@
 
 
   <!-- Modal edit pane --> 
+  <div id="pastePane" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="pastePane" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+      <h4>Paste citations into the field below</h4>
+    </div>
+    <div class="modal-body">
+      <textarea id="pasteArea" class="input-block-level" rows="20" autofocus>Paste your citations here.</textarea><br />
+      <button id="pasteSubmit" class="btn">Submit</button>
+    </div>
+  </div>
   <div id="editPane" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="editPane" aria-hidden="true">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
@@ -191,17 +203,6 @@
           </p>
         </div>           
        
-        
-        <div class="row-fluid">
-          <div class="span3">
-            Publication type:
-              <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#">Article <i class="icon-caret"></i> </a> 
-              <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                <li>&nbsp;Article <b class="icon-ok"></b></li>
-                <li>&nbsp;Book </li>
-                <li>&nbsp;Edited Book</li>
-                <li>&nbsp;Conference </li>
-                <li>&nbsp;In Book</li>
                 <li>&nbsp;In Proceedings</li>
                 <li>&nbsp;Proceedings</li>
               </ul><br />
@@ -237,20 +238,20 @@
             </form>
           </div>
         </div>
-
-      </div> 
-
-    </div>
-    <div class="modal-footer">
+<div class="modal-footer">
       <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
       <button class="btn btn-primary">Save changes</button>
     </div>
-  </div>
+
+      </div> 
+    
+    </div>
+      </div>
 
 
    
     <script src="/static/js/citations.js"></script>
-
+    <script src="/static/js/insert_citations.js"></script>
   </body>
 
 </html>
