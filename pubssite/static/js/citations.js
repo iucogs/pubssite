@@ -99,8 +99,10 @@ function page_init() {
   // grab citations and collections
   $.getJSON("http://nupubs.cogs.indiana.edu/collection/owner/" + user, function(data) {
     populate_collections_new(data);
-    get_citations(data); 
-  });
+   })
+   .done(function() {
+    var rep_pubs = $.grep(current_collections, function(e) {return e.collection_name === "My Representative Publications"}); 
+   });
   $('#collections-list').tab(); 
 }
 
