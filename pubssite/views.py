@@ -2,6 +2,7 @@ import requests
 import rython
 import logging
 import json
+import redis
 
 from pyramid.response import Response
 from pyramid.view import (notfound_view_config, view_config, forbidden_view_config,)
@@ -24,6 +25,10 @@ ctx("Encoding.default_external = 'UTF-8'")
 parser = ctx("Anystyle.parser")
 
 log = logging.getLogger(__name__)
+
+cit_cache = redis.StrictRedis(host='localhost', port=6379, db=0)
+auth_cache = redis.StrictRedis(host='localhost', port=6379, db=1)
+
 
 ## SITE VIEWS ##
 
@@ -208,11 +213,17 @@ def citation_by_id(request):
     # here we check for multiple citation_ids, separated by commas
     # if it's one citation, break by returning it. otherwise, the else.
     if "," not in id:
-        citation = Session.query(Citation).get(id)
-        if not citation:
-            return HTTPNotFound("Citation not found!")
-        else:
-            return citation.json
+        if cit_cache.exists(id):
+            cit_cache.expire(id, 3600)
+            return cit_cache.hgetall(id)
+        else:    
+            citation = Session.query(Citation).get(id)
+            if not citation:
+                return HTTPNotFound("Citation not found!")
+            else:
+                cit_cache.hmset(id, citation.json)
+                cit_cache.expire(id, 3600)
+                return citation.json
     else:        
         ids = id.split(",")
         for citation_id in ids:
