@@ -27,7 +27,7 @@ parser = ctx("Anystyle.parser")
 log = logging.getLogger(__name__)
 
 cit_cache = redis.StrictRedis(host='localhost', port=6379, db=0)
-auth_cache = redis.StrictRedis(host='localhost', port=6379, db=1)
+coll_cache = redis.StrictRedis(host='localhost', port=6379, db=1)
 
 
 ## SITE VIEWS ##
@@ -258,7 +258,7 @@ def citations_by_owner(request):
         if cit_cache.exists(citation.citation_id):
             cit_cache.expire(citation.citation_id, 3600)
         else:
-            cit_cache.hmset(citatino.citation_id, citation.json)
+            cit_cache.hmset(citation.citation_id, citation.json)
             cit_cache.expire(citation.citation_id, 3600)
 
     return [citation.json for citation in citations]
@@ -312,11 +312,19 @@ def delete_collection(request):
 @view_config(route_name='collection_by_id', renderer='pubs_json')
 def collection_by_id(request):
     id = int(request.matchdict.get('id', -1))
-    collection = Session.query(Collection).get(id)
-    Session.commit()
-    if not collection:
-        return HTTPNotFound()
-    return collection.json
+
+    if coll_cache.exists(id):
+        coll_cache.expire(id, 3600)
+        return coll_cache.hgetall(id)
+    else:
+        collection = Session.query(Collection).get(id)
+        Session.commit()
+        if not collection:
+            return HTTPNotFound()
+        
+        coll_cache.hmset(id, collection.json)
+        coll_cache.expire(id, 3600)       
+        return collection.json
 
 # returns a list of collection objects association with an owner
 # INPUT: request object containing the owner's name
