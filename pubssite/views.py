@@ -227,11 +227,17 @@ def citation_by_id(request):
     else:        
         ids = id.split(",")
         for citation_id in ids:
-            citation = Session.query(Citation).get(id)
-            if not citation:
-                return HTTPNotFound("Citation " + citation_id + " not found!")
+            if cit_cache.exists(citation_id):
+                cit_cache.expire(citation_id, 3600)
+                citations.append(cit_cache.hgetall(citation_id))
             else:
-                citations.append(citation.json) 
+                citation = Session.query(Citation).get(citation_id)
+                if not citation:
+                    return HTTPNotFound("Citation " + citation_id + " not found!")
+                else:
+                    cit_cache.hmset(citation_id, citation.json)
+                    cit_cache.expire(citation_id, 3600)
+                    citations.append(citation.json) 
         return citations
 
 # takes a string, the owner, and returns all citations associated with this
