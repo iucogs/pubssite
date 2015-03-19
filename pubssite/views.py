@@ -199,6 +199,7 @@ def delete_citation(request):
 # INPUT: A request object containing a single citation ID or a list of IDs 
 # delimited by commas
 # OUPUT: the JSON of the corresponding ID(s)
+# TODO: don't throw up if citation not found in list
 @view_config(route_name='citation_by_id', renderer='pubs_json')
 def citation_by_id(request):
     id = str(request.matchdict.get('id', -1))
@@ -249,18 +250,17 @@ def citations_by_collection(request):
         return HTTPNotFound()
     return [citation.json for citation in collection.citations]
 
-# returns an authors 10 most recent citations, listed by year
+# returns an author's representative citations
 # INPUT: request object containing a username
-# OUTPUT: a JSON array of the author's 10 most recent citations sorted by year
-# descending
-@view_config(route_name='author_most_recent', renderer='pubs_json')
-def author_most_recent(request):
-    return {"helo":"ok"}
+# OUTPUT: a JSON array of the author's represenative publications
+@view_config(route_name='representative_publications', renderer='pubs_json')
+def representative_publications(request):
     owner = str(request.matchdict.get('owner', -1))
-    citations = Session.query(Citation).filter(Citation.owner == owner).order_by(desc(Citation.year)).limit(10)
-    if not citations:
-        return HTTPNotFound()
-    return [citation.json for citation in citations]
+    rep_pubs = Session.query(Collection).filter(and_(Collection.owner == owner), (Collection.collection_name == "My Representative Publications")).first()
+    
+    if not rep_pubs:
+        return {owner: 'This user doesn\t have a My Representative Publications collection.'}
+    return [citation.json for citation in rep_pubs.citations]
 
 ## COLLECTION API VIEWS ##
 
@@ -304,4 +304,5 @@ def collections_by_owner(request):
     if not collections:
         return HTTPNotFound()
     return [collection.json for collection in collections]
+
 

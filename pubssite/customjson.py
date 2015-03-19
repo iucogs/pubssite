@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Custom JSON Encoder to encode any arbitrary generator, iterator, closure or
 functor. This is really frustrating to have to include everywhere because this

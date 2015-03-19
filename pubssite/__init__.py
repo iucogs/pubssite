@@ -40,14 +40,14 @@ def main(global_config, **settings):
     config.add_route('login', '/login')
 
     # Citation routes
+    config.add_route('representative_publications', '/citation/rep_pubs/{owner:.*}')
     config.add_route('citation_by_id', '/citation/{id:[0-9]+(,[0-9]+)*}')
     config.add_route('citations_by_owner', '/citation/owner/{owner:.*}')
     config.add_route('citations_by_collection', '/collection/citations/{id:\d+}')
     config.add_route('citation_delete', '/citation/delete/{id:\d+}')
     config.add_route('citation_update', '/citation/')
     config.add_route('citation_add', '/citation/parse')
-    config.add_route('author_most_recent', '/citation/owner/recent/{owner:.*}')
-    
+        
     # Collection routes
     config.add_route('collection_by_id', '/collection/{id:\d+}')
     config.add_route('collections_by_owner', '/collection/owner/{owner:.*}')
