@@ -245,6 +245,7 @@ def citation_by_id(request):
 # INPUT: a string representing the owner of a citation
 # OUTPUT: A JSON array containing the JSON of all citations associated with the
 # owner
+# TODO: add ability to recall from cache- look at refactoring query
 @view_config(route_name='citations_by_owner', renderer='pubs_json')
 def citations_by_owner(request):
     owner = str(request.matchdict.get('owner', -1))
@@ -253,6 +254,13 @@ def citations_by_owner(request):
     Session.commit()
     if not citations:
         return HTTPNotFound()
+    for citation in citations:
+        if cit_cache.exists(citation.citation_id):
+            cit_cache.expire(citation.citation_id, 3600)
+        else:
+            cit_cache.hmset(citatino.citation_id, citation.json)
+            cit_cache.expire(citation.citation_id, 3600)
+
     return [citation.json for citation in citations]
 
 # retuns a json object containing the citations in a collection given by the id
