@@ -6,11 +6,10 @@ $('#pasteSubmit').on('click', function() {
  
   $.each(citations, function (index, val) { 
     if (val != '') {
-      console.log(val);
-      val = JSON.stringify(val);
+      val = val.trim();
       $.post('http://nupubs.cogs.indiana.edu/citation/parse', val)
       .done(function(data) {
-        alert("Parsed: " + data);
+        console.log("Parsed: " + data);
       });
     }
   });

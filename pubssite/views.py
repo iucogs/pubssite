@@ -87,7 +87,8 @@ def logout(request):
 
 @view_config(route_name='citation_add', request_method='POST', renderer='pubs_json')
 def citation_add(request):
-    raw = str(request.body)
+    log.debug(request.body)
+    raw = request.body
     citation = parser.parse(raw)[0]
     
     try:
@@ -119,7 +120,7 @@ def citation_add(request):
     for author in authors:
         citation.authors.append(author)
     
-    #Session.commit()
+    Session.commit()
 
     return citation.json 
 
