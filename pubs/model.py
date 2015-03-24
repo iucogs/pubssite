@@ -140,7 +140,6 @@ class Collection(Base):
 
 # User-related tables
 # TODO: Add relations to Citations and Collections.
-# TODO: Add proxy support
 
 proxy_of = Table('proxy_of', Base.metadata,
     Column('authorid', Integer, ForeignKey('users.id'), primary_key=True),
@@ -158,13 +157,13 @@ class User(Base):
     cogs = Column(Boolean)
     proxies = relationship("User", 
                            secondary=proxy_of,
-                           primaryjoin=id==proxy_of.c.authorid,
-                           secondaryjoin=id==proxy_of.c.proxyid)
+                           primaryjoin=id==proxy_of.c.proxyid,
+                           secondaryjoin=id==proxy_of.c.authorid)
 
     @property
     def json(self):
         attrs = ['id', 'username', 'lastname', 'firstname', 'admin', 'cogs']
-        struct = {"proxies": [proxy for proxy in self.proxies]}
+        struct = {"proxies": [proxy.id for proxy in self.proxies]}
         for attr in attrs:
             struct[attr] = getattr(self, attr, None)
         return struct

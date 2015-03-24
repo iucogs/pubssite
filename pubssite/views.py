@@ -341,4 +341,13 @@ def collections_by_owner(request):
         return HTTPNotFound()
     return [collection.json for collection in collections]
 
+## USER API VIEWS ## 
 
+@view_config(route_name='user_proxies', renderer='pubs_json')
+def user_proxies(request):
+    user = str(request.matchdict.get('user', -1))
+    user = Session.query(User).filter(User.username == user).first()
+    if not user:
+        return HTTPNotFound("user not found!")
+    else:
+        return user.json['proxies']
