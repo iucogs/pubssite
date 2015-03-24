@@ -8,7 +8,7 @@ from pyramid.response import Response
 from pyramid.view import (notfound_view_config, view_config, forbidden_view_config,)
 from pyramid.security import (remember, forget,)
 #from .security import USERS
-from pyramid.httpexceptions import HTTPNotFound, HTTPFound
+from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPInternalServerError
 from sqlalchemy.sql import exists
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy import (update, insert, and_,)
@@ -116,14 +116,16 @@ def citation_add(request):
     if citation.keywords is None:
         citation.keywords = ''
 
-    
     for author in authors:
         citation.authors.append(author)
     
-    Session.commit()
-
-    return citation.json 
-
+    try: 
+        Session.commit()
+        return citation.json 
+    except:
+        Session.rollback()
+        HTTPInternalServorError("There was an error parsing your citation: " + raw)
+    
 # this one updates a citation and the authors associated with it.
 # INPUT: request object containing a JSON encoded citation in the JSON body of
 # the request
