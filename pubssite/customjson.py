@@ -1,3 +1,4 @@
+#!/var/pubs/pubssite/pubsenv/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -34,4 +35,4 @@ def dumps(*args):
     Shortcut for ``ExtJsonEncoder.encode()``
     '''
     return ExtJsonEncoder(sort_keys=False, ensure_ascii=False, 
-            skipkeys=True).encode(*args)
+            skipkeys=True, encoding='utf-8').encode(*args)

@@ -1,12 +1,12 @@
 var current_citations = {};
 var current_collections = [];
+// the templates are filled by the page_init function below and don't need to be
+// tampered with
 var templates = {};
 var user = $.cookie("user");
-
-var current_collection = "";
 var current_format = "apa";
 var sort_order = "auth_string";
-
+var proxies = [];
 
 //TODO: Add support for Jr., II, etc
 function render_mla_authors(authors_array) {
@@ -95,6 +95,9 @@ function page_init() {
   });
   $.getScript("/static/js/mla_templates.js", function () { 
     templates["mla"] = mla_templates;
+  });
+  $.getJSON("http://nupubs.cogs.indiana.edu/proxies/" + user, function(data) {
+    proxies = data;
   });
   // grab citations and collections
   $.getJSON("http://nupubs.cogs.indiana.edu/collection/owner/" + user, function(data) {
