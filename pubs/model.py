@@ -163,7 +163,7 @@ class User(Base):
     @property
     def json(self):
         attrs = ['id', 'username', 'lastname', 'firstname', 'admin', 'cogs']
-        struct = {"proxies": [proxy.id for proxy in self.proxies]}
+        struct = {"proxies": [proxy.username for proxy in self.proxies]}
         for attr in attrs:
             struct[attr] = getattr(self, attr, None)
         return struct
