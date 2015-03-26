@@ -84,6 +84,26 @@ function render_apa_authors(authors_array) {
     }
 }
 
+function get_proxies() {
+  // get proxies and set up the select list
+  $.getJSON("http://nupubs.cogs.indiana.edu/proxies/" + user, function(data) {
+    proxies = data;
+  }).done(function(data) {
+    proxies = data;
+   // $("#proxy-list").val(user); 
+    $.each(proxies, function(index, proxy) { 
+      $("#proxy-list").append("<option value="+proxy.username+">" + proxy.fullname + "</option>");  
+    });
+    $("#proxy-list").on("change.switch_user", function() {
+      populate_collections($(this).val(), true);
+    });
+    var current_user = $.grep(data, function (u) { return u.username === user });
+    $('#proxy-list').val(current_user.fullname);
+
+  });
+}
+
+
 // This function draws the collections/citations tables and populates the global
 // variables current_citations, current_collections and templates. It is very
 // important. Do try to return it in one piece, 007.
@@ -96,18 +116,35 @@ function page_init() {
   $.getScript("/static/js/mla_templates.js", function () { 
     templates["mla"] = mla_templates;
   });
-  $.getJSON("http://nupubs.cogs.indiana.edu/proxies/" + user, function(data) {
-    proxies = data;
-  });
-  // grab citations and collections
-  $.getJSON("http://nupubs.cogs.indiana.edu/collection/owner/" + user, function(data) {
-    populate_collections_new(data);
+  populate_collections(user, false);
+  $('#collections-list').tab();
+  get_proxies();
+}
+
+// this populates the collections tabs at the top of the page
+
+// TODO: Ruth - sort citations by year, author, etc.  
+function populate_collections(user, redraw) {
+  
+  $.getJSON("http://nupubs.cogs.indiana.edu/collection/owner/" + user, function(collections) {
    })
-   .done(function() {
-    var rep_pubs = $.grep(current_collections, function(e) {return e.collection_name === "My Representative Publications"});
-    if (rep_pubs[0]) get_collection_citations(rep_pubs[0].collection_id);
-    else get_collection_citations(current_collections[0]);
+   .done(function(collections) {
+    var collections_html = [];
+    $.each(collections, function (index, collection) {
+      current_collections.push(collection);
+      if (index == 0) 
+        collections_html.push('<li>' + "<a href='#" + collection.collection_id + "' data-toggle=\"tab\">" + collection.collection_name + ' <i class="icon-remove"></i></a></li><li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Select another collection <b class="caret"></b></a><ul id="collections-select" class="dropdown-menu">');
+      else
+        collections_html.push('<li class><a href="#' + collection.collection_id + '" data-toggle="tab">' + collection.collection_name + ' <i class="icon-remove" style="display: none;"></i></a></li>');
+    });
+    collections_html.push('</ul></li>');
+    if (redraw === false) $("#collections-content").append("<ul id=\"collections-list\" class=\"nav nav-tabs\" data-tabs=\"tabs\">" + collections_html.join("") +'</ul><div class="tab-content" id="citations-content"></div>' );
+    else $("#collections-list").html(collections_html.join("")); 
     
+    
+    $("#collections-list li").first().addClass('active'); 
+    $('#collections-list').tab();
+  
     // add loading listeners
     $("#collections-list .dropdown ul li a").each(function (index) {
       var id = $(this).attr("href").substr(1, "href".length); 
@@ -115,33 +152,18 @@ function page_init() {
         get_collection_citations(id);
         $(this).off("click.load_citations");
       });
-    });
-  });
-  $('#collections-list').tab(); 
-}
-
-// this populates the collections tabs at the top of the page
-// TODO: dropdown w/ all users' collections
-
-// TODO: Ruth - sort citations by year, author, etc.  
-function populate_collections_new(collections) {
-//	alert('populate');
-  var collections_html = [];
-  $.each(collections, function (index, collection) {
-    current_collections.push(collection);
-    if (index == 0) 
-      collections_html.push('<li>' + "<a href='#" + collection.collection_id + "' data-toggle=\"tab\">" + collection.collection_name + ' <i class="icon-remove"></i></a></li><li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Select another collection <b class="caret"></b></a><ul id="collections-select" class="dropdown-menu">');
-    else
-      collections_html.push('<li class><a href="#' + collection.collection_id + '" data-toggle="tab">' + collection.collection_name + ' <i class="icon-remove" style="display: none;"></i></a></li>');
-  });
-  collections_html.push('</ul></li>');
-  $("#collections-content").append("<ul id=\"collections-list\" class=\"nav nav-tabs\" data-tabs=\"tabs\">" + collections_html.join("") +'</ul><div class="tab-content" id="citations-content"></div>' );
-  $("#collections-list li").first().addClass('active'); 
-  $('#collections-list').tab();
-
-  remove_collection_tab_onclick();
-  add_collection_tab_onclick();
+    }); 
     
+    // preselect my representative pubs and draw its' citations
+    var rep_pubs = $.grep(current_collections, function(e) {return e.collection_name.trim().toLowerCase() === "my representative publications" && e.owner === user});
+    if (rep_pubs[0]) get_collection_citations(rep_pubs[0].collection_id);
+    else get_collection_citations(current_collections[0]);
+  
+    // listeners for moving collections between dropdown and open tabs
+    remove_collection_tab_onclick();
+    add_collection_tab_onclick();
+ 
+  });      
 }
 
 function add_collection_tab_onclick() {
@@ -169,17 +191,6 @@ function remove_collection_tab_onclick() {  // open tabs
   });
 }
 
-
-function populate_collections(collections) {
-  var collections_html = [];
-    $.each(collections, function (i, item) {
-    collections_html.push('<li>' + "<a href='#" + item.collection_id + "' data-toggle=\"tab\">" + item.collection_name + "</a></li>");
-    current_collections.push(item);
-  });
-  $("#collections-content").append("<ul id=\"collections-list\" class=\"nav nav-tabs\" data-tabs=\"tabs\">" + collections_html.join("") +'</ul><div class="tab-content" id="citations-content"></div>' );
-  $("#collections-list li").first().addClass('active'); 
-  $('#collections-list').tab();
-}
 
 // populates current_citations for rendering by render_citations below
 function get_citations(collections) { 
@@ -235,8 +246,8 @@ function render_citations(format) {
       citations.push('<tr id=' + temp_cit.citation_id + '><td class="citation-actions"><input type="checkbox"></td>' +
                      '<td>' + Mustache.render(template[citation.pubtype], temp_cit) + '</td>' +
                      '<td class="citation actions"><i class="icon-share-alt"></i>' +
-					 '<a href="#editPane" role="button" data-toggle="modal" onclick="populateEditPane(' + temp_cit.citation_id + ');"><i class="icon-pencil"></i></a>' +
-                  	'<i class="icon-download-alt"> </i><i class="icon-remove"></i></td></tr>');
+			          		 '<a href="#editPane" role="button" data-toggle="modal" onclick="populateEditPane(' + temp_cit.citation_id + ');"><i class="icon-pencil"></i></a>' +
+                     '<i class="icon-download-alt"> </i><i class="icon-remove"></i></td></tr>');
       });
             
       table = '<div class="tab-pane" id="' + collection + '"><table class="table table-hover table-condensed table-striped citation"><tbody>' + 
