@@ -68,7 +68,6 @@ function render_apa_authors(authors_array) {
         formatted_author_array.push(temp_auth);
     });
     
-    
     // This block handles the actual APA-defined layout for a given number of
     // authors.
     num_authors = formatted_author_array.length;
@@ -86,23 +85,21 @@ function render_apa_authors(authors_array) {
 
 function get_proxies() {
   // get proxies and set up the select list
+  var current_user;
   $.getJSON("http://nupubs.cogs.indiana.edu/proxies/" + user, function(data) {
     proxies = data;
   }).done(function(data) {
     proxies = data;
-   // $("#proxy-list").val(user); 
     $.each(proxies, function(index, proxy) { 
       $("#proxy-list").append("<option value="+proxy.username+">" + proxy.fullname + "</option>");  
     });
     $("#proxy-list").on("change.switch_user", function() {
       populate_collections($(this).val(), true);
     });
-    var current_user = $.grep(data, function (u) { return u.username === user });
-    $('#proxy-list').val(current_user.fullname);
-
+    current_user = $.grep(data, function (u) { return u.username === user });
+    $('#proxy-list').val(current_user[0].username);
   });
 }
-
 
 // This function draws the collections/citations tables and populates the global
 // variables current_citations, current_collections and templates. It is very
@@ -133,14 +130,16 @@ function populate_collections(user, redraw) {
     $.each(collections, function (index, collection) {
       current_collections.push(collection);
       if (index == 0) 
-        collections_html.push('<li>' + "<a href='#" + collection.collection_id + "' data-toggle=\"tab\">" + collection.collection_name + ' <i class="icon-remove"></i></a></li><li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Select another collection <b class="caret"></b></a><ul id="collections-select" class="dropdown-menu">');
+        collections_html.push('<li>' + "<a href='#" + collection.collection_id + 
+        "' data-toggle=\"tab\">" + collection.collection_name + 
+        ' <i class="icon-remove"></i></a></li><li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Select another collection <b class="caret"></b></a><ul id="collections-select" class="dropdown-menu">');
       else
-        collections_html.push('<li class><a href="#' + collection.collection_id + '" data-toggle="tab">' + collection.collection_name + ' <i class="icon-remove" style="display: none;"></i></a></li>');
+        collections_html.push('<li class><a href="#' + collection.collection_id + 
+        '" data-toggle="tab">' + collection.collection_name + ' <i class="icon-remove" style="display: none;"></i></a></li>');
     });
     collections_html.push('</ul></li>');
     if (redraw === false) $("#collections-content").append("<ul id=\"collections-list\" class=\"nav nav-tabs\" data-tabs=\"tabs\">" + collections_html.join("") +'</ul><div class="tab-content" id="citations-content"></div>' );
     else $("#collections-list").html(collections_html.join("")); 
-    
     
     $("#collections-list li").first().addClass('active'); 
     $('#collections-list').tab();
@@ -178,7 +177,6 @@ function add_collection_tab_onclick() {
   });
 }
 
-
 function remove_collection_tab_onclick() {  // open tabs
   alert('add onclick listener to x in tab');
   $('#collections-list li a i.icon-remove').click(function () {   
@@ -191,16 +189,6 @@ function remove_collection_tab_onclick() {  // open tabs
   });
 }
 
-
-// populates current_citations for rendering by render_citations below
-function get_citations(collections) { 
-  $.each(collections, function (index, collection) {
-    $.getJSON("http://nupubs.cogs.indiana.edu/collection/citations/" + collection.collection_id, function(data) {
-      current_citations[collection.collection_id] = data; 
-    });
-  });
-}
-
 function get_collection_citations(collection_id) {
   $.getJSON("http://nupubs.cogs.indiana.edu/collection/citations/" + collection_id, function (data) {
     current_citations[collection_id] = data;
@@ -209,7 +197,6 @@ function get_collection_citations(collection_id) {
     render_citations(current_format);
   });
 }
-
 
 // TODO: refactor this into a function that renders one collection at at time
 // and appends to the citations-content table instead of emptying it each time.
@@ -242,7 +229,7 @@ function render_citations(format) {
         } else if (current_format == 'mla') { 
           temp_cit.authors = render_mla_authors(temp_cit.authors);
         }
-  
+      console.log(Mustache.render(template[citation.pubtype], temp_cit)); 
       citations.push('<tr id=' + temp_cit.citation_id + '><td class="citation-actions"><input type="checkbox"></td>' +
                      '<td>' + Mustache.render(template[citation.pubtype], temp_cit) + '</td>' +
                      '<td class="citation actions"><i class="icon-share-alt"></i>' +
