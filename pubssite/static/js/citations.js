@@ -147,9 +147,8 @@ function populate_collections(user, redraw) {
     // add loading listeners
     $("#collections-list .dropdown ul li a").each(function (index) {
       var id = $(this).attr("href").substr(1, "href".length); 
-      $(this).on("click.load_citations", function () {     
+      $(this).one("click.load_citations", function () {     
         get_collection_citations(id);
-        $(this).off("click.load_citations");
       });
     }); 
     
@@ -167,7 +166,7 @@ function populate_collections(user, redraw) {
 
 function add_collection_tab_onclick() {
 //	alert('add onclick listener to element in dropdown list');
-  $('#collections-select li a').click(function () { // formally in collection select list  // when click on a element
+  $('#collections-select li a').one('click', function () { // formally in collection select list  // when click on a element
 	  alert('doing onclick to move from dropdown to open tab');
     $(this).find(".icon-remove").show(); //
     var select_list = $('#collections-select').parent();
@@ -179,11 +178,11 @@ function add_collection_tab_onclick() {
 
 function remove_collection_tab_onclick() {  // open tabs
   alert('add onclick listener to x in tab');
-  $('#collections-list li a i.icon-remove').click(function () {   
+  $('#collections-list li a i.icon-remove').one('click', function () {   
 	  alert('doing onclick to close tab -- and move to dropdown $(this): ' + $(this));
     var tab = $(this).parent().parent();
     tab.off('click'); 
-    tab.removeClass("active");
+//    $(this).parent.removeClass("active");
     $(this).hide();
     $(this).parent().parent().prependTo("#collections-select");
   });
@@ -229,6 +228,7 @@ function render_citations(format) {
         } else if (current_format == 'mla') { 
           temp_cit.authors = render_mla_authors(temp_cit.authors);
         }
+      if (citation.pubtype === "proceedings" || citation.pubtype === "conference") citation.pubtype = "inproceedings";
       console.log(Mustache.render(template[citation.pubtype], temp_cit)); 
       citations.push('<tr id=' + temp_cit.citation_id + '><td class="citation-actions"><input type="checkbox"></td>' +
                      '<td>' + Mustache.render(template[citation.pubtype], temp_cit) + '</td>' +

@@ -68,7 +68,7 @@ class Citation(Base):
 
     # TODO: Fix bug so that owners are actually referenced by user_id
     #user_id = Column(Integer, ForeignKey('users.user_id'))
-    citation_id = Column(Integer, primary_key=True)
+    citation_id = Column(Integer, primary_key=True, autoincrement=True)
 
     authors = relationship("Author", secondary=author_of, backref='citations') 
 
@@ -163,7 +163,7 @@ class User(Base):
     @property
     def json(self):
         attrs = ['id', 'username', 'lastname', 'firstname', 'admin', 'cogs']
-        struct = {"proxies": [proxy.username for proxy in self.proxies]}
+        struct = {"proxies": [{"username": proxy.username, "fullname": proxy.firstname + " " + proxy.lastname} for proxy in self.proxies]}
         for attr in attrs:
             struct[attr] = getattr(self, attr, None)
         return struct

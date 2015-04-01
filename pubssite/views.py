@@ -103,7 +103,7 @@ def citation_add(request):
     
     citation_exists = Session.query(Citation).filter(Citation.raw.like(citation.raw))
     if citation_exists.first() is not None:
-        return citation_exists.first().json
+        return {"citation_exists": True} 
     
 
     # abstract and keywords are text columns and cannot have default values.
@@ -119,7 +119,8 @@ def citation_add(request):
     for author in authors:
         citation.authors.append(author)
     
-    try: 
+    try:
+        Session.add(citation)
         Session.commit()
         return citation.json 
     except:
