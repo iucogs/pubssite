@@ -45,7 +45,7 @@
   <script type="text/javascript" src="/static/js/apa_templates.js"></script>
   <script type="text/javascript" src="/static/js/mla_templates.js"></script>
   <script type="text/javascript" src='/static/js/citations.js'></script>
-
+  <script type="text/javascript" src='/static/js/edit_citations.js'></script>
 
 
 </head>
