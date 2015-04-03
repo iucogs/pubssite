@@ -4,6 +4,7 @@ import logging
 import json
 import redis
 
+from copy import deepcopy
 from pyramid.response import Response
 from pyramid.view import (notfound_view_config, view_config, forbidden_view_config,)
 from pyramid.security import (remember, forget,)
@@ -90,7 +91,6 @@ def citation_add(request):
     log.debug(request.body)
     raw = request.body
     citation = parser.parse(raw)[0]
-    
     try:
         auth_string = citation.pop('author')
         authors = author_parse(auth_string)
@@ -98,12 +98,11 @@ def citation_add(request):
         authors = [] 
 
     formatted_citation = citation_format(citation, raw)
+    
     citation = Citation(formatted_citation)
-    
-    
     citation_exists = Session.query(Citation).filter(Citation.raw.like(citation.raw))
     if citation_exists.first() is not None:
-        return {"citation_exists": True} 
+        return citation.exists.first().json 
     
 
     # abstract and keywords are text columns and cannot have default values.
@@ -119,13 +118,19 @@ def citation_add(request):
     for author in authors:
         citation.authors.append(author)
     
+    json = deepcopy(citation.json)
+    other_json = {k: v for k,v in citation.json.iteritems()} 
+    # we save the json as committing expires the object
+    # we do this manually because python is call by reference
+    # we are utterly enraged
     try:
         Session.add(citation)
         Session.commit()
         return citation.json 
+    
     except:
         Session.rollback()
-        HTTPInternalServorError("There was an error parsing your citation: " + raw)
+        HTTPInternalServerError("There was an error parsing your citation: " + raw)
     
 # this one updates a citation and the authors associated with it.
 # INPUT: request object containing a JSON encoded citation in the JSON body of
@@ -292,6 +297,36 @@ def representative_publications(request):
     return [citation.json for citation in rep_pubs.citations]
 
 ## COLLECTION API VIEWS ##
+
+# this adds a citation or list of citations to a collection
+# INPUT: the collection_id and a comma-delimited list of citation ids
+# OUTPUT: the collection's list of citations
+@view_config(route_name='add_citation_to_collection', request_method="PUT", renderer='pubs_json')
+def add_citation_to_collection(request):
+    collection_id = int(request.matchdict.get('coll_id', -1))
+    citation_id = request.matchdict.get('cit_id', -1)
+    
+    collection = Session.query(Collection).get(collection_id)
+    if collection:
+        if ',' in citation_id:
+            citation_ids = citation_id.split()
+            for cit_id in citation_ids:
+                citation = Session.query(Citation).get(cit_id)
+                if citation:
+                    collection.citations.append(citation)
+                else:
+                    pass
+        else:
+            citation = Session.query(Citation).get(citation_id)
+            if citation:
+                collection.citations.append(citation)
+            else:
+                pass
+        Session.commit()
+        return [citation.json for citation in collection.citations]
+    else:
+        return HTTPNotFound("Collection not found.")
+
 
 # this seems to delete a collection. very dangerous.
 # INPUT: request object containing the ID of the collection to be deleted
