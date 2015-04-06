@@ -2,7 +2,6 @@ from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Table
 from sqlalchemy.orm import sessionmaker, relationship, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
-from zope.sqlalchemy import ZopeTransactionExtension
 import pubs.config
 
 # Create the database engine from config file
