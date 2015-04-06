@@ -4,6 +4,7 @@ var current_collections = [];
 // tampered with
 var templates = {};
 var user = $.cookie("user");
+var current_user = "";
 var current_format = "apa";
 var sort_order = "auth_string";
 var proxies = [];
@@ -94,6 +95,8 @@ function get_proxies() {
       $("#proxy-list").append("<option value="+proxy.username+">" + proxy.fullname + "</option>");  
     });
     $("#proxy-list").on("change.switch_user", function() {
+      current_user = $(this).username;
+      current_collections = $.grep(current_collections, function (c) { return c.owner === current_user; });
       populate_collections($(this).val(), true);
     });
     current_user = $.grep(data, function (u) { return u.username === user });
@@ -145,8 +148,9 @@ function populate_collections(user, redraw) {
     $('#collections-list').tab();
   
     // add loading listeners
+    // NOTE: This "href".length thing might be stupid and a problem later
     $("#collections-list .dropdown ul li a").each(function (index) {
-      var id = $(this).attr("href").substr(1, "href".length); 
+      var id = $(this).attr("href").substr(1, 5000); 
       $(this).one("click.load_citations", function () {     
         get_collection_citations(id);
       });
@@ -155,7 +159,7 @@ function populate_collections(user, redraw) {
     // preselect my representative pubs and draw its' citations
     var rep_pubs = $.grep(current_collections, function(e) {return e.collection_name.trim().toLowerCase() === "my representative publications" && e.owner === user});
     if (rep_pubs[0]) get_collection_citations(rep_pubs[0].collection_id);
-    else get_collection_citations(current_collections[0]);
+    else get_collection_citations(current_collections[0].collection_id);
   
     // listeners for moving collections between dropdown and open tabs
     remove_collection_tab_onclick();
@@ -213,7 +217,7 @@ function render_citations(format) {
   $("#citations-content").empty();
   var template = templates[current_format];
   var current_citation_list;
-
+  console.log("we renderin bb");
   $.each(current_citations, function(collection, citation_list) {
     if (citation_list) {
       current_citation_list = citation_list;
@@ -229,7 +233,6 @@ function render_citations(format) {
           temp_cit.authors = render_mla_authors(temp_cit.authors);
         }
       if (citation.pubtype === "proceedings" || citation.pubtype === "conference") citation.pubtype = "inproceedings";
-      console.log(Mustache.render(template[citation.pubtype], temp_cit)); 
       citations.push('<tr id=' + temp_cit.citation_id + '><td class="citation-actions"><input type="checkbox"></td>' +
                      '<td>' + Mustache.render(template[citation.pubtype], temp_cit) + '</td>' +
                      '<td class="citation actions"><i class="icon-share-alt"></i>' +
@@ -248,7 +251,10 @@ function render_citations(format) {
     }
   });
   // set the current tab's associated citations as active
-  var id = $("#collections-list li.active").find("a").attr("href").substr(1, "href".length); 
+  // TODO: do something smarter with that substring. allowing for 50000 digits
+  // should buy you some time to revisit this later. don't forget the other one
+  // in this file.
+  var id = $("#collections-list li.active").find("a").attr("href").substr(1, 50000); 
   $(".tab-pane#" + id).addClass("active");
 }
 

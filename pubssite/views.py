@@ -11,8 +11,7 @@ from pyramid.security import (remember, forget,)
 #from .security import USERS
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPInternalServerError
 from sqlalchemy.sql import exists
-from sqlalchemy.exc import DBAPIError
-from sqlalchemy import (update, insert, and_,)
+from sqlalchemy import (exc, update, insert, and_,)
 from .models import *
 from .citation_format import *
 
@@ -102,7 +101,7 @@ def citation_add(request):
     citation = Citation(formatted_citation)
     citation_exists = Session.query(Citation).filter(Citation.raw.like(citation.raw))
     if citation_exists.first() is not None:
-        return citation.exists.first().json 
+        return citation_exists.first().json 
     
 
     # abstract and keywords are text columns and cannot have default values.
@@ -118,8 +117,6 @@ def citation_add(request):
     for author in authors:
         citation.authors.append(author)
     
-    json = deepcopy(citation.json)
-    other_json = {k: v for k,v in citation.json.iteritems()} 
     # we save the json as committing expires the object
     # we do this manually because python is call by reference
     # we are utterly enraged
@@ -128,7 +125,8 @@ def citation_add(request):
         Session.commit()
         return citation.json 
     
-    except:
+    except exc.SQLAlchemyError as error:
+        log.debug(error)
         Session.rollback()
         HTTPInternalServerError("There was an error parsing your citation: " + raw)
     
@@ -260,7 +258,6 @@ def citations_by_owner(request):
     owner = str(request.matchdict.get('owner', -1))
     citations = Session.query(Citation).filter(Citation.owner == owner).all()
     
-    Session.commit()
     if not citations:
         return HTTPNotFound()
     for citation in citations:
@@ -279,7 +276,6 @@ def citations_by_owner(request):
 def citations_by_collection(request):
     id = int(request.matchdict.get('id', -1))
     collection = Session.query(Collection).get(id)
-    Session.commit() 
     if not collection:
         return HTTPNotFound()
     return [citation.json for citation in collection.citations]
@@ -357,7 +353,6 @@ def collection_by_id(request):
         return coll_cache.hgetall(id)
     else:
         collection = Session.query(Collection).get(id)
-        Session.commit()
         if not collection:
             return HTTPNotFound()
         
@@ -372,7 +367,6 @@ def collection_by_id(request):
 def collections_by_owner(request):
     owner = str(request.matchdict.get('owner', -1))
     collections = Session.query(Collection).filter(Collection.owner == owner).all()
-    Session.commit()
     if not collections:
         return HTTPNotFound()
     return [collection.json for collection in collections]

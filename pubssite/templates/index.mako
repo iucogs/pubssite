@@ -36,6 +36,7 @@
 
   </style>
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script type="text/javascript" src='/static/js/http_verbs.js'></script>  
   <script type="text/javascript" src='/static/js/jquery.cookie.js'></script>  
   <script type="text/javascript" src="/static/js/mustache.js"></script>
   <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
@@ -46,6 +47,7 @@
   <script type="text/javascript" src="/static/js/mla_templates.js"></script>
   <script type="text/javascript" src='/static/js/citations.js'></script>
   <script type="text/javascript" src='/static/js/edit_citations.js'></script>
+  <script type="text/javascript" src='/static/js/insert_citations.js'></script>
 
 
 </head>
@@ -60,8 +62,9 @@
     });
     $('#collections-list').tab();
   
-    $(document).on('ajaxStop', function () { 
+    $(document).one('ajaxStop', function () { 
       render_citations();
+      paste_init();
       //$("#citations-table").sortable({ items: "tr" });
       $("table.citation").sortable({items: "tr"});
     
@@ -81,12 +84,7 @@
         
         <ul class="nav pull-right">
          <li>Show collections belonging to: <select id="proxy-list"></select></li>
-<!---
-          <li><a class="dropdown-toggle" data-toggle="dropdown" href="#">Show collections belonging to: <b class="caret"></b></a>
-              <ul id="proxy-list" class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-              </ul>
-          </li> --> 
-		  <li><a href="#">Sign out</a></li>
+    		 <li><a href="#">Sign out</a></li>
         </ul>    
       </div>  
     </div>
@@ -120,7 +118,7 @@
             </ul>
           </div>
           <a href="#editPane" role="button" class="btn" data-toggle="modal"><i class="icon-pencil"></i></a>
-          <a href="#pastePane" role="button" class="btn" data-toggle="modal">Paste citations</a>
+          <a href="#pastePane" id="pasteButton" role="button" class="btn" data-toggle="modal">Paste citations</a>
           <a class="btn"><i class="icon-remove"></i></a>
         </div>
         </h2>
@@ -144,9 +142,10 @@
 
   <!-- Modal edit pane --> 
   <div id="pastePane" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="pastePane" aria-hidden="true">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
-      <h4>Paste citations into the field below</h4>
+    <div id="pasteHeader" class="modal-header">
+      <p>&nbsp;<button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button></p>
+      <div class="pull-right"><p>Add citations to: <select id="addCollectionsList"></select></p></div>
+      <h4><p>Paste citations into the field below</p></h4>
     </div>
     <div class="modal-body">
       <textarea id="pasteArea" class="input-block-level" rows="20" autofocus>Paste your citations here.</textarea><br />
@@ -255,8 +254,6 @@
 
 
    
-    <script src="/static/js/citations.js"></script>
-    <script src="/static/js/insert_citations.js"></script>
   </body>
 
 </html>

@@ -2,12 +2,12 @@ from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Table
 from sqlalchemy.orm import sessionmaker, relationship, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
-
+from zope.sqlalchemy import ZopeTransactionExtension
 import pubs.config
 
 # Create the database engine from config file
 url = pubs.config.get('sqlalchemy', 'url')
-engine = create_engine(url, echo=False, pool_recycle=5) 
+engine = create_engine(url, echo=False, pool_recycle=3600) 
 
 # configure the declarative syntax base
 Base = declarative_base()
