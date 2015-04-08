@@ -7,11 +7,10 @@ function paste_init() {
   paste_submit_onclick();
 }
 
-
 // substring STUPIDITY!!!!!!!!!!!!!
 function paste_open_onclick() {
   $('#pasteButton').on('click', function() {
-    var collection = $("#collections-list li.active a").attr('href').substr(1, 50000);
+    var collection = $("#collections-list li.active a").attr('href').replace('#', '');
     $("#addCollectionsList").val(collection);
   });
 }
@@ -23,9 +22,8 @@ function paste_submit_onclick() {
     var citations_raw = $(this).siblings('#pasteArea').val();
     var citations = citations_raw.split('\n');
     var collection = $("#addCollectionsList").val();     
-    var count = citations.length;
-    
     citations = $.grep(citations, function (c) {return c != ''; });
+    var count = citations.length;
     console.log(citations); 
 
     $.each(citations, function (index, val) { 

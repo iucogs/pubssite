@@ -122,10 +122,8 @@ function page_init() {
 }
 
 // this populates the collections tabs at the top of the page
-
 // TODO: Ruth - sort citations by year, author, etc.  
 function populate_collections(user, redraw) {
-  
   $.getJSON("http://nupubs.cogs.indiana.edu/collection/owner/" + user, function(collections) {
    })
    .done(function(collections) {
@@ -138,7 +136,7 @@ function populate_collections(user, redraw) {
         ' <i class="icon-remove"></i></a></li><li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Select another collection <b class="caret"></b></a><ul id="collections-select" class="dropdown-menu">');
       else
         collections_html.push('<li class><a href="#' + collection.collection_id + 
-        '" data-toggle="tab">' + collection.collection_name + ' <i class="icon-remove" style="display: none;"></i></a></li>');
+        '" >' + collection.collection_name + '</a></li>');
     });
     collections_html.push('</ul></li>');
     if (redraw === false) $("#collections-content").append("<ul id=\"collections-list\" class=\"nav nav-tabs\" data-tabs=\"tabs\">" + collections_html.join("") +'</ul><div class="tab-content" id="citations-content"></div>' );
@@ -150,7 +148,7 @@ function populate_collections(user, redraw) {
     // add loading listeners
     // NOTE: This "href".length thing might be stupid and a problem later
     $("#collections-list .dropdown ul li a").each(function (index) {
-      var id = $(this).attr("href").substr(1, 5000); 
+      var id = $(this).attr("href").replace("#", ''); 
       $(this).one("click.load_citations", function () {     
         get_collection_citations(id);
       });
@@ -162,36 +160,49 @@ function populate_collections(user, redraw) {
     else get_collection_citations(current_collections[0].collection_id);
   
     // listeners for moving collections between dropdown and open tabs
-    remove_collection_tab_onclick();
-    add_collection_tab_onclick();
- 
+    show_tab_onclick();
   });      
 }
 
-function add_collection_tab_onclick() {
-//	alert('add onclick listener to element in dropdown list');
-  $('#collections-select li a').one('click', function () { // formally in collection select list  // when click on a element
-	  alert('doing onclick to move from dropdown to open tab');
-    $(this).find(".icon-remove").show(); //
+// this attaches to li in the collection select menu
+function show_tab_onclick() { 
+  $('#collections-select li a').on('click', function () { 
     var select_list = $('#collections-select').parent();
-    $(this).parent().insertBefore(select_list);
-    $(this).off('click'); 
- //   remove_collection_tab_onclick();
+    var tab_href = $(this).attr('href');
+    var tab_title = $(this).text();
+    var tab = $.parseHTML('<li class="active"><a href="'+tab_href+'" data-toggle="tab">'+tab_title+' <i class="icon-remove"></i></a></li>');
+    
+    $(tab).insertBefore(select_list);
+    $("#collections-list li.active").removeClass("active");
+    $(tab).addClass('active');
+    close_tab_onclick(tab);
+    $(this).parent().toggle();
   });
 }
 
-function remove_collection_tab_onclick() {  // open tabs
-  alert('add onclick listener to x in tab');
-  $('#collections-list li a i.icon-remove').one('click', function () {   
-	  alert('doing onclick to close tab -- and move to dropdown $(this): ' + $(this));
-    var tab = $(this).parent().parent();
-    tab.off('click'); 
-//    $(this).parent.removeClass("active");
-    $(this).hide();
-    $(this).parent().parent().prependTo("#collections-select");
+// This closes a tab, setting the one to the left as active.
+// collection_select gives us the matching element in the collections dropdown
+// list to toggle, new_citation_view is the div that will show the actual citations
+// and current_citations_view is the div currently showing citations.
+function close_tab_onclick(tab) {
+  $(tab).find("a i.icon-remove").one('click', function() {
+    var collection_select_id = $(tab).find("a").attr('href');
+    var collection_select = $.grep($("#collections-select li a"), function(c) { return $(c).attr('href') === collection_select_id; });
+    var new_citations_view = $(tab).prev().find('a').attr('href'); 
+    var current_citations_view = $("#citations-content div.active"); 
+    
+    $(collection_select).parent().toggle();
+    $(tab).prev().addClass('active');
+    $(tab).remove();
+    $(current_citations_view).removeClass('active');
+    console.log(new_citations_view);
+    $(new_citations_view, $("#citations-content")).addClass('active');
   });
 }
 
+// This gets the citations for a given collection and then renders them.
+// This will get a lot faster when we refactor render_citations into something
+// that doesn't do a global rerendering of all citations.
 function get_collection_citations(collection_id) {
   $.getJSON("http://nupubs.cogs.indiana.edu/collection/citations/" + collection_id, function (data) {
     current_citations[collection_id] = data;
@@ -251,10 +262,8 @@ function render_citations(format) {
     }
   });
   // set the current tab's associated citations as active
-  // TODO: do something smarter with that substring. allowing for 50000 digits
-  // should buy you some time to revisit this later. don't forget the other one
-  // in this file.
-  var id = $("#collections-list li.active").find("a").attr("href").substr(1, 50000); 
+  // TODO: do something smarter with that substring. 
+  var id = $("#collections-list li.active").find("a").attr("href").replace('#', ''); 
   $(".tab-pane#" + id).addClass("active");
 }
 
