@@ -146,7 +146,6 @@ function populate_collections(user, redraw) {
     $('#collections-list').tab();
   
     // add loading listeners
-    // NOTE: This "href".length thing might be stupid and a problem later
     $("#collections-list .dropdown ul li a").each(function (index) {
       var id = $(this).attr("href").replace("#", ''); 
       $(this).one("click.load_citations", function () {     
@@ -177,6 +176,8 @@ function show_tab_onclick() {
     $(tab).addClass('active');
     close_tab_onclick(tab);
     $(this).parent().toggle();
+    $("table.citation").sortable({items: "tr"});
+
   });
 }
 
@@ -195,7 +196,6 @@ function close_tab_onclick(tab) {
     $(tab).prev().addClass('active');
     $(tab).remove();
     $(current_citations_view).removeClass('active');
-    console.log(new_citations_view);
     $(new_citations_view, $("#citations-content")).addClass('active');
   });
 }
@@ -228,7 +228,6 @@ function render_citations(format) {
   $("#citations-content").empty();
   var template = templates[current_format];
   var current_citation_list;
-  console.log("we renderin bb");
   $.each(current_citations, function(collection, citation_list) {
     if (citation_list) {
       current_citation_list = citation_list;
@@ -258,13 +257,15 @@ function render_citations(format) {
     } else { 
       table = '<div class="tab-pane" id="' + collection + '"><table class="table table-hover table-condensed table-striped"><tbody>' + 
                "This collection has no citations." + "</tbody></table></div>";
-      $('.tab-content').append(table);
+      $('.tab-content').append(table); 
     }
   });
   // set the current tab's associated citations as active
   // TODO: do something smarter with that substring. 
   var id = $("#collections-list li.active").find("a").attr("href").replace('#', ''); 
   $(".tab-pane#" + id).addClass("active");
+  $("table.citation").sortable({items: "tr"});
+
 }
 
 // need to sort and rethink citation and collection data structures before preceding.

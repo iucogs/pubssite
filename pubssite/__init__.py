@@ -50,9 +50,11 @@ def main(global_config, **settings):
         
     # Collection routes
     config.add_route('add_citation_to_collection', '/collection/{coll_id:\d+}/{cit_id:[0-9]+(,[0-9]+)*}')
+    config.add_route('update_collection', '/collection/{id:[0-9]+}/{new_name:.*}')
     config.add_route('collection_by_id', '/collection/{id:\d+}')
     config.add_route('collections_by_owner', '/collection/owner/{owner:.*}')
     config.add_route('collection_delete', '/collection/delete/{id:\d+}')
+    config.add_route('remove_citation_from_collection', '/collection/{coll_id:[0-9]+}/{cit_id:[0-9]+}')
 
     # User routes
     config.add_route('user_proxies', '/proxies/{user:.*}')

@@ -33,6 +33,10 @@
       text-align: right; 
       vertical-align: middle;
     }
+    #navbar {
+      padding-left: 12.5%;
+      padding-right: 12.5%;
+    }
 
   </style>
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -65,15 +69,12 @@
     $(document).one('ajaxStop', function () { 
       render_citations();
       paste_init();
-      //$("#citations-table").sortable({ items: "tr" });
-      $("table.citation").sortable({items: "tr"});
-    
     });
   </script>
 <!-- navbar begin --> 
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
-      <div class="container">
+      <div id="navbar" class="container-fluid">
         <ul class="nav"> 
           <li><a class="brand" href="#">Publications</a></li>
           <li><a href="#" class="pull-left"><i class="icon-home"></i></a></li>
@@ -118,9 +119,12 @@
             </ul>
           </div>
           <a href="#editPane" role="button" class="btn" data-toggle="modal"><i class="icon-pencil"></i></a>
-          <a href="#pastePane" id="pasteButton" role="button" class="btn" data-toggle="modal">Paste citations</a>
-          <a class="btn"><i class="icon-remove"></i></a>
+                   <a class="btn"><i class="icon-remove"></i></a>
         </div>
+        
+        <a href="#pastePane" id="pasteButton" role="button" class="btn dropdown" data-toggle="modal">Add citations</a>
+          
+
         </h2>
  
    </div>

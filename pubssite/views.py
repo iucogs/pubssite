@@ -323,6 +323,32 @@ def add_citation_to_collection(request):
     else:
         return HTTPNotFound("Collection not found.")
 
+# This updates the name of a collection
+# INPUT: request object containing the ID of the collection to be updated and
+# the new name
+# OUTPUT: A dict with the collection's ID tied to the new name.
+@view_config(route_name='update_collection', request_method='PUT')
+def update_collection(request):
+    collection_id = int(request.matchdict.get('id', -1))
+    new_name = str(request.matchdict.get('new_name', -1))
+
+    collection = Session.query(Collection).get(collection_id)
+    collection.collection_name = new_name
+    Session.commit()
+
+# This removes a citation from a collection
+# INPUT: request object containing the ID of the collection and the citation ID
+# to be removed
+# OUTPUT: The json of the citations now belonging to the collection
+@view_config(route_name='remove_citation_from_collection',
+             request_method='DELETE')
+def remove_citation_from_collection(request):
+    collection_id = int(request.matchdict.get('coll_id', -1))
+    citation_id = request.matchdict.get('cit_id', -1)
+    
+    collection = Session.query(Collection).get(collection_id)
+    collection.citations = [citation for citation in collection.citations if citation.citation_id != citation_id]
+
 
 # this seems to delete a collection. very dangerous.
 # INPUT: request object containing the ID of the collection to be deleted
