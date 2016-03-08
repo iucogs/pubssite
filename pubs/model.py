@@ -31,16 +31,25 @@ class Author(Base):
     firstname = Column(String)
     lastname = Column(String)
     verified = Column(Boolean)
+    gender = Column(String)
 
-    def __init__(self, firstname, lastname, verified=False):
+    def __init__(self, firstname, lastname, verified=False, gender=''):
         self.firstname = firstname
         self.lastname = lastname
         self.verified = verified
+        self.gender = gender
 
     def __repr__(self):
-        return "<Author %d: %s %s>" %\
+        return u"<Author %d: %s %s>" %\
             (self.author_id, self.firstname, self.lastname)
+    
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+    
+    def __unicode__(self):
+        return u"%s %s".format(self.firstname, self.lastname)
 
+    # TODO: Refactor
     def toString(self):
         return self.lastname + ", " + self.firstname + ", "
 
@@ -82,8 +91,8 @@ class Citation(Base):
 
 
     def __repr__(self):
-        return "<Citation %d: %s (%s)>" %\
-            (self.citation_id, self.title, self.year)
+        return u"<Citation %d: %s (%s)>".format(
+            self.citation_id, self.title, self.year)
 
     @property
     def json(self):
@@ -133,8 +142,8 @@ class Collection(Base):
         return struct
 
     def __repr__(self):
-        return "<Collection %d: %s (%s)>" %\
-            (self.collection_id, self.collection_name, self.owner)
+        return u"<Collection %d: %s (%s)>".format(
+            self.collection_id, self.collection_name, self.owner)
 
 
 
@@ -152,7 +161,6 @@ class User(Base):
     cogs = Column(Boolean)
 
     def __repr__(self):
-        return "<User %d: %s>" %\
-            (self.id, self.username)
+        return u"<User %d: %s>".format(self.id, self.username)
 
 Session.close()
