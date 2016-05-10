@@ -27,6 +27,7 @@ def main(global_config, **settings):
     authn_policy = AuthTktAuthenticationPolicy('iu_cas')
     authz_policy = ACLAuthorizationPolicy()
     config = Configurator(settings=settings)
+    config.include('pyramid_mako')
 
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)
