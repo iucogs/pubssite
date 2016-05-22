@@ -22,7 +22,7 @@ def add_cors_headers_response_callback(event):
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
-    engine = engine_from_config(settings, 'sqlalchemy.')
+    engine = engine_from_config(settings, 'sqlalchemy.', pool_recycle=3600)
     DBSession.configure(bind=engine)
     authn_policy = AuthTktAuthenticationPolicy('iu_cas')
     authz_policy = ACLAuthorizationPolicy()
@@ -41,18 +41,24 @@ def main(global_config, **settings):
     config.add_route('login', '/login')
 
     # Citation routes
+    config.add_route('representative_publications', '/citation/rep_pubs/{owner:.*}')
     config.add_route('citation_by_id', '/citation/{id:[0-9]+(,[0-9]+)*}')
     config.add_route('citations_by_owner', '/citation/owner/{owner:.*}')
     config.add_route('citations_by_collection', '/collection/citations/{id:\d+}')
     config.add_route('citation_delete', '/citation/delete/{id:\d+}')
     config.add_route('citation_update', '/citation/')
     config.add_route('citation_add', '/citation/parse')
-    config.add_route('author_most_recent', '/citation/owner/recent/{owner:.*}')
-    
+        
     # Collection routes
+    config.add_route('add_citation_to_collection', '/collection/{coll_id:\d+}/{cit_id:[0-9]+(,[0-9]+)*}')
+    config.add_route('update_collection', '/collection/{id:[0-9]+}/{new_name:.*}')
     config.add_route('collection_by_id', '/collection/{id:\d+}')
     config.add_route('collections_by_owner', '/collection/owner/{owner:.*}')
     config.add_route('collection_delete', '/collection/delete/{id:\d+}')
+    config.add_route('remove_citation_from_collection', '/collection/{coll_id:[0-9]+}/{cit_id:[0-9]+}')
+
+    # User routes
+    config.add_route('user_proxies', '/proxies/{user:.*}')
 
     config.scan()
     return config.make_wsgi_app()

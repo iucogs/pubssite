@@ -28,13 +28,6 @@ Notes: Our project currently is using the excellent
 [Anystyle](http://anystyle.io) parser. We're still training it and working to
 improve its accuracy.
    
-<!--- <a name="citation_update"></a>
-**Update a citation**   
-URL: `http://nupubs.cogs.indiana.edu/citation/`   
-Method: `PUT`   
-Input: An updated JSON encoded citation in the JSON body of the request
-Output: JSON reflecting the changes made by the update   
-   -->
 <a name="citation_by_id"></a>
 **Retrieve one or more citations by their IDs**   
 URL: `http://nupubs.cogs.indiana.edu/citation/[IDs]   
