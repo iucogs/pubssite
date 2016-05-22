@@ -104,9 +104,10 @@ Output: A list of JSON-encoded collections
 
 ### Installing Ruby and `anystyle` parser:
 1.  Install Ruby:
-    -  **Windows:** [RubyInstaller](http://rubyinstaller.org/downloads/)
-    -  **Ubuntu/Debian:** `sudo apt-get install ruby-dev`
+    -  **Windows:** [RubyInstaller](http://rubyinstaller.org/downloads/), then follow the directions for installing the "Development Kit", which has download links on the left column under the Ruby downloads.
+    -  **Ubuntu/Debian:** `sudo apt-get install ruby-dev build-essential`
 2.  Install anystyle from terminal: `gem install --user-install anystyle-parser`
+3.  If the user-install complains about not being in the `PATH`, then follow the directions at the [Ruby Gems site](http://guides.rubygems.org/faqs/#user-install)
 
 ## Launching the API
 From the repository directory, run `pserve development.ini`.
