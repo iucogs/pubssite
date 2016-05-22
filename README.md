@@ -1,33 +1,6 @@
 pubssite README
 ==================
 
-## Installing Pubssite
-
-### Installing MySQL Database
-1.  Download and install [MySQL Community Server 5.5](https://dev.mysql.com/downloads/mysql/5.5.html):
-    - **Debian/Ubuntu:** `sudo apt-get install mysql-server-5.5 libmysqlclient-dev` 
-2.  Download a database mirror (contact [Jaimie](mailto:jammurdo@indiana.edu)).
-3.  Import the database using the MySQL 5.5 Command Line Client (run `mysql` at a terminal or use the desktop shortcut):
-    - `CREATE DATABASE pubs; USE pubs; source pubs.backup.sql`
-
-### Installing `pubssite` Python Code
-1.  Install the [Anaconda Python 2.7 Distribution](http://continuum.io/downloads).
-2.  Open a terminal and run `git clone git@github.com:iucogs/pubssite.git`
-3.  In the terminal run `cd pubssite` to access the folder.
-4.  `python setup.py develop` will install the package and all dependencies.
-
-### Configuring the `pubs.ini` File
-1.  Open the repository folder.
-2.  Copy `pubs.ini.template` to `pubs.ini`
-3.  Edit the `pubs.ini` template file:
-    -  Change the directive `url = ...` to `url = mysql://user:password@localhost:3306/pubs?charset=utf8&use_unicode=1`.
-        -  **Note:** Replace `user` and `password` with your mysql username (*i.e.*, `root`) and password.
-
-
-## Launching the API
-From the repository directory, run `pserve development.ini`.
-
-
 ## API documentation
 
 **Note: This version is in development and this README is intended as a
@@ -96,7 +69,7 @@ Input: A collection's ID. e.g.
    
 Output: A JSON-encoded representation of the collection   
    
-<a name="collection_by_owner></a>
+<a name="collection_by_owner"></a>
 **Retrieve a list of collections belonging to a given user**   
 URL: `http://nupubs.cogs.indiana.edu/collection/owner/[owner]`   
 Method: `GET`   
@@ -105,6 +78,38 @@ Input: A nupubs user. e.g.
 `http://nupubs.cogs.indiana.edu/collection/owner/pjcraig`   
    
 Output: A list of JSON-encoded collections   
+
+
+## Installing Pubssite
+
+### Installing MySQL Database
+1.  Download and install [MySQL Community Server 5.5](https://dev.mysql.com/downloads/mysql/5.5.html):
+    - **Debian/Ubuntu:** `sudo apt-get install mysql-server-5.5 libmysqlclient-dev` 
+2.  Download a database mirror (contact [Jaimie](mailto:jammurdo@indiana.edu)).
+3.  Import the database using the MySQL 5.5 Command Line Client (run `mysql` at a terminal or use the desktop shortcut):
+    - `CREATE DATABASE pubs; USE pubs; source pubs.backup.sql`
+
+### Installing `pubssite` Python Code
+1.  Install the [Anaconda Python 2.7 Distribution](http://continuum.io/downloads).
+2.  Open a terminal and run `git clone git@github.com:iucogs/pubssite.git`
+3.  In the terminal run `cd pubssite` to access the folder.
+4.  `python setup.py develop` will install the package and all dependencies.
+
+### Configuring the `pubs.ini` File
+1.  Open the repository folder.
+2.  Copy `pubs.ini.template` to `pubs.ini`
+3.  Edit the `pubs.ini` template file:
+    -  Change the directive `url = ...` to `url = mysql://user:password@localhost:3306/pubs?charset=utf8&use_unicode=1`.
+        -  **Note:** Replace `user` and `password` with your mysql username (*i.e.*, `root`) and password.
+
+### Installing Ruby and `anystyle` parser:
+1.  Install Ruby:
+    -  **Windows:** [RubyInstaller](http://rubyinstaller.org/downloads/)
+    -  **Ubuntu/Debian:** `sudo apt-get install ruby-dev`
+2.  Install anystyle from terminal: `gem install --user-install anystyle-parser`
+
+## Launching the API
+From the repository directory, run `pserve development.ini`.
 
 
 Getting Started
