@@ -110,3 +110,5 @@ Output: A list of JSON-encoded collections
 
 ## Launching the API
 From the repository directory, run `pserve development.ini`.
+
+Open a browser and go to [http://localhost:6543/] to see the website running.
