@@ -1,5 +1,4 @@
-pubssite README
-==================
+#pubssite README
 
 ## API documentation
 
@@ -111,18 +110,3 @@ Output: A list of JSON-encoded collections
 
 ## Launching the API
 From the repository directory, run `pserve development.ini`.
-
-
-Getting Started
----------------
-
-- cd <directory containing this file>
-
-- $venv/bin/pip install --editable .
-
-- gem install --user-install anystyle-parser
-
-- $venv/bin/populate_pubssite development.ini
-
-- $venv/bin/pserve development.ini
-
