@@ -16,9 +16,10 @@ pubssite README
 3.  In the terminal run `cd pubssite` to access the folder.
 4.  `python setup.py develop` will install the package and all dependencies.
 
-### Configuring the `development.ini` File
+### Configuring the `pubs.ini` File
 1.  Open the repository folder.
-2.  Edit the `pubs.ini` template file:
+2.  Copy `pubs.template.ini` to `pubs.ini`
+3.  Edit the `pubs.ini` template file:
     -  Change the directive `url = ...` to `url = mysql://user:password@localhost:3306/pubs?charset=utf8&use_unicode=1`.
         -  **Note:** Replace `user` and `password` with your mysql username (*i.e.*, `root`) and password.
 
