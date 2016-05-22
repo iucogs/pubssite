@@ -18,7 +18,7 @@ pubssite README
 
 ### Configuring the `pubs.ini` File
 1.  Open the repository folder.
-2.  Copy `pubs.template.ini` to `pubs.ini`
+2.  Copy `pubs.ini.template` to `pubs.ini`
 3.  Edit the `pubs.ini` template file:
     -  Change the directive `url = ...` to `url = mysql://user:password@localhost:3306/pubs?charset=utf8&use_unicode=1`.
         -  **Note:** Replace `user` and `password` with your mysql username (*i.e.*, `root`) and password.
