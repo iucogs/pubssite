@@ -253,6 +253,7 @@ def citations_by_collection(request):
 # INPUT: request object containing a username
 # OUTPUT: a JSON array of the author's 10 most recent citations sorted by year
 # descending
+"""
 @view_config(route_name='author_most_recent', renderer='pubs_json')
 def author_most_recent(request):
     return {"helo":"ok"}
@@ -261,7 +262,7 @@ def author_most_recent(request):
     if not citations:
         return HTTPNotFound()
     return [citation.json for citation in citations]
-
+"""
 ## COLLECTION API VIEWS ##
 
 # this seems to delete a collection. very dangerous.
