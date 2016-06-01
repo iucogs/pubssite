@@ -2,16 +2,15 @@ import requests
 import rython
 import logging
 import json
-import redis
 
-from copy import deepcopy
 from pyramid.response import Response
 from pyramid.view import (notfound_view_config, view_config, forbidden_view_config,)
 from pyramid.security import (remember, forget,)
 #from .security import USERS
-from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPInternalServerError
+from pyramid.httpexceptions import HTTPNotFound, HTTPFound
 from sqlalchemy.sql import exists
-from sqlalchemy import (exc, update, insert, and_,)
+from sqlalchemy.exc import DBAPIError
+from sqlalchemy import (update, insert, and_,)
 from .models import *
 from .citation_format import *
 
@@ -25,10 +24,6 @@ ctx("Encoding.default_external = 'UTF-8'")
 parser = ctx("Anystyle.parser")
 
 log = logging.getLogger(__name__)
-
-cit_cache = redis.StrictRedis(host='localhost', port=6379, db=0)
-coll_cache = redis.StrictRedis(host='localhost', port=6379, db=1)
-
 
 ## SITE VIEWS ##
 
@@ -87,9 +82,9 @@ def logout(request):
 
 @view_config(route_name='citation_add', request_method='POST', renderer='pubs_json')
 def citation_add(request):
-    log.debug(request.body)
-    raw = request.body
+    raw = str(request.body)
     citation = parser.parse(raw)[0]
+    
     try:
         auth_string = citation.pop('author')
         authors = author_parse(auth_string)
@@ -97,11 +92,12 @@ def citation_add(request):
         authors = [] 
 
     formatted_citation = citation_format(citation, raw)
-    
     citation = Citation(formatted_citation)
+    
+    
     citation_exists = Session.query(Citation).filter(Citation.raw.like(citation.raw))
     if citation_exists.first() is not None:
-        return citation_exists.first().json 
+        return citation_exists.first().json
     
 
     # abstract and keywords are text columns and cannot have default values.
@@ -114,22 +110,14 @@ def citation_add(request):
     if citation.keywords is None:
         citation.keywords = ''
 
+    
     for author in authors:
         citation.authors.append(author)
     
-    # we save the json as committing expires the object
-    # we do this manually because python is call by reference
-    # we are utterly enraged
-    try:
-        Session.add(citation)
-        Session.commit()
-        return citation.json 
-    
-    except exc.SQLAlchemyError as error:
-        log.debug(error)
-        Session.rollback()
-        HTTPInternalServerError("There was an error parsing your citation: " + raw)
-    
+    #Session.commit()
+
+    return citation.json 
+
 # this one updates a citation and the authors associated with it.
 # INPUT: request object containing a JSON encoded citation in the JSON body of
 # the request
@@ -211,7 +199,6 @@ def delete_citation(request):
 # INPUT: A request object containing a single citation ID or a list of IDs 
 # delimited by commas
 # OUPUT: the JSON of the corresponding ID(s)
-# TODO: don't throw up if citation not found in list
 @view_config(route_name='citation_by_id', renderer='pubs_json')
 def citation_by_id(request):
     id = str(request.matchdict.get('id', -1))
@@ -220,31 +207,19 @@ def citation_by_id(request):
     # here we check for multiple citation_ids, separated by commas
     # if it's one citation, break by returning it. otherwise, the else.
     if "," not in id:
-        if cit_cache.exists(id):
-            cit_cache.expire(id, 3600)
-            return cit_cache.hgetall(id)
-        else:    
-            citation = Session.query(Citation).get(id)
-            if not citation:
-                return HTTPNotFound("Citation not found!")
-            else:
-                cit_cache.hmset(id, citation.json)
-                cit_cache.expire(id, 3600)
-                return citation.json
+        citation = Session.query(Citation).get(id)
+        if not citation:
+            return HTTPNotFound("Citation not found!")
+        else:
+            return citation.json
     else:        
         ids = id.split(",")
         for citation_id in ids:
-            if cit_cache.exists(citation_id):
-                cit_cache.expire(citation_id, 3600)
-                citations.append(cit_cache.hgetall(citation_id))
+            citation = Session.query(Citation).get(id)
+            if not citation:
+                return HTTPNotFound("Citation " + citation_id + " not found!")
             else:
-                citation = Session.query(Citation).get(citation_id)
-                if not citation:
-                    return HTTPNotFound("Citation " + citation_id + " not found!")
-                else:
-                    cit_cache.hmset(citation_id, citation.json)
-                    cit_cache.expire(citation_id, 3600)
-                    citations.append(citation.json) 
+                citations.append(citation.json) 
         return citations
 
 # takes a string, the owner, and returns all citations associated with this
@@ -252,21 +227,14 @@ def citation_by_id(request):
 # INPUT: a string representing the owner of a citation
 # OUTPUT: A JSON array containing the JSON of all citations associated with the
 # owner
-# TODO: add ability to recall from cache- look at refactoring query
 @view_config(route_name='citations_by_owner', renderer='pubs_json')
 def citations_by_owner(request):
     owner = str(request.matchdict.get('owner', -1))
     citations = Session.query(Citation).filter(Citation.owner == owner).all()
     
+    Session.commit()
     if not citations:
         return HTTPNotFound()
-    for citation in citations:
-        if cit_cache.exists(citation.citation_id):
-            cit_cache.expire(citation.citation_id, 3600)
-        else:
-            cit_cache.hmset(citation.citation_id, citation.json)
-            cit_cache.expire(citation.citation_id, 3600)
-
     return [citation.json for citation in citations]
 
 # retuns a json object containing the citations in a collection given by the id
@@ -276,79 +244,25 @@ def citations_by_owner(request):
 def citations_by_collection(request):
     id = int(request.matchdict.get('id', -1))
     collection = Session.query(Collection).get(id)
+    Session.commit() 
     if not collection:
         return HTTPNotFound()
     return [citation.json for citation in collection.citations]
 
-# returns an author's representative citations
+# returns an authors 10 most recent citations, listed by year
 # INPUT: request object containing a username
-# OUTPUT: a JSON array of the author's represenative publications
-@view_config(route_name='representative_publications', renderer='pubs_json')
-def representative_publications(request):
+# OUTPUT: a JSON array of the author's 10 most recent citations sorted by year
+# descending
+@view_config(route_name='author_most_recent', renderer='pubs_json')
+def author_most_recent(request):
+    return {"helo":"ok"}
     owner = str(request.matchdict.get('owner', -1))
-    rep_pubs = Session.query(Collection).filter(and_(Collection.owner == owner), (Collection.collection_name == "My Representative Publications")).first()
-    
-    if not rep_pubs:
-        return {owner: 'This user doesn\t have a My Representative Publications collection.'}
-    return [citation.json for citation in rep_pubs.citations]
+    citations = Session.query(Citation).filter(Citation.owner == owner).order_by(desc(Citation.year)).limit(10)
+    if not citations:
+        return HTTPNotFound()
+    return [citation.json for citation in citations]
 
 ## COLLECTION API VIEWS ##
-
-# this adds a citation or list of citations to a collection
-# INPUT: the collection_id and a comma-delimited list of citation ids
-# OUTPUT: the collection's list of citations
-@view_config(route_name='add_citation_to_collection', request_method="PUT", renderer='pubs_json')
-def add_citation_to_collection(request):
-    collection_id = int(request.matchdict.get('coll_id', -1))
-    citation_id = request.matchdict.get('cit_id', -1)
-    
-    collection = Session.query(Collection).get(collection_id)
-    if collection:
-        if ',' in citation_id:
-            citation_ids = citation_id.split()
-            for cit_id in citation_ids:
-                citation = Session.query(Citation).get(cit_id)
-                if citation:
-                    collection.citations.append(citation)
-                else:
-                    pass
-        else:
-            citation = Session.query(Citation).get(citation_id)
-            if citation:
-                collection.citations.append(citation)
-            else:
-                pass
-        Session.commit()
-        return [citation.json for citation in collection.citations]
-    else:
-        return HTTPNotFound("Collection not found.")
-
-# This updates the name of a collection
-# INPUT: request object containing the ID of the collection to be updated and
-# the new name
-# OUTPUT: A dict with the collection's ID tied to the new name.
-@view_config(route_name='update_collection', request_method='PUT')
-def update_collection(request):
-    collection_id = int(request.matchdict.get('id', -1))
-    new_name = str(request.matchdict.get('new_name', -1))
-
-    collection = Session.query(Collection).get(collection_id)
-    collection.collection_name = new_name
-    Session.commit()
-
-# This removes a citation from a collection
-# INPUT: request object containing the ID of the collection and the citation ID
-# to be removed
-# OUTPUT: The json of the citations now belonging to the collection
-@view_config(route_name='remove_citation_from_collection',
-             request_method='DELETE')
-def remove_citation_from_collection(request):
-    collection_id = int(request.matchdict.get('coll_id', -1))
-    citation_id = request.matchdict.get('cit_id', -1)
-    
-    collection = Session.query(Collection).get(collection_id)
-    collection.citations = [citation for citation in collection.citations if citation.citation_id != citation_id]
-
 
 # this seems to delete a collection. very dangerous.
 # INPUT: request object containing the ID of the collection to be deleted
@@ -373,18 +287,11 @@ def delete_collection(request):
 @view_config(route_name='collection_by_id', renderer='pubs_json')
 def collection_by_id(request):
     id = int(request.matchdict.get('id', -1))
-
-    if coll_cache.exists(id):
-        coll_cache.expire(id, 3600)
-        return coll_cache.hgetall(id)
-    else:
-        collection = Session.query(Collection).get(id)
-        if not collection:
-            return HTTPNotFound()
-        
-        coll_cache.hmset(id, collection.json)
-        coll_cache.expire(id, 3600)       
-        return collection.json
+    collection = Session.query(Collection).get(id)
+    Session.commit()
+    if not collection:
+        return HTTPNotFound()
+    return collection.json
 
 # returns a list of collection objects association with an owner
 # INPUT: request object containing the owner's name
@@ -393,17 +300,8 @@ def collection_by_id(request):
 def collections_by_owner(request):
     owner = str(request.matchdict.get('owner', -1))
     collections = Session.query(Collection).filter(Collection.owner == owner).all()
+    Session.commit()
     if not collections:
         return HTTPNotFound()
     return [collection.json for collection in collections]
 
-## USER API VIEWS ## 
-
-@view_config(route_name='user_proxies', renderer='pubs_json')
-def user_proxies(request):
-    user = str(request.matchdict.get('user', -1))
-    user = Session.query(User).filter(User.username == user).first()
-    if not user:
-        return HTTPNotFound("user not found!")
-    else:
-        return user.json['proxies']
