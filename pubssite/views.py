@@ -249,6 +249,20 @@ def citations_by_collection(request):
         return HTTPNotFound()
     return [citation.json for citation in collection.citations]
 
+
+# returns an author's representative citations
+# INPUT: request object containing a username
+# OUTPUT: a JSON array of the author's represenative publications
+@view_config(route_name='representative_publications', renderer='pubs_json')
+def representative_publications(request):
+    owner = str(request.matchdict.get('owner', -1))
+    rep_pubs = Session.query(Collection).filter(and_(Collection.owner == owner), (Collection.collection_name == "My Representative Publications")).first()
+    
+    if not rep_pubs:
+        return {owner: 'This user doesn\t have a My Representative Publications collection.'}
+    return [citation.json for citation in rep_pubs.citations]
+
+
 # returns an authors 10 most recent citations, listed by year
 # INPUT: request object containing a username
 # OUTPUT: a JSON array of the author's 10 most recent citations sorted by year
