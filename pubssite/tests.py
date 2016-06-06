@@ -9,7 +9,9 @@ class TestMyView(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp()
         from sqlalchemy import create_engine
-        engine = create_engine('sqlite://')
+        #currently conected to the local database . Replace username and password in the connection string 
+        #Format is mysql+mysqlconnector://<user>:<password>@<host>[:<port>]/<dbname>
+        engine = create_engine('mysql+mysqldb://root:rosylin24@localhost:6543/pubssite')
         from .models import (
             Base,
             MyModel,

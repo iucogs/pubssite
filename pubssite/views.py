@@ -257,7 +257,7 @@ def citations_by_collection(request):
 def author_most_recent(request):
     return {"helo":"ok"}
     owner = str(request.matchdict.get('owner', -1))
-    citations = Session.query(Citation).filter(Citation.owner == owner).order_by(desc(Citation.year)).limit(10)
+    citations = Session.query(Citation).filter(Citation.owner == owner).order_by(Citation.year.desc()).limit(10)
     if not citations:
         return HTTPNotFound()
     return [citation.json for citation in citations]
