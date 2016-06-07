@@ -305,3 +305,12 @@ def collections_by_owner(request):
         return HTTPNotFound()
     return [collection.json for collection in collections]
 
+def autoFill(query, table, column):
+    
+    session = Session.query(table)
+    res = session.filter(table.column.like(query)).limit(10)
+    return dict(query,
+            suggestions=[r.column for r in res],
+            data=["%s" %(r.column) for r in res])
+    
+
