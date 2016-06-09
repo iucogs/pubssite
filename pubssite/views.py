@@ -308,7 +308,7 @@ def collections_by_owner(request):
 
 @view_config(route_name='get_user_by_name', request_method='GET',
              permission='user')
-def get_user_by_name(request, query, table, column):
+def get_user_by_name(request):
     user = str(request.matchdict.get('user', -1))
     res = Session.query(User).filter(User.lastname + ","+ User.firstname).like(user)
     Session.commit()
