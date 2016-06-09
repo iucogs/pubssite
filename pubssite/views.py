@@ -305,12 +305,21 @@ def collections_by_owner(request):
         return HTTPNotFound()
     return [collection.json for collection in collections]
 
-def autoFill(query, table, column):
-    
-    session = Session.query(table)
-    res = session.filter(table.column.like(query)).limit(10)
-    return dict(query,
-            suggestions=[r.column for r in res],
-            data=["%s" %(r.column) for r in res])
-    
+
+@view_config(route_name='get_user_by_name', request_method='GET',
+             permission='user')
+def get_user_by_name(request, query, table, column):
+    user = str(request.matchdict.get('user', -1))
+    res = Session.query(User).filter(User.lastname + ","+ User.firstname).like(user)
+    Session.commit()
+    #session = Session.query(table)
+    #res = session.filter(table.column.like(query)).limit(10)
+    if not res:
+        return {}
+    else: 
+        return [x.json for x in res]
+        #---------------------------------------------------- return dict(query,
+                #-------------------------- suggestions=[r.column for r in res],
+                #------------------------- data=["%s" %(r.column) for r in res])
+        
 

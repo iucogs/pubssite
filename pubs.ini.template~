@@ -1,0 +1,2 @@
+[sqlalchemy]
+url = mysql://user:pass@localhost:3306/pubs?charset=utf8&use_unicode=0
