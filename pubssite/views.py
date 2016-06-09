@@ -312,14 +312,24 @@ def get_user_by_name(request):
     user = str(request.matchdict.get('user', -1))
     res = Session.query(User).filter(User.lastname + ","+ User.firstname).like(user)
     Session.commit()
-    #session = Session.query(table)
-    #res = session.filter(table.column.like(query)).limit(10)
     if not res:
         return {}
     else: 
         return [x.json for x in res]
-        #---------------------------------------------------- return dict(query,
-                #-------------------------- suggestions=[r.column for r in res],
-                #------------------------- data=["%s" %(r.column) for r in res])
-        
 
+
+#Merge function fot two citations
+#takes two citations by id and merges them if found similar
+@view_config(route_name='merge_publications', renderer='pubs_json')
+def merge_publications(request):
+    id_one = int(request.matchdict.get('id', -1))
+    collection_one = Session.query(Collection).get(id_one)
+    id_two = int(request.matchdict.get('id', -1))
+    collection_two = Session.query(Collection).get(id_two)
+    Session.commit()
+    if not collection_one:
+        return HTTPNotFound()
+    if not collection_two:
+        return HTTPNotFound()
+    return [collection_one.json, collection_two.json]
+    
