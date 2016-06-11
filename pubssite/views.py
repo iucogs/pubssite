@@ -51,7 +51,9 @@ def home(request):
 def login(request):
     if 'casticket' in request.params:
         ticket = request.params['casticket']
-        payload = {'cassvc': 'IU', 'casticket': ticket, 'casurl':'http://nupubs.cogs.indiana.edu'}
+        payload = {'cassvc': 'IU', 
+                   'casticket': ticket, 
+                   'casurl': request.application_url}
         user = str(requests.get("https://cas.iu.edu/cas/validate", params=payload).text)
         if "no" in user:
             return {'no way pal': 'get lost ok?'}
