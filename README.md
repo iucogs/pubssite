@@ -1,5 +1,7 @@
 #pubssite README
 
+[![Join the chat at https://gitter.im/iucogs/pubssite](https://badges.gitter.im/iucogs/pubssite.svg)](https://gitter.im/iucogs/pubssite?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## API documentation
 
 **Note: This version is in development and this README is intended as a
