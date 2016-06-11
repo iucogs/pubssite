@@ -51,7 +51,9 @@ def home(request):
 def login(request):
     if 'casticket' in request.params:
         ticket = request.params['casticket']
-        payload = {'cassvc': 'IU', 'casticket': ticket, 'casurl':'http://nupubs.cogs.indiana.edu'}
+        payload = {'cassvc': 'IU', 
+                   'casticket': ticket, 
+                   'casurl': request.application_url}
         user = str(requests.get("https://cas.iu.edu/cas/validate", params=payload).text)
         if "no" in user:
             return {'no way pal': 'get lost ok?'}
@@ -249,10 +251,25 @@ def citations_by_collection(request):
         return HTTPNotFound()
     return [citation.json for citation in collection.citations]
 
+
+# returns an author's representative citations
+# INPUT: request object containing a username
+# OUTPUT: a JSON array of the author's represenative publications
+@view_config(route_name='representative_publications', renderer='pubs_json')
+def representative_publications(request):
+    owner = str(request.matchdict.get('owner', -1))
+    rep_pubs = Session.query(Collection).filter(and_(Collection.owner == owner), (Collection.collection_name == "My Representative Publications")).first()
+    
+    if not rep_pubs:
+        return {owner: 'This user doesn\t have a My Representative Publications collection.'}
+    return [citation.json for citation in rep_pubs.citations]
+
+
 # returns an authors 10 most recent citations, listed by year
 # INPUT: request object containing a username
 # OUTPUT: a JSON array of the author's 10 most recent citations sorted by year
 # descending
+"""
 @view_config(route_name='author_most_recent', renderer='pubs_json')
 def author_most_recent(request):
     return {"helo":"ok"}
@@ -261,7 +278,7 @@ def author_most_recent(request):
     if not citations:
         return HTTPNotFound()
     return [citation.json for citation in citations]
-
+"""
 ## COLLECTION API VIEWS ##
 
 # this seems to delete a collection. very dangerous.

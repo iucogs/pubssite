@@ -2,12 +2,11 @@ from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Table
 from sqlalchemy.orm import sessionmaker, relationship, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
-
 import pubs.config
 
 # Create the database engine from config file
 url = pubs.config.get('sqlalchemy', 'url')
-engine = create_engine(url, echo=False, pool_recycle=5) 
+engine = create_engine(url, echo=False, pool_recycle=3600) 
 
 # configure the declarative syntax base
 Base = declarative_base()
@@ -77,7 +76,7 @@ class Citation(Base):
 
     # TODO: Fix bug so that owners are actually referenced by user_id
     #user_id = Column(Integer, ForeignKey('users.user_id'))
-    citation_id = Column(Integer, primary_key=True)
+    citation_id = Column(Integer, primary_key=True, autoincrement=True)
 
     authors = relationship("Author", secondary=author_of, backref='citations') 
 
@@ -149,7 +148,12 @@ class Collection(Base):
 
 # User-related tables
 # TODO: Add relations to Citations and Collections.
-# TODO: Add proxy support
+
+proxy_of = Table('proxy_of', Base.metadata,
+    Column('authorid', Integer, ForeignKey('users.id'), primary_key=True),
+    Column('proxyid', Integer, ForeignKey('users.id'), primary_key=True)
+    )
+
 class User(Base):
     __tablename__ = 'users'
 
@@ -159,6 +163,18 @@ class User(Base):
     firstname = Column(String)
     admin = Column(Boolean)
     cogs = Column(Boolean)
+    proxies = relationship("User", 
+                           secondary=proxy_of,
+                           primaryjoin=id==proxy_of.c.proxyid,
+                           secondaryjoin=id==proxy_of.c.authorid)
+
+    @property
+    def json(self):
+        attrs = ['id', 'username', 'lastname', 'firstname', 'admin', 'cogs']
+        struct = {"proxies": [{"username": proxy.username, "fullname": proxy.firstname + " " + proxy.lastname} for proxy in self.proxies]}
+        for attr in attrs:
+            struct[attr] = getattr(self, attr, None)
+        return struct
 
     def __repr__(self):
         return u"<User %d: %s>".format(self.id, self.username)

@@ -2,15 +2,15 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" content="Pubs Citations Tracking System">
   <title>Indiana University Publications Tracker</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Indiana University's Publications Tracker">
   <meta name="author" content="Patrick Craig, COGS Codeman">
 
   <!-- Bootstrap -->
-  <link href="/static/css/bootstrap.css" rel="stylesheet" >
-  <link href="/static/css/bootstrap-modal.css" rel="stylesheet" >
+  <link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
+  <link href="/static/css/bootstrap-modal.css" rel="stylesheet" type="text/css">
 
 
    <!-- HTML5 shim, support pour le internet ancien -->
@@ -20,29 +20,38 @@
 
   <style type="text/css">
     body {
+      padding-left: 12.5%;
+      padding-right: 12.5%;
       padding-top: 60px;
       padding-bottom: 40px;
     }
     .sidebar-nav {
-     padding: 9px 0;
+     padding: 12.5%;
     }
     td.citation-actions {
       white-space: nowrap;
       text-align: right; 
       vertical-align: middle;
     }
-  </style>
-  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
-  <script src='/static/js/jquery.cookie.js'></script>  
-  <script src="/static/js/mustache.js"></script>
-  <script src="/static/js/bootstrap.min.js"></script>
-  <script src="/static/js/bootstrap-modalmanager.js"></script>
-  <script src="/static/js/bootstrap-modal.js"></script>
-  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-  <script src="/static/js/apa_templates.js"></script>
-  <script src="/static/js/mla_templates.js"></script>
-  <script src='/static/js/citations.js'></script>
+    #navbar {
+      padding-left: 12.5%;
+      padding-right: 12.5%;
+    }
 
+  </style>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script type="text/javascript" src='/static/js/http_verbs.js'></script>  
+  <script type="text/javascript" src='/static/js/jquery.cookie.js'></script>  
+  <script type="text/javascript" src="/static/js/mustache.js"></script>
+  <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/static/js/bootstrap-modalmanager.js"></script>
+  <script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  <script type="text/javascript" src="/static/js/apa_templates.js"></script>
+  <script type="text/javascript" src="/static/js/mla_templates.js"></script>
+  <script type="text/javascript" src='/static/js/citations.js'></script>
+  <script type="text/javascript" src='/static/js/edit_citations.js'></script>
+  <script type="text/javascript" src='/static/js/insert_citations.js'></script>
 
 
 </head>
@@ -57,17 +66,15 @@
     });
     $('#collections-list').tab();
   
-    $(document).on('ajaxStop', function () { 
+    $(document).one('ajaxStop', function () { 
       render_citations();
-      //$("#citations-table").sortable({ items: "tr" });
-      $("table.citation").sortable({items: "tr"});
-    
+      paste_init();
     });
   </script>
 <!-- navbar begin --> 
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
-      <div class="container">
+      <div id="navbar" class="container-fluid">
         <ul class="nav"> 
           <li><a class="brand" href="#">Publications</a></li>
           <li><a href="#" class="pull-left"><i class="icon-home"></i></a></li>
@@ -77,26 +84,22 @@
         </form>
         
         <ul class="nav pull-right">
-          <li><a class="dropdown-toggle" data-toggle="dropdown" href="#">Signed in as [placeholder] <b class="caret"></b></a>
-              <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                <li><a href="#">My Account</a></li>
-              </ul>
-          </li>  
-		  <li><a href="#">Sign out</a></li>
+         <li>Show collections belonging to: <select id="proxy-list"></select></li>
+    		 <li><a href="#">Sign out</a></li>
         </ul>    
       </div>  
     </div>
   </div>
   <!-- navbar end -->
   
-  <div class="container" id="collections-content">
+  <div class="container-fluid" id="collections-content">
  
    <div class="main-view"> <!-- TODO: fix tab-content class -->
       <div class="tab-pane active" id="tab-all">
 
 
         <!-- COLLECTION HEADER -->
-        <h2>My Citations 
+        <h2>My Citations</h2> 
 
         <div class="btn-toolbar pull-right">
           <div class="btn-group">
@@ -116,27 +119,16 @@
             </ul>
           </div>
           <a href="#editPane" role="button" class="btn" data-toggle="modal"><i class="icon-pencil"></i></a>
-          <a href="#pastePane" role="button" class="btn" data-toggle="modal">Paste citations</a>
-          <a class="btn"><i class="icon-remove"></i></a>
+                   <a class="btn"><i class="icon-remove"></i></a>
         </div>
+        
+        <a href="#pastePane" id="pasteButton" role="button" class="btn dropdown" data-toggle="modal">Add citations</a>
+          
+
         </h2>
  
    </div>
     
-        <!-- CITATIONS -->
-<!---
-        <div class="dropdown" align="left">
-          Display format:     
-          <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#">APA <i class="icon-caret-alt"></i> </a> 
-            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-              <li>APA <b class="icon-ok"></b></li>
-              <li>MLA</li>
-              <li>EndNote</li>
-              <li>Bibtex</li>
-            </ul>
-        </div>
-  --->
-
         <div align="left">
           Display format:
           <select id="format-control" onchange="render_citations(this.value)">
@@ -154,9 +146,10 @@
 
   <!-- Modal edit pane --> 
   <div id="pastePane" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="pastePane" aria-hidden="true">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
-      <h4>Paste citations into the field below</h4>
+    <div id="pasteHeader" class="modal-header">
+      <p>&nbsp;<button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button></p>
+      <div class="pull-right"><p>Add citations to: <select id="addCollectionsList"></select></p></div>
+      <h4><p>Paste citations into the field below</p></h4>
     </div>
     <div class="modal-body">
       <textarea id="pasteArea" class="input-block-level" rows="20" autofocus>Paste your citations here.</textarea><br />
@@ -169,9 +162,9 @@
       <h4>Editing [citation no. placeholder]</h4>
     </div>
     <div class="modal-body">
-      <div class="row-fluid">
-        
-        <div class="span6">
+    <div class="row-fluid">
+      
+	    <div class="span6">  <!-- Authors, Title, Year --> 
           <p>Author Names (Lastname, Firstname)</p>
           <p><input type="text" class="span12"></p>
           <p><input type="text" class="span12"></p>
@@ -181,31 +174,44 @@
           <p><input type="text" class="span12"></p>
           <p><input type="text" class="span12"></p>
           <button class="btn" align="center">Add more authors <i class="icon-plus"></i></button><br />
-          Title: <input type="text" class="field span12">
-          Year: <input type="text" class="field span12">
-        </div>
-        <div class="span6">
+          Title: <input type="text" id="title" class="field span12">
+          Year: <input type="text" id="year" class="field span12">
+        </div>  <!-- Authors, Title, Year --> 
+		
+        <div class="span6">  <!-- Raw...Note --> 
           <p>Raw text: <br />
-          <textarea class="field span12" rows="3"></textarea><br /> 
+          <textarea id="raw" class="field span12" rows="3"></textarea><br /> 
           Preview: [placeholder preview]</p>
           <p>Abstract:
-          <textarea class="field span12" rows="3"></textarea>
+          <textarea id="abstract" class="field span12" rows="3"></textarea>
            
           Keywords:
-          <textarea class="field span12" rows="3"></textarea>
+          <textarea id="keywords" class="field span12" rows="3"></textarea>
           </p>
           <p>doi:
-          <input class="field span12" type="text"><br />
+          <input id="doi" class="field span12" type="text"><br />
           URL:
-          <input class="field span12" type="text">
+          <input id="url" class="field span12" type="text">
           Note:
-          <input class="field span12" type="text">
+          <input id="note" class="field span12" type="text">
           </p>
-        </div>           
+        </div>     <!-- Raw...Note -->        
        
-                <li>&nbsp;In Proceedings</li>
-                <li>&nbsp;Proceedings</li>
-              </ul><br />
+            </div> <!-- row-fluid -->  
+			
+			<div class="row-fluid">   <!-- row-fluid -->    
+		  <div class="span6" style="background-color:yellow">  <!-- Pubtype --> 
+            Publication Type:
+			<select id="pubtype" onchange="alert(4)" class="form-control">
+            <option value="auth_string">Article</option>
+            <option value="year">Book</option>
+            <option value="year_desc">Edited Book</option>
+            </select>
+		  </div> <!-- Pubtype --> 
+		  </div>  <!-- row-fluid -->  
+		  
+		  <div class="row-fluid">  <!-- row-fluid -->  
+		  <div class="span3">  <!-- Journal, Vol, Num --> 
               <form class="form-inline">
                 <div class="control-group">
                   <label class="control-label" for="journal">Journal: </label>
@@ -222,9 +228,10 @@
                   <div class="controls"><input type="text" id="number"></div>
                 </div>      
               </form>
-          </div>
-          <div class="span3">
-            <br /> 
+          </div> <!-- Journal, Vol, Num --> 
+		  
+		  
+          <div class="span3">  <!-- Pages, Month --> 
             <form class="form-inline">  
                 <div class="control-group">
                   <label class="control-label" for="pages">Pages: </label>
@@ -236,22 +243,21 @@
                   <div class="controls"><input type="text" id="month"></div>
                 </div> 
             </form>
-          </div>
-        </div>
-<div class="modal-footer">
+          </div>  <!-- Pages, Month --> 
+		  
+      </div> <!-- row-fluid --> 
+
+    </div>
+    <div class="modal-footer">
       <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
       <button class="btn btn-primary">Save changes</button>
     </div>
 
-      </div> 
+  </div> 
     
-    </div>
-      </div>
 
 
    
-    <script src="/static/js/citations.js"></script>
-    <script src="/static/js/insert_citations.js"></script>
   </body>
 
 </html>

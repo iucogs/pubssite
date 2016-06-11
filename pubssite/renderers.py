@@ -1,7 +1,9 @@
+#!/var/pubs/pubssite/pubsenv/bin/python
+# -*- coding: utf-8 -*-
+
 import customjson
-import pystache
 import os
-from pyramid.asset import abspath_from_asset_spec
+#from pyramid.asset import abspath_from_asset_spec
 
 class PubsJSONRenderer: 
         def __init__(self, info): 
@@ -27,12 +29,4 @@ class PubsJSONRenderer:
                                 request.response.headerlist.append(('Access-Control-Allow-Origin', '*'))
                 return customjson.dumps(value) 
 
-def pystache_renderer_factory(info):
-    template = os.path.join(abspath_from_asset_spec('pubssite:templates', False),
-                            info.name)
-    f = open(template) 
-    s = f.read() 
-    f.close() 
-    def _render(value, system):
-        return pystache.render(s, value)
-    return _render
+

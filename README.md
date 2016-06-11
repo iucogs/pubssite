@@ -1,5 +1,4 @@
-pubssite README
-==================
+#pubssite README
 
 ## API documentation
 
@@ -28,13 +27,6 @@ Notes: Our project currently is using the excellent
 [Anystyle](http://anystyle.io) parser. We're still training it and working to
 improve its accuracy.
    
-<!--- <a name="citation_update"></a>
-**Update a citation**   
-URL: `http://nupubs.cogs.indiana.edu/citation/`   
-Method: `PUT`   
-Input: An updated JSON encoded citation in the JSON body of the request
-Output: JSON reflecting the changes made by the update   
-   -->
 <a name="citation_by_id"></a>
 **Retrieve one or more citations by their IDs**   
 URL: `http://nupubs.cogs.indiana.edu/citation/[IDs]   
@@ -76,7 +68,7 @@ Input: A collection's ID. e.g.
    
 Output: A JSON-encoded representation of the collection   
    
-<a name="collection_by_owner></a>
+<a name="collection_by_owner"></a>
 **Retrieve a list of collections belonging to a given user**   
 URL: `http://nupubs.cogs.indiana.edu/collection/owner/[owner]`   
 Method: `GET`   
@@ -87,16 +79,36 @@ Input: A nupubs user. e.g.
 Output: A list of JSON-encoded collections   
 
 
-Getting Started
----------------
+## Installing Pubssite
 
-- cd <directory containing this file>
+### Installing MySQL Database
+1.  Download and install [MySQL Community Server 5.5](https://dev.mysql.com/downloads/mysql/5.5.html):
+    - **Debian/Ubuntu:** `sudo apt-get install mysql-server-5.5 libmysqlclient-dev` 
+2.  Download a database mirror (contact [Jaimie](mailto:jammurdo@indiana.edu)).
+3.  Import the database using the MySQL 5.5 Command Line Client (run `mysql` at a terminal or use the desktop shortcut):
+    - `CREATE DATABASE pubs; USE pubs; source pubs.backup.sql`
 
-- $venv/bin/pip install --editable .
+### Installing `pubssite` Python Code
+1.  Install the [Anaconda Python 2.7 Distribution](http://continuum.io/downloads).
+2.  Open a terminal and run `git clone git@github.com:iucogs/pubssite.git`
+3.  In the terminal run `cd pubssite` to access the folder.
+4.  `python setup.py develop` will install the package and all dependencies.
 
-- gem install --user-install anystyle-parser
+### Configuring the `pubs.ini` File
+1.  Open the repository folder.
+2.  Copy `pubs.ini.template` to `pubs.ini`
+3.  Edit the `pubs.ini` template file:
+    -  Change the directive `url = ...` to `url = mysql://user:password@localhost:3306/pubs?charset=utf8&use_unicode=1`.
+        -  **Note:** Replace `user` and `password` with your mysql username (*i.e.*, `root`) and password.
 
-- $venv/bin/populate_pubssite development.ini
+### Installing Ruby and `anystyle` parser:
+1.  Install Ruby:
+    -  **Windows:** [RubyInstaller](http://rubyinstaller.org/downloads/), then follow the directions for installing the "Development Kit", which has download links on the left column under the Ruby downloads.
+    -  **Ubuntu/Debian:** `sudo apt-get install ruby-dev build-essential`
+2.  Install anystyle from terminal: `gem install --user-install anystyle-parser`
+3.  If the user-install complains about not being in the `PATH`, then follow the directions at the [Ruby Gems site](http://guides.rubygems.org/faqs/#user-install)
 
-- $venv/bin/pserve development.ini
+## Launching the API
+From the repository directory, run `pserve development.ini`.
 
+Open a browser and go to [http://localhost:6543/](http://localhost:6543/) to see the website running.

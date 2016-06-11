@@ -56,7 +56,7 @@ var apa_templates = {"": "{{#authors}}{{authors}}{{/authors}} {{^authors}}<b>[UN
                                        {{#year}} ({{year}}). {{/year}}{{^year}} <b>[UNKNOWN YEAR].</b> {{/year}} \
                                        Retrieved from: {{#url}}{{url}}{{/url}}{{^url}}[UNKNOWN URL]{{/url}}",
 
-                     "proceedings": "{{#authors}}{{authors}}{{/authors}}{{^authors}}<b>[UNKNOWN AUTHOR].</b> {{/authors}} \
+                     "inproceedings": "{{#authors}}{{authors}}{{/authors}}{{^authors}}<b>[UNKNOWN AUTHOR].</b> {{/authors}} \
                                      {{#year}} ({{year}}). {{/year}}{{^year}}<b>[UNKNOWN YEAR]. </b>{{/year}} \
                                      {{#title}}<i>{{title}}</i>. {{/title}}{{^title}} <b>[UNKNOWN TITLE]. </b>{{/title}} \
                                      {{#pages}} {{pages}}{{/pages}}.{{^pages}}<b>[UNKNOWN PAGES].</b>{{/pages}} \
