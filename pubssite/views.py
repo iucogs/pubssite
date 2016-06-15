@@ -308,6 +308,7 @@ def collection_by_id(request):
     Session.commit()
     if not collection:
         return HTTPNotFound()
+    print collection.json
     return collection.json
 
 # returns a list of collection objects association with an owner
@@ -323,11 +324,10 @@ def collections_by_owner(request):
     return [collection.json for collection in collections]
 
 
-@view_config(route_name='get_user_by_name', request_method='GET',
-             permission='user')
+@view_config(route_name='get_user_by_name', request_method='GET', renderer='pubs_json')
 def get_user_by_name(request):
-    user = str(request.matchdict.get('user', -1))
-    res = Session.query(User).filter(User.lastname + ","+ User.firstname).like(user)
+    user =request.matchdict.get('user', -1)
+    res = Session.query(User).filter(User.lastname.ilike('%%%s%%' %(user.lower())))
     Session.commit()
     if not res:
         return {}
