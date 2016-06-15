@@ -326,13 +326,14 @@ def collections_by_owner(request):
 
 @view_config(route_name='get_user_by_name', request_method='GET', renderer='pubs_json')
 def get_user_by_name(request):
+    dictfilt = lambda x, y: dict([ (i,x[i]) for i in x if i in set(y) ])
     user =request.matchdict.get('user', -1)
     res = Session.query(User).filter(User.lastname.ilike('%%%s%%' %(user.lower())))
     Session.commit()
     if not res:
         return {}
     else: 
-        return [x.json for x in res]
+        return [dictfilt(x.json, ("username", "firstname", "lastname")) for x in res]
 
 
 #Merge function fot two citations
