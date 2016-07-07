@@ -48,7 +48,8 @@ def main(global_config, **settings):
     config.add_route('citation_delete', '/citation/delete/{id:\d+}')
     config.add_route('citation_update', '/citation/{id:[0-9]+(,[0-9]+)*}')
     config.add_route('citation_add', '/citation/parse')
-    config.add_route('citation_add', '/citation')
+    # TODO: split POST of /citation and parse function
+    # config.add_route('citation_add', '/citation')
         
     # Collection routes
     config.add_route('add_citation_to_collection', '/collection/{coll_id:\d+}/{cit_id:[0-9]+(,[0-9]+)*}')
