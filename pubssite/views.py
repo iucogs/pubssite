@@ -127,9 +127,9 @@ def citation_add(request):
 #TODO: add permission user
 #TODO: change new_citation to updated_citation or something. Y'know. For
 #clarity.
-@view_config(route_name='citation_update', request_method='PUT', renderer='pubs_json')
+@view_config(route_name='citation_update', request_method=('GET','PUT'), renderer='pubs_json')
 def citation_update(request):
-    new_citation = request.json_body
+    new_citation = request.matchdict.get('user', -1)
     current_citation = Session.query(Citation).get(new_citation['citation_id'])
     new_cit_authors = new_citation['authors'] 
     # following try/catch clean up the citation dict for update, making the
@@ -203,7 +203,9 @@ def delete_citation(request):
 # OUPUT: the JSON of the corresponding ID(s)
 @view_config(route_name='citation_by_id', renderer='pubs_json')
 def citation_by_id(request):
+    
     id = str(request.matchdict.get('id', -1))
+    
     citations = []
     
     # here we check for multiple citation_ids, separated by commas
@@ -262,6 +264,7 @@ def representative_publications(request):
     
     if not rep_pubs:
         return {owner: 'This user doesn\t have a My Representative Publications collection.'}
+   
     return [citation.json for citation in rep_pubs.citations]
 
 
@@ -323,7 +326,8 @@ def collections_by_owner(request):
         return HTTPNotFound()
     return [collection.json for collection in collections]
 
-
+##autocomplete function . Filters using lastname
+#returns only username , firstname and lastname. dictfilt filters the keys of dictionary
 @view_config(route_name='get_user_by_name', request_method='GET', renderer='pubs_json')
 def get_user_by_name(request):
     dictfilt = lambda x, y: dict([ (i,x[i]) for i in x if i in set(y) ])
@@ -336,18 +340,30 @@ def get_user_by_name(request):
         return [dictfilt(x.json, ("username", "firstname", "lastname")) for x in res]
 
 
-#Merge function fot two citations
-#takes two citations by id and merges them if found similar
-@view_config(route_name='merge_publications', renderer='pubs_json')
+#Merge function for two citations
+#takes two citations by id and merges 
+@view_config(route_name='merge_publications',request_method='GET',  renderer='pubs_json')
 def merge_publications(request):
-    id_one = int(request.matchdict.get('id', -1))
-    collection_one = Session.query(Collection).get(id_one)
-    id_two = int(request.matchdict.get('id', -1))
-    collection_two = Session.query(Collection).get(id_two)
+    
+    pivot_id = int(request.matchdict.get('id', -1))
+    merge_ids = map(int, str(request.matchdict.get('merge_ids', -1)).split(","))
     Session.commit()
-    if not collection_one:
+    list = []
+    #res is to be updated before using citation_update function
+    res = Session.query(Citation).get(pivot_id)
+    for item in merge_ids:
+        myjson=Session.query(Citation).get(item).json
+        myjson_keys = myjson.keys()
+        for key in myjson_keys:
+            myjson[key]= res.json.get(key)
+        list.append(myjson)
+        
+        #update item here using myjson
+        Session.execute(update(Citation).where(Citation.citation_id== item).values(myjson))
+        #Session.execute(update(Citation).where(Citation.citation_id == new_citation['citation_id']).values(new_citation))
+    return list
+    if not list:
         return HTTPNotFound()
-    if not collection_two:
-        return HTTPNotFound()
-    return [collection_one.json, collection_two.json]
+    #return res.json
+
     

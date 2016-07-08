@@ -46,8 +46,9 @@ def main(global_config, **settings):
     config.add_route('citations_by_owner', '/citation/owner/{owner:.*}')
     config.add_route('citations_by_collection', '/collection/citations/{id:\d+}')
     config.add_route('citation_delete', '/citation/delete/{id:\d+}')
-    config.add_route('citation_update', '/citation/')
+    config.add_route('citation_update', '/citation/{id:\d+}')
     config.add_route('citation_add', '/citation/parse')
+    #    config.add_route('citation_add', '/citation/')
         
     # Collection routes
     config.add_route('add_citation_to_collection', '/collection/{coll_id:\d+}/{cit_id:[0-9]+(,[0-9]+)*}')
@@ -57,7 +58,7 @@ def main(global_config, **settings):
     config.add_route('collection_delete', '/collection/delete/{id:\d+}')
 
     config.add_route('get_user_by_name', '/users/names/{user:.*}')
-    config.add_route('merge_publications', '/merge/{id:[0-9]+(,[0-9]+)*}')
+    config.add_route('merge_publications', 'citation/{id:[0-9]+(,[0-9]+)*}/merge/{merge_ids:[0-9]+(,[0-9]+)*}')
 
     config.add_route('remove_citation_from_collection', '/collection/{coll_id:[0-9]+}/{cit_id:[0-9]+}')
 
@@ -68,3 +69,4 @@ def main(global_config, **settings):
     config.scan()
     return config.make_wsgi_app()
 
+    
