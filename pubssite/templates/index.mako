@@ -9,14 +9,36 @@
   <meta name="author" content="Patrick Craig, COGS Codeman">
 
   <!-- Bootstrap -->
-  <link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-  <link href="/static/css/bootstrap-modal.css" rel="stylesheet" type="text/css">
-
-
    <!-- HTML5 shim, support pour le internet ancien -->
    <!-- [if lt IE 9]>
      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
    <![endif]-->
+
+  <!-- jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <script type="text/javascript" src='/static/js/jquery.cookie.js'></script>  
+  <script src="/static/js/jquery.validate.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+  <!-- Bootstrap -->
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/static/js/bootstrap-modalmanager.js"></script>
+  <script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>
+
+  <!-- Mustache -->
+  <script src="/static/js/mustache.js"></script>
+
+  <!-- Pubs -->
+  <script type="text/javascript" src='/static/js/edit.js'></script>
+  <script type="text/javascript" src="/static/js/citations.js"></script>
+  <script type="text/javascript" src='/static/js/insert_citations.js'></script>
+
+
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/css/reset.css">
+	<link rel="stylesheet" href="/static/css/style.css">
 
   <style type="text/css">
     body {
@@ -39,19 +61,6 @@
     }
 
   </style>
-  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-  <script type="text/javascript" src='/static/js/http_verbs.js'></script>  
-  <script type="text/javascript" src='/static/js/jquery.cookie.js'></script>  
-  <script type="text/javascript" src="/static/js/mustache.js"></script>
-  <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="/static/js/bootstrap-modalmanager.js"></script>
-  <script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>
-  <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-  <script type="text/javascript" src="/static/js/apa_templates.js"></script>
-  <script type="text/javascript" src="/static/js/mla_templates.js"></script>
-  <script type="text/javascript" src='/static/js/citations.js'></script>
-  <script type="text/javascript" src='/static/js/edit_citations.js'></script>
-  <script type="text/javascript" src='/static/js/insert_citations.js'></script>
 
 
 </head>
@@ -157,104 +166,9 @@
     </div>
   </div>
   <div id="editPane" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="editPane" aria-hidden="true">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
-      <h4>Editing [citation no. placeholder]</h4>
-    </div>
-    <div class="modal-body">
-    <div class="row-fluid">
-      
-	    <div class="span6">  <!-- Authors, Title, Year --> 
-          <p>Author Names (Lastname, Firstname)</p>
-          <p><input type="text" class="span12"></p>
-          <p><input type="text" class="span12"></p>
-          <p><input type="text" class="span12"></p>
-          <p><input type="text" class="span12"></p>
-          <p><input type="text" class="span12"></p>
-          <p><input type="text" class="span12"></p>
-          <p><input type="text" class="span12"></p>
-          <button class="btn" align="center">Add more authors <i class="icon-plus"></i></button><br />
-          Title: <input type="text" id="title" class="field span12">
-          Year: <input type="text" id="year" class="field span12">
-        </div>  <!-- Authors, Title, Year --> 
-		
-        <div class="span6">  <!-- Raw...Note --> 
-          <p>Raw text: <br />
-          <textarea id="raw" class="field span12" rows="3"></textarea><br /> 
-          Preview: [placeholder preview]</p>
-          <p>Abstract:
-          <textarea id="abstract" class="field span12" rows="3"></textarea>
-           
-          Keywords:
-          <textarea id="keywords" class="field span12" rows="3"></textarea>
-          </p>
-          <p>doi:
-          <input id="doi" class="field span12" type="text"><br />
-          URL:
-          <input id="url" class="field span12" type="text">
-          Note:
-          <input id="note" class="field span12" type="text">
-          </p>
-        </div>     <!-- Raw...Note -->        
-       
-            </div> <!-- row-fluid -->  
-			
-			<div class="row-fluid">   <!-- row-fluid -->    
-		  <div class="span6" style="background-color:yellow">  <!-- Pubtype --> 
-            Publication Type:
-			<select id="pubtype" onchange="alert(4)" class="form-control">
-            <option value="auth_string">Article</option>
-            <option value="year">Book</option>
-            <option value="year_desc">Edited Book</option>
-            </select>
-		  </div> <!-- Pubtype --> 
-		  </div>  <!-- row-fluid -->  
-		  
-		  <div class="row-fluid">  <!-- row-fluid -->  
-		  <div class="span3">  <!-- Journal, Vol, Num --> 
-              <form class="form-inline">
-                <div class="control-group">
-                  <label class="control-label" for="journal">Journal: </label>
-                  <div class="controls"><input type="text" id="journal"></div>
-                </div>
-                
-                <div class="control-group">
-                  <label class="control-label" for="volume">Volume: </label>
-                  <div class="controls"><input type="text" id="volume"></div>
-                </div>
-                
-                <div class="control-group">
-                  <label class="control-label" for="number">Number: </label>
-                  <div class="controls"><input type="text" id="number"></div>
-                </div>      
-              </form>
-          </div> <!-- Journal, Vol, Num --> 
-		  
-		  
-          <div class="span3">  <!-- Pages, Month --> 
-            <form class="form-inline">  
-                <div class="control-group">
-                  <label class="control-label" for="pages">Pages: </label>
-                  <div class="controls"><input type="text" id="pages"></div>
-                </div>
-                
-                <div class="control-group">
-                  <label class="control-label" for="month">Month: </label>
-                  <div class="controls"><input type="text" id="month"></div>
-                </div> 
-            </form>
-          </div>  <!-- Pages, Month --> 
-		  
-      </div> <!-- row-fluid --> 
-
-    </div>
-    <div class="modal-footer">
-      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-      <button class="btn btn-primary">Save changes</button>
-    </div>
-
+    <%include file="edit.mako" />
   </div> 
-    
+
 
 
    

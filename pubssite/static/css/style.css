@@ -1,0 +1,68 @@
+.container{
+  padding: 5px;
+}
+.textbox{
+  border: 1px solid;
+  border-radius:5px;
+  height: 30px;
+}
+.dropdown{
+  border: 1px solid;
+  border-radius:5px;
+  height: 30px;
+}
+#control-buttons{
+  margin: 10px;
+  text-align:center;
+}
+#table-buttons{
+  margin: 10px;
+  text-align:center;
+}
+#preview-rawtext{
+  text-align:left;
+  overflow-y:scroll;
+  height: 100px;
+}
+#preview-pane{
+  text-align:center;
+}
+#pubsid{
+  margin:10px;
+}
+
+.form-group{
+  margin-bottom: 0px;
+}
+
+.radio input[type=radio] {
+  margin-left: 0px;
+  margin-top: 0px;
+}
+
+thead { font-weight: bold; }
+
+.table-borderless tbody tr td, .table-borderless tbody tr th, .table-borderless thead tr th {
+    border: none;
+}
+td{
+  text-align:center;
+  vertical-align: middle;
+}
+tr td{
+ margin: 0;
+}
+.checkbox-label{
+    display:block;
+}
+.table{
+    border-collapse: collapse;
+  border-spacing: 0;
+}
+.error{
+  border-color: red
+}
+.disabledPointer{
+  pointer-events: none;
+    opacity: 1.0;
+}
