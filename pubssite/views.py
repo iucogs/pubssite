@@ -127,12 +127,13 @@ def citation_add(request):
 #TODO: add permission user
 #TODO: change new_citation to updated_citation or something. Y'know. For
 #clarity.
-@view_config(route_name='citation_update', request_method='PUT', renderer='pubs_json')
+@view_config(route_name='citation_id', request_method='PUT', renderer='pubs_json')
 def citation_update(request):
 
     new_citation = request.json_body
+
     current_citation = Session.query(Citation).get(new_citation['citation_id'])
-    id = str(request.matchdict.get('id', -1))
+    id = int(request.matchdict.get('id', -1))
     if new_citation['citation_id'] != id:
         raise HTTPBadRequest('id in URL does not match citation_id in JSON body')
 
@@ -206,7 +207,7 @@ def delete_citation(request):
 # INPUT: A request object containing a single citation ID or a list of IDs 
 # delimited by commas
 # OUPUT: the JSON of the corresponding ID(s)
-@view_config(route_name='citation_by_id', renderer='pubs_json')
+@view_config(route_name='citation_id', renderer='pubs_json')
 def citation_by_id(request):
     id = str(request.matchdict.get('id', -1))
     citations = []

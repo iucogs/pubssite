@@ -42,11 +42,10 @@ def main(global_config, **settings):
 
     # Citation routes
     config.add_route('representative_publications', '/citation/rep_pubs/{owner:.*}')
-    config.add_route('citation_by_id', '/citation/{id:[0-9]+(,[0-9]+)*}')
+    config.add_route('citation_id', '/citation/{id:[0-9]+(,[0-9]+)*}')
     config.add_route('citations_by_owner', '/citation/owner/{owner:.*}')
     config.add_route('citations_by_collection', '/collection/citations/{id:\d+}')
     config.add_route('citation_delete', '/citation/delete/{id:\d+}')
-    config.add_route('citation_update', '/citation/{id:[0-9]+(,[0-9]+)*}')
     config.add_route('citation_add', '/citation/parse')
     # TODO: split POST of /citation and parse function
     # config.add_route('citation_add', '/citation')
