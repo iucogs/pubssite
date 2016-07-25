@@ -118,6 +118,15 @@ member_of_collection = Table('member_of_collection', Base.metadata,
     Column('citation_id', Integer, ForeignKey('citations.citation_id'))
     )
 
+section_of = Table('section_of', Base.metadata,
+                   Column('citation_id', Integer, ForeignKey('citations.citation_id')),
+                   Column('section_title', String),
+                   Column('collection_id', Integer, ForeignKey('collections.collection_id')))
+
+represent_pubs_of = Table('represent_pubs_of', Base.metadata,
+                          Column('user_id', Integer, primary_key= True), 
+                          Column('citation_id', Integer, ForeignKey('citations.citation_id'), primary_key= True))
+
 class Collection(Base):
     __tablename__ = 'collections'
     __table_args__ = {'autoload' : True}

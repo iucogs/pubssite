@@ -127,7 +127,7 @@ def citation_add(request):
 #TODO: add permission user
 #TODO: change new_citation to updated_citation or something. Y'know. For
 #clarity.
-@view_config(route_name='citation_update', request_method=('GET','PUT'), renderer='pubs_json')
+@view_config(route_name='citation_update', request_method='PUT', renderer='pubs_json')
 def citation_update(request):
     new_citation = request.matchdict.get('user', -1)
     current_citation = Session.query(Citation).get(new_citation['citation_id'])
@@ -347,7 +347,7 @@ def merge_publications(request):
     
     pivot_id = int(request.matchdict.get('id', -1))
     merge_ids = map(int, str(request.matchdict.get('merge_ids', -1)).split(","))
-    Session.commit()
+    
     list = []
     #res is to be updated before using citation_update function
     res = Session.query(Citation).get(pivot_id)
@@ -358,8 +358,21 @@ def merge_publications(request):
             myjson[key]= res.json.get(key)
         list.append(myjson)
         
-        #update item here using myjson
-        Session.execute(update(Citation).where(Citation.citation_id== item).values(myjson))
+        Session.execute(update(member_of_collection).where(member_of_collection.columns.citation_id==item).values(citation_id=myjson['citation_id']))
+        
+        #update item here using myjsonll
+        #Session.execute(update(author_of).where(author_of.citation_id==item).values(pivot_id))
+        
+        #Session.execute(update(author_of).where(author_of.citation_id==item).values(author_of.columns.citation_id=myjson['citation_id']))
+        # Session.execute(update(Citation).where(Citation.citation_id== item).values(pubtype = myjson['pubtype'], abstract = myjson['abstract'],keywords = myjson['keywordsl'],
+                                                                                   # doi = myjson['doi'],url = myjson['url'], address= myjson['address'], booktitle= myjson['booktitle'],
+                                                                                    # chapter= myjson['chapter'], crossref= myjson['crossref'], edition= myjson['edition'], editor= myjson['editor'],
+                                                                                     # translator= myjson['translator'], howpublished= myjson['howpublished'], institution= myjson['institution'], journal= myjson['journal'],
+                                                                                      # bibtex_key= myjson['bibtex_key'], month= myjson['month'], note= myjson['note'], number= myjson['number'],organization= myjson['organization'],
+                                                                                      # pages= myjson['pages'],publisher= myjson['publisher'],location= myjson['location'],school= myjson['school'],series= myjson['series'],
+                                                                                      # title= myjson['title'],type= myjson['type'],volume= myjson['volume'],year= myjson['year'],year= myjson['year'],year= myjson['year'],
+                                                                                      # year= myjson['year'],year= myjson['year'],year= myjson['year']))
+        Session.commit()
         #Session.execute(update(Citation).where(Citation.citation_id == new_citation['citation_id']).values(new_citation))
     return list
     if not list:

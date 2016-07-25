@@ -46,7 +46,7 @@ def main(global_config, **settings):
     config.add_route('citations_by_owner', '/citation/owner/{owner:.*}')
     config.add_route('citations_by_collection', '/collection/citations/{id:\d+}')
     config.add_route('citation_delete', '/citation/delete/{id:\d+}')
-    config.add_route('citation_update', '/citation/{id:\d+}')
+    config.add_route('citation_update', '/citation/edit/{id:\d+}')
     config.add_route('citation_add', '/citation/parse')
     #    config.add_route('citation_add', '/citation/')
         
