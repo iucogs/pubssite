@@ -59,6 +59,7 @@ def main(global_config, **settings):
 
     config.add_route('get_user_by_name', '/users/names/{user:.*}')
     config.add_route('merge_publications', 'citation/{id:[0-9]+(,[0-9]+)*}/merge/{merge_ids:[0-9]+(,[0-9]+)*}')
+    config.add_route('show_similar_to', '/citation/similarto/{id:\d+}')
 
     config.add_route('remove_citation_from_collection', '/collection/{coll_id:[0-9]+}/{cit_id:[0-9]+}')
 

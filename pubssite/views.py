@@ -10,9 +10,10 @@ from pyramid.security import (remember, forget,)
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound
 from sqlalchemy.sql import exists
 from sqlalchemy.exc import DBAPIError
-from sqlalchemy import (update, insert, and_,)
+from sqlalchemy import (update, insert, and_)
 from .models import *
 from .citation_format import *
+from sqlalchemy.sql import select
 
 # Dev note: flushes at the beginning of get views are for consistency between
 # developer versions.
@@ -130,7 +131,8 @@ def citation_add(request):
 @view_config(route_name='citation_update', request_method='PUT', renderer='pubs_json')
 def citation_update(request):
     new_citation = request.matchdict.get('user', -1)
-    current_citation = Session.query(Citation).get(new_citation['citation_id'])
+    
+    current_citation = Session.query(Citation).get(new_citation['citation_id']).json
     new_cit_authors = new_citation['authors'] 
     # following try/catch clean up the citation dict for update, making the
     # incoming dict isomorphic to the table mapping.
@@ -342,41 +344,86 @@ def get_user_by_name(request):
 
 #Merge function for two citations
 #takes two citations by id and merges 
-@view_config(route_name='merge_publications',request_method='GET',  renderer='pubs_json')
+@view_config(route_name='merge_publications',request_method=('GET', 'DELETE'), renderer='pubs_json')
 def merge_publications(request):
-    
+    #merge_ids are merged into pivot_id
     pivot_id = int(request.matchdict.get('id', -1))
     merge_ids = map(int, str(request.matchdict.get('merge_ids', -1)).split(","))
     
-    list = []
-    #res is to be updated before using citation_update function
+    #update member_of_collection table. get the collections to which pivot_id belong to.
+    piv_coll_query = Session.execute(select([member_of_collection.columns.collection_id]).where(member_of_collection.columns.citation_id==pivot_id))
+    pivot_collections=[]
+    for row in piv_coll_query:
+        pivot_collections.append(row)
+    
     res = Session.query(Citation).get(pivot_id)
+    #iterate over the merge_ids separated by comma in query string
     for item in merge_ids:
+        list=[]
+        #get the collections to which the merge_id belong to
+        item_coll_query = Session.execute(select([member_of_collection.columns.collection_id]).where(member_of_collection.columns.citation_id==item))
+        merge_collections=[]
+        for row in item_coll_query:
+            merge_collections.append(row)
+        #subtract merge_collections and pivot_collections
+        merge_collections= [int(x[0]) for x in merge_collections if x not in pivot_collections]
+        #get the merge json 
         myjson=Session.query(Citation).get(item).json
+        
+        print "step one done"
+        #update the citation before deleting it.
         myjson_keys = myjson.keys()
         for key in myjson_keys:
             myjson[key]= res.json.get(key)
         list.append(myjson)
         
-        Session.execute(update(member_of_collection).where(member_of_collection.columns.citation_id==item).values(citation_id=myjson['citation_id']))
         
-        #update item here using myjsonll
-        #Session.execute(update(author_of).where(author_of.citation_id==item).values(pivot_id))
+        #add the merge collections to pivot collections
+        if not merge_collections:
+            for x in merge_collections:
+                Session.execute(member_of_collection.insert().values(collection_id=x, citation_id=pivot_id))
+        print "step two done"
+        #update the similar_to table
+        Session.execute(update(similar_to).where(similar_to.columns.citation_id1==item).values(citation_id1=pivot_id))
+        Session.execute(update(similar_to).where(similar_to.columns.citation_id2==item).values(citation_id2=pivot_id))
+        print "step three done"
+        #add the citation to deleted citations table
         
-        #Session.execute(update(author_of).where(author_of.citation_id==item).values(author_of.columns.citation_id=myjson['citation_id']))
-        # Session.execute(update(Citation).where(Citation.citation_id== item).values(pubtype = myjson['pubtype'], abstract = myjson['abstract'],keywords = myjson['keywordsl'],
-                                                                                   # doi = myjson['doi'],url = myjson['url'], address= myjson['address'], booktitle= myjson['booktitle'],
-                                                                                    # chapter= myjson['chapter'], crossref= myjson['crossref'], edition= myjson['edition'], editor= myjson['editor'],
-                                                                                     # translator= myjson['translator'], howpublished= myjson['howpublished'], institution= myjson['institution'], journal= myjson['journal'],
-                                                                                      # bibtex_key= myjson['bibtex_key'], month= myjson['month'], note= myjson['note'], number= myjson['number'],organization= myjson['organization'],
-                                                                                      # pages= myjson['pages'],publisher= myjson['publisher'],location= myjson['location'],school= myjson['school'],series= myjson['series'],
-                                                                                      # title= myjson['title'],type= myjson['type'],volume= myjson['volume'],year= myjson['year'],year= myjson['year'],year= myjson['year'],
-                                                                                      # year= myjson['year'],year= myjson['year'],year= myjson['year']))
+        Session.execute(deleted_citations.insert().values(pubtype = myjson['pubtype'], abstract = myjson['abstract'],keywords = myjson['keywords'],
+                                                                                    doi = myjson['doi'],url = myjson['url'], address= myjson['address'], booktitle= myjson['booktitle'],
+                                                                                    chapter= myjson['chapter'], crossref= myjson['crossref'], edition= myjson['edition'], editor= myjson['editor'],
+                                                                                    translator= myjson['translator'], howpublished= myjson['howpublished'], institution= myjson['institution'], journal= myjson['journal'],
+                                                                                    bibtex_key= myjson['bibtex_key'], month= myjson['month'], note= myjson['note'], number= myjson['number'],organization= myjson['organization'],
+                                                                                    pages= myjson['pages'],publisher= myjson['publisher'],location= myjson['location'],school= myjson['school'],series= myjson['series'],
+                                                                                    title= myjson['title'],type= myjson['type'],volume= myjson['volume'],year= myjson['year'],raw= myjson['raw'],verified= myjson['verified'],
+                                                                                    last_modified= myjson['last_modified'],entryTime= myjson['entryTime'], citation_id=item, reason= "merged"))
+        
+        print "step four done"
+        #delete the citation
+        citation = Session.query(Citation).get(item)
+        if item:
+            Session.delete(citation)
+        print "done"
         Session.commit()
-        #Session.execute(update(Citation).where(Citation.citation_id == new_citation['citation_id']).values(new_citation))
-    return list
-    if not list:
+    if not myjson:
         return HTTPNotFound()
-    #return res.json
+    return "successfully merged"
 
-    
+
+#returns false if there are no similar citations
+#returns list of similar citations otherwise.
+@view_config(route_name='show_similar_to',request_method='GET', renderer='pubs_json')
+def show_similar_to(request):
+    citation_id= int(request.matchdict.get('id', -1))
+    print citation_id
+    similar_citations=[]
+    res= Session.execute(select([similar_to.columns.citation_id2]).where(similar_to.columns.citation_id1 == citation_id))
+    for row in res:
+        similar_citations.append(row)   
+    res= Session.execute(select([similar_to.columns.citation_id1]).where(similar_to.columns.citation_id2 == citation_id))
+    for row in res:
+        similar_citations.append(row)
+    similar_citations= [int(x[0]) for x in similar_citations]
+    if not similar_citations:
+        return False
+    return similar_citations

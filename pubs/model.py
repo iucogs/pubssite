@@ -163,6 +163,38 @@ proxy_of = Table('proxy_of', Base.metadata,
     Column('proxyid', Integer, ForeignKey('users.id'), primary_key=True)
     )
 
+deleted_citations= Table('deleted_citations', Base.metadata, 
+                        Column('id', Integer, primary_key=True, autoincrement=True),
+                        Column('author0ln', String),Column('author0fn', String),
+                        Column('author1ln', String),Column('author1fn', String),
+                        Column('author2ln', String),Column('author2fn', String),
+                        Column('author3ln', String),Column('author3fn', String),
+                        Column('author4ln', String),Column('author4fn', String),
+                        Column('author5ln', String),Column('author5fn', String),
+                        Column('citation_id', Integer),Column('user_id', Integer),
+                        Column('pubtype', String),Column('cit_key', String),
+                        Column('abstract', String),Column('keywords', String),
+                        Column('doi', String),Column('url', String),
+                        Column('address', String),Column('annote', String),
+                        Column('author', String),Column('booktitle', String),
+                        Column('chapter', String),Column('crossref', String),
+                        Column('edition', String),Column('editor', String),
+                        Column('translator', String),Column('howpublished', String),
+                        Column('institution', String),Column('journal', String),
+                        Column('bibtex_key', String),Column('month', String),
+                        Column('note', String),Column('number', String),
+                        Column('organization', String),Column('pages', String),
+                        Column('publisher', String),Column('location', String),
+                        Column('school', String),Column('series', String),
+                        Column('title', String),Column('type', String),
+                        Column('volume', String),Column('year', String),
+                        Column('raw', String),Column('verified', Integer),
+                        Column('format', String),Column('filename', String),
+                        Column('submitter', String),Column('owner', String),
+                        Column('entryTime', Float),Column('last_modified', Float),
+                        Column('date_retrieved', String),Column('collections', String),
+                        Column('similar_to', String),Column('reason', String),
+                        Column('deleted_timestamp', Float))
 class User(Base):
     __tablename__ = 'users'
 
