@@ -290,10 +290,10 @@ def author_most_recent(request):
 # INPUT: request object containing the ID of the collection to be deleted
 # OUTPUT: A message relaying the success of the operation
 # TODO: make sure the user can only delete their own collections
-@view_config(route_name='collection_delete', request_method='DELETE',
-             permission='user')
+@view_config(route_name='collection_delete', request_method='DELETE', renderer='pubs_json')
 def delete_collection(request):
     id = int(request.matchdict.get('id', -1))
+    print id
     collection = Session.query(Collection).get(id)
     if collection:
         Session.delete(collection)
@@ -323,6 +323,7 @@ def collection_by_id(request):
 def collections_by_owner(request):
     owner = str(request.matchdict.get('owner', -1))
     collections = Session.query(Collection).filter(Collection.owner == owner).all()
+    print len(collections)
     Session.commit()
     if not collections:
         return HTTPNotFound()
@@ -344,7 +345,7 @@ def get_user_by_name(request):
 
 #Merge function for two citations
 #takes two citations by id and merges 
-@view_config(route_name='merge_publications',request_method=('GET', 'DELETE'), renderer='pubs_json')
+@view_config(route_name='merge_publications',request_method=('GET','PUT', 'DELETE'), renderer='pubs_json')
 def merge_publications(request):
     #merge_ids are merged into pivot_id
     pivot_id = int(request.matchdict.get('id', -1))
@@ -409,13 +410,43 @@ def merge_publications(request):
         return HTTPNotFound()
     return "successfully merged"
 
+@view_config(route_name='search_by_cit_id', request_method='GET', renderer='pubs_json')
+def search_by_cit_id(request):
+    #dictfilt = lambda x, y: dict([ (i,x[i]) for i in x if i in set(y) ])
+    item =request.matchdict.get('id', -1)
+    res = Session.query(Citation).get(item)
+    Session.commit()
+    if not res:
+        return {}
+    else: 
+        return res.json
 
+@view_config(route_name='search_by_author_name', request_method='GET', renderer='pubs_json')
+def search_by_author_name(request):
+    #dictfilt = lambda x, y: dict([ (i,x[i]) for i in x if i in set(y) ])
+    item =request.matchdict.get('name', -1)
+    
+    res = Session.query(Author).filter(Author.lastname.ilike('%%%s%%' %(item.lower())))
+    fres= Session.query(Author).filter(Author.firstname.ilike('%%%s%%' %(item.lower())))
+    auth_list=[]
+    for x in res:
+        auth_list.append(x.json.get('author_id'))
+    for x in fres:
+        auth_list.append(x.json.get('author_id'))
+    cit_list=[]
+    for item in auth_list:
+        cit_list= Session.query(author_of).filter(author_of.columns.author_id == item)
+        print cit_list
+    Session.commit()
+    if not res:
+        return {}
+    else: 
+        return cit_list
 #returns false if there are no similar citations
 #returns list of similar citations otherwise.
 @view_config(route_name='show_similar_to',request_method='GET', renderer='pubs_json')
 def show_similar_to(request):
     citation_id= int(request.matchdict.get('id', -1))
-    print citation_id
     similar_citations=[]
     res= Session.execute(select([similar_to.columns.citation_id2]).where(similar_to.columns.citation_id1 == citation_id))
     for row in res:
@@ -427,3 +458,15 @@ def show_similar_to(request):
     if not similar_citations:
         return False
     return similar_citations
+
+@view_config(route_name='add_citation_to_collection',request_method='PUT', renderer='pubs_json')
+def add_citation_to_collection(request):
+    myjson = request.json_body
+    coll_id = int(myjson.get("coll_id"))
+    cit_ids = myjson.get("cit_ids")
+    
+    for x in cit_ids:
+        Session.execute(member_of_collection.insert().values(collection_id=coll_id, citation_id=x))
+    Session.commit()
+    return "Success"
+

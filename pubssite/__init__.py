@@ -51,17 +51,22 @@ def main(global_config, **settings):
     #    config.add_route('citation_add', '/citation/')
         
     # Collection routes
-    config.add_route('add_citation_to_collection', '/collection/{coll_id:\d+}/{cit_id:[0-9]+(,[0-9]+)*}')
+    config.add_route('add_citation_to_collection', '/collection/{coll_id:\d+}/add/{cit_id:[0-9]+(,[0-9]+)*}')
     config.add_route('update_collection', '/collection/{id:[0-9]+}/{new_name:.*}')
     config.add_route('collection_by_id', '/collection/{id:\d+}')
     config.add_route('collections_by_owner', '/collection/owner/{owner:.*}')
     config.add_route('collection_delete', '/collection/delete/{id:\d+}')
-
+    config.add_route('remove_citation_from_collection', '/collection/delete/{coll_id:[0-9]+}/{cit_id:[0-9]+}')
+    
+    #autocomplete and search routes
     config.add_route('get_user_by_name', '/users/names/{user:.*}')
+    config.add_route('search_by_cit_id', '/search/citid/{id:[0-9]+(,[0-9]+)*}')
+    config.add_route('search_by_author_name', '/search/authorname/{name:.*}')
+    #merge and similar_to routes
     config.add_route('merge_publications', 'citation/{id:[0-9]+(,[0-9]+)*}/merge/{merge_ids:[0-9]+(,[0-9]+)*}')
     config.add_route('show_similar_to', '/citation/similarto/{id:\d+}')
 
-    config.add_route('remove_citation_from_collection', '/collection/{coll_id:[0-9]+}/{cit_id:[0-9]+}')
+    
 
     # User routes
     config.add_route('user_proxies', '/proxies/{user:.*}')
