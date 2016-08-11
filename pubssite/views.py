@@ -179,8 +179,10 @@ def citation_update(request):
     for current_author in current_authors:
         if current_author.author_id not in [author.get('author_id', []) for author in new_cit_authors]:
             current_citation.authors.remove(current_author)
-    
+
+    Session.flush()
     Session.commit()
+    Session.expire(current_citation)
     updated_cit = Session.query(Citation).get(new_citation['citation_id'])
     return updated_cit.json
 
