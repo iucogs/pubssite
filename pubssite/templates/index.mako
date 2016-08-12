@@ -149,7 +149,23 @@
     <a href="#pastePane" id="pasteButton" role="button" class="btn dropdown" data-toggle="modal">Add citations</a>
   </div>
 </div>
+  
+<!-- Modal edit pane --> 
+  <div id="pastePane" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="pastePane" aria-hidden="true">
+    <div id="pasteHeader" class="modal-header">
+      <p>&nbsp;<button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button></p>
+      <div class="pull-right"><p>Add citations to: <select id="addCollectionsList"></select></p></div>
+      <h4><p>Paste citations into the field below</p></h4>
+    </div>
+    <div class="modal-body">
+      <textarea id="pasteArea" class="input-block-level" rows="20" autofocus>Paste your citations here.</textarea><br />
+      <button id="pasteSubmit" class="btn">Submit</button>
+    </div>
+  </div>
 
+  <div id="editPane" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="editPane" aria-hidden="true">
+    <%include file="edit.mako" />
+  </div> 
 
    
   </body>
