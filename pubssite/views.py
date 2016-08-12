@@ -7,7 +7,7 @@ from pyramid.response import Response
 from pyramid.view import (notfound_view_config, view_config, forbidden_view_config,)
 from pyramid.security import (remember, forget,)
 #from .security import USERS
-from pyramid.httpexceptions import HTTPNotFound, HTTPFound
+from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPBadRequest
 from sqlalchemy.sql import exists
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy import (update, insert, and_)
@@ -128,11 +128,16 @@ def citation_add(request):
 #TODO: add permission user
 #TODO: change new_citation to updated_citation or something. Y'know. For
 #clarity.
-@view_config(route_name='citation_update', request_method='PUT', renderer='pubs_json')
+@view_config(route_name='citation_id', request_method='PUT', renderer='pubs_json')
 def citation_update(request):
-    new_citation = request.matchdict.get('user', -1)
-    
-    current_citation = Session.query(Citation).get(new_citation['citation_id']).json
+
+    new_citation = request.json_body
+
+    current_citation = Session.query(Citation).get(new_citation['citation_id'])
+    id = int(request.matchdict.get('id', -1))
+    if new_citation['citation_id'] != id:
+        raise HTTPBadRequest('id in URL does not match citation_id in JSON body')
+
     new_cit_authors = new_citation['authors'] 
     # following try/catch clean up the citation dict for update, making the
     # incoming dict isomorphic to the table mapping.
@@ -203,7 +208,7 @@ def delete_citation(request):
 # INPUT: A request object containing a single citation ID or a list of IDs 
 # delimited by commas
 # OUPUT: the JSON of the corresponding ID(s)
-@view_config(route_name='citation_by_id', renderer='pubs_json')
+@view_config(route_name='citation_id', renderer='pubs_json')
 def citation_by_id(request):
     
     id = str(request.matchdict.get('id', -1))
