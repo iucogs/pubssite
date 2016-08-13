@@ -84,12 +84,12 @@ class Citation(Base):
                      "author_of.c.contribution_type=='author')",
         secondaryjoin="Author.author_id==author_of.c.author_id") 
     
-    translators = relationship("Author", secondary=author_of, backref='citations',
+    translators = relationship("Author", secondary=author_of, backref='translations',
         primaryjoin="and_(Citation.citation_id==author_of.c.citation_id,"
                      "author_of.c.contribution_type=='translator')",
         secondaryjoin="Author.author_id==author_of.c.author_id") 
     
-    editors = relationship("Author", secondary=author_of, backref='citations',
+    editors = relationship("Author", secondary=author_of, backref='edited_volumes',
         primaryjoin="and_(Citation.citation_id==author_of.c.citation_id,"
                      "author_of.c.contribution_type=='editor')",
         secondaryjoin="Author.author_id==author_of.c.author_id") 
