@@ -37,8 +37,8 @@
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-  <!--<link rel="stylesheet" href="/static/css/reset.css">
-	<link rel="stylesheet" href="/static/css/style.css">-->
+  <!--<link rel="stylesheet" href="/static/css/reset.css">-->
+	<link rel="stylesheet" href="/static/css/style.css">
 
   <style type="text/css">
     body {

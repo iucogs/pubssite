@@ -342,7 +342,7 @@
 <div class="container-fluid">
   <!--Start of column 1-->
   <div class="col-sm-6 col-xs-12">
-    <div class="table table-borderless table-sm">
+    <div class="table table-borderless table-sm col-sm-12">
       <table class="table" id="contributors-table">  
         <thead>
           <tr>
@@ -380,7 +380,7 @@
         </tbody>
       </table>
     </div>
-    <div id="table-buttons" class="btn-grp">
+    <div id="table-buttons" class="btn-grp col-sm-12">
       <button type="button" class="btn btn-default btn-md" id="add">
         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
       </button>
@@ -468,12 +468,12 @@
 
   </div>
 </div>
-<div class="container">
-  <div id="control-buttons" class="btn-grp">
+<div class="container-fluid">
+  <div id="control-buttons" class="btn-grp col-sm-12 text-center">
     <button type="button" id="verify" class="btn btn-warning">Verify</button>
     <button type="button" id="save" class="btn btn-success">Save</button>
     <!-- <input type="submit" id="save" class="btn btn-success submit" value="Save"/> -->
-    <button type="button" id="close" class="btn btn-danger">Close</button>
+    <button type="button" id="close" class="btn btn-danger" data-dismiss="modal">Close</button>
   </div>
   <div id="errorModalContainer" class="modal fade" role="dialog"></div>
 </div>

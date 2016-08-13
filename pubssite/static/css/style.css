@@ -1,37 +1,37 @@
-.container{
+#editPane .container{
   padding: 5px;
 }
-.textbox{
+#editPane .textbox{
   border: 1px solid;
   border-radius:5px;
   height: 30px;
 }
-.dropdown{
+#editPane .dropdown{
   border: 1px solid;
   border-radius:5px;
   height: 30px;
 }
-#control-buttons{
+#editPane #control-buttons{
   margin: 10px;
   text-align:center;
 }
-#table-buttons{
+#editPane #table-buttons{
   margin: 10px;
   text-align:center;
 }
-#preview-rawtext{
+#editPane #preview-rawtext{
   text-align:left;
   overflow-y:scroll;
   height: 100px;
 }
-#preview-pane{
+#editPane #preview-pane{
   text-align:center;
 }
-#pubsid{
+#editPane #pubsid{
   margin:10px;
 }
 
-.form-group{
+#editPane .form-group{
   margin-bottom: 0px;
 }
 
@@ -40,29 +40,32 @@
   margin-top: 0px;
 }
 
-thead { font-weight: bold; }
+#editPane thead { font-weight: bold; }
 
 .table-borderless tbody tr td, .table-borderless tbody tr th, .table-borderless thead tr th {
     border: none;
 }
-td{
+
+#editPane td{
   text-align:center;
-  vertical-align: middle;
 }
-tr td{
+
+#editPane tr td{
  margin: 0;
 }
-.checkbox-label{
+
+#editPane .checkbox-label{
     display:block;
 }
-.table{
+#editPane .table{
     border-collapse: collapse;
   border-spacing: 0;
+  margin-bottom: 0;
 }
-.error{
+#editPane .error{
   border-color: red
 }
-.disabledPointer{
+#editPane .disabledPointer{
   pointer-events: none;
     opacity: 1.0;
 }
