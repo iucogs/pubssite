@@ -138,9 +138,13 @@ def citation_update(request):
     if new_citation['citation_id'] != id:
         raise HTTPBadRequest('id in URL does not match citation_id in JSON body')
 
+    del new_citation['citation_id']
+
     new_cit_authors = new_citation['authors'] 
     # following try/catch clean up the citation dict for update, making the
     # incoming dict isomorphic to the table mapping.
+    # TODO: Fix this to also have authors, editors, and translators all follow
+    # the same cleanup procedure for each role.
     try:
         del new_citation['authors']
     except KeyError:
@@ -152,7 +156,10 @@ def citation_update(request):
         pass
     
     # update citation fields like title, year, etc.
-    Session.execute(update(Citation).where(Citation.citation_id == new_citation['citation_id']).values(new_citation))
+    for key in new_citation.keys():
+        if getattr(current_citation, key) == new_citation[key]:
+            del new_citation[key]
+    Session.execute(update(Citation).where(Citation.citation_id == id).values(new_citation))
     
     # list of tuples of the citation's current authors
     current_authors = [auth for auth in current_citation.authors]
@@ -180,8 +187,10 @@ def citation_update(request):
     for current_author in current_authors:
         if current_author.author_id not in [author.get('author_id', []) for author in new_cit_authors]:
             current_citation.authors.remove(current_author)
-    
+
+    Session.flush()
     Session.commit()
+    Session.expire(current_citation)
     updated_cit = Session.query(Citation).get(new_citation['citation_id'])
     return updated_cit.json
 

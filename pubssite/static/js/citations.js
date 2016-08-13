@@ -245,9 +245,9 @@ function render_citations(format) {
       if (citation.pubtype === "proceedings" || citation.pubtype === "conference") citation.pubtype = "inproceedings";
       citations.push('<tr id=' + temp_cit.citation_id + '><td class="citation-actions"><input type="checkbox"></td>' +
                      '<td>' + Mustache.render(template[citation.pubtype], temp_cit) + '</td>' +
-                     '<td class="citation actions"><i class="icon-share-alt"></i>' +
-			          		 '<a href="#editPane" role="button" data-toggle="modal" onclick="populateEditPane(' + temp_cit.citation_id + ');"><i class="icon-pencil"></i></a>' +
-                     '<i class="icon-download-alt"> </i><i class="icon-remove"></i></td></tr>');
+                     '<td class="citation actions"><span class="glyphicon glyphicon-share-alt"></span>' +
+			          		 '<a href="#editPane" role="button" data-toggle="modal" onclick="populateEditPane(' + temp_cit.citation_id + ');"><span class="glyphicon glyphicon-pencil"></span></a>' +
+                     '<span class="glphicon glyphicon-download-alt"> </span><span class="glyphicon glyphicon-remove"></span></td></tr>');
       });
             
       table = '<div class="tab-pane" id="' + collection + '"><table class="table table-hover table-condensed table-striped citation"><tbody>' + 
@@ -269,9 +269,6 @@ function render_citations(format) {
 }
 
 // need to sort and rethink citation and collection data structures before preceding.
-function populateEditPane(citation_id) {
-	alert(JSON.stringify(current_citations[629]));
-}
 
 function updateSortOrder(new_sort_order) {
 	sort_order = new_sort_order;

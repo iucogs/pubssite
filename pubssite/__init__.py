@@ -2,11 +2,14 @@ from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 #from .security import groupfinder
 from pyramid.config import Configurator
+
 from sqlalchemy import engine_from_config
 from pyramid.request import Request
 from pyramid.request import Response
 from .models import DBSession
 from pyramid.events import NewRequest
+
+
 
 def add_cors_headers_response_callback(event):
     def cors_headers(request, response):
@@ -24,6 +27,7 @@ def main(global_config, **settings):
     """
     engine = engine_from_config(settings, 'sqlalchemy.', pool_recycle=3600)
     DBSession.configure(bind=engine)
+
     authn_policy = AuthTktAuthenticationPolicy('iu_cas')
     authz_policy = ACLAuthorizationPolicy()
     config = Configurator(settings=settings)

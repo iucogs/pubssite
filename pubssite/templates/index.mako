@@ -9,14 +9,36 @@
   <meta name="author" content="Patrick Craig, COGS Codeman">
 
   <!-- Bootstrap -->
-  <link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-  <link href="/static/css/bootstrap-modal.css" rel="stylesheet" type="text/css">
-
-
    <!-- HTML5 shim, support pour le internet ancien -->
    <!-- [if lt IE 9]>
      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
    <![endif]-->
+
+  <!-- jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <script type="text/javascript" src='/static/js/jquery.cookie.js'></script>  
+  <script src="/static/js/jquery.validate.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+  <!-- Bootstrap -->
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<!--  <script type="text/javascript" src="/static/js/bootstrap-modalmanager.js"></script> -->
+<!--  <script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>-->
+
+  <!-- Mustache -->
+  <script src="/static/js/mustache.js"></script>
+
+  <!-- Pubs -->
+  <script type="text/javascript" src='/static/js/edit.js'></script>
+  <script type="text/javascript" src="/static/js/citations.js"></script>
+  <script type="text/javascript" src='/static/js/insert_citations.js'></script>
+
+
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <!--<link rel="stylesheet" href="/static/css/reset.css">-->
+	<link rel="stylesheet" href="/static/css/style.css">
 
   <style type="text/css">
     body {
@@ -39,19 +61,6 @@
     }
 
   </style>
-  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-  <script type="text/javascript" src='/static/js/http_verbs.js'></script>  
-  <script type="text/javascript" src='/static/js/jquery.cookie.js'></script>  
-  <script type="text/javascript" src="/static/js/mustache.js"></script>
-  <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="/static/js/bootstrap-modalmanager.js"></script>
-  <script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>
-  <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-  <script type="text/javascript" src="/static/js/apa_templates.js"></script>
-  <script type="text/javascript" src="/static/js/mla_templates.js"></script>
-  <script type="text/javascript" src='/static/js/citations.js'></script>
-  <script type="text/javascript" src='/static/js/edit_citations.js'></script>
-  <script type="text/javascript" src='/static/js/insert_citations.js'></script>
 
 
 </head>
@@ -72,80 +81,77 @@
     });
   </script>
 <!-- navbar begin --> 
-  <div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-      <div id="navbar" class="container-fluid">
-        <ul class="nav"> 
-          <li><a class="brand" href="#">Publications</a></li>
-          <li><a href="#" class="pull-left"><i class="icon-home"></i></a></li>
-        </ul>
-        <form class="navbar-search pull-left">
-          <input type="text" class="search-query" placeholder="Search Publications!">
-        </form>
-        
-        <ul class="nav pull-right">
-         <li>Show collections belonging to: <select id="proxy-list"></select></li>
-    		 <li><a href="#">Sign out</a></li>
-        </ul>    
-      </div>  
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <ul class="nav navbar-nav">
+        <li><a class="navbar-brand" href="#">Publications</a></li>
+        <li><a href="#" class="glyphicon glyphicon-home"></a></li>
+      </ul>
+    </div>
+
+    <form class="navbar-form navbar-left" role="search">
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Search Publications">
+      </div>
+    </form>
+
+    <form class="navbar-form navbar-right">
+      <div class="form-group">
+        <span>Show Publications of</span>
+        <select class="form-control">
+          <option>Colin Allen</option>
+          <option>Peter Todd</option>
+          <option>Ruth Eberle</option>
+          <option>Jaimie Murdock</option>
+          <option>James Townsend</option>
+        </select>
+      </div>
+      <a class="btn btn-default" href="#">Sign out</a>
+    </form>
+  </div>
+</nav>
+  <!-- navbar end -->
+
+<div class="container-fluid" id="collections-content">
+  <h2>My Citations</h2>
+  <div class="col-md-4">
+    <div class="form-inline form-group">
+      <label for="sel1">Display Format</label>
+      <select class="form-control" id="sel1">
+        <option value="apa">APA</option>
+        <option value="mla">MLA</option>
+        <option value="bibtex">Bibtex</option>
+        <option value="endnote">Endnote</option>
+      </select>
     </div>
   </div>
-  <!-- navbar end -->
-  
-  <div class="container-fluid" id="collections-content">
- 
-   <div class="main-view"> <!-- TODO: fix tab-content class -->
-      <div class="tab-pane active" id="tab-all">
-
-
-        <!-- COLLECTION HEADER -->
-        <h2>My Citations</h2> 
-
-        <div class="btn-toolbar pull-right">
-          <div class="btn-group">
-          <div class="btn-group dropdown">
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-share-alt"></i></a>
-            <ul class="dropdown-menu">
-              <li><a href="#">Link</a></li>
-            </ul>
-          </div>
-          <div class="btn-group dropdown">
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-download-alt"></i></a>
-            <ul class="dropdown-menu">
-              <li><a href="#">BibTeX</a></li>
-              <li><a href="#">EndNote</a></li>
-              <li><a href="#">APA Plaintext</a></li>
-              <li><a href="#">MLA Plaintext</a></li>
-            </ul>
-          </div>
-          <a href="#editPane" role="button" class="btn" data-toggle="modal"><i class="icon-pencil"></i></a>
-                   <a class="btn"><i class="icon-remove"></i></a>
-        </div>
-        
-        <a href="#pastePane" id="pasteButton" role="button" class="btn dropdown" data-toggle="modal">Add citations</a>
-          
-
-        </h2>
- 
-   </div>
-    
-        <div align="left">
-          Display format:
-          <select id="format-control" onchange="render_citations(this.value)">
-            <option value="apa">APA</option>
-            <option value="mla">MLA</option>
-            <option value="bibtex">Bibtex</option>
-            <option value="endnote">Endnote</option>
-          </select>
-        </div>
-
-        </div>
-    </div> <!-- tab-content -->
+  <div class="col-md-4 col-md-offset-4">
+    <div class="btn-group" role="group">
+      <div class="btn-group dropdown">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-share-alt"></i></a>
+        <ul class="dropdown-menu">
+          <li><a href="#">Link</a></li>
+        </ul>
+      </div>
+      <div class="btn-group dropdown">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-download-alt"></i></a>
+        <ul class="dropdown-menu">
+          <li><a href="#">BibTeX</a></li>
+          <li><a href="#">EndNote</a></li>
+          <li><a href="#">APA Plaintext</a></li>
+          <li><a href="#">MLA Plaintext</a></li>
+        </ul>
+      </div>
+      <a href="#editPane" role="button" class="btn" data-toggle="modal"><i class="glyphicon glyphicon-pencil"></i></a>
+      <a class="btn"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+    <a href="#pastePane" id="pasteButton" role="button" class="btn dropdown" data-toggle="modal">Add citations</a>
   </div>
-
-
-  <!-- Modal edit pane --> 
-  <div id="pastePane" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="pastePane" aria-hidden="true">
+</div>
+  
+<!-- Modal edit pane --> 
+  <div id="pastePane" class="modal" tabindex="-1" role="dialog" aria-labelledby="pastePane" aria-hidden="true">
     <div id="pasteHeader" class="modal-header">
       <p>&nbsp;<button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button></p>
       <div class="pull-right"><p>Add citations to: <select id="addCollectionsList"></select></p></div>
@@ -156,106 +162,16 @@
       <button id="pasteSubmit" class="btn">Submit</button>
     </div>
   </div>
-  <div id="editPane" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="editPane" aria-hidden="true">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
-      <h4>Editing [citation no. placeholder]</h4>
-    </div>
-    <div class="modal-body">
-    <div class="row-fluid">
-      
-	    <div class="span6">  <!-- Authors, Title, Year --> 
-          <p>Author Names (Lastname, Firstname)</p>
-          <p><input type="text" class="span12"></p>
-          <p><input type="text" class="span12"></p>
-          <p><input type="text" class="span12"></p>
-          <p><input type="text" class="span12"></p>
-          <p><input type="text" class="span12"></p>
-          <p><input type="text" class="span12"></p>
-          <p><input type="text" class="span12"></p>
-          <button class="btn" align="center">Add more authors <i class="icon-plus"></i></button><br />
-          Title: <input type="text" id="title" class="field span12">
-          Year: <input type="text" id="year" class="field span12">
-        </div>  <!-- Authors, Title, Year --> 
-		
-        <div class="span6">  <!-- Raw...Note --> 
-          <p>Raw text: <br />
-          <textarea id="raw" class="field span12" rows="3"></textarea><br /> 
-          Preview: [placeholder preview]</p>
-          <p>Abstract:
-          <textarea id="abstract" class="field span12" rows="3"></textarea>
-           
-          Keywords:
-          <textarea id="keywords" class="field span12" rows="3"></textarea>
-          </p>
-          <p>doi:
-          <input id="doi" class="field span12" type="text"><br />
-          URL:
-          <input id="url" class="field span12" type="text">
-          Note:
-          <input id="note" class="field span12" type="text">
-          </p>
-        </div>     <!-- Raw...Note -->        
-       
-            </div> <!-- row-fluid -->  
-			
-			<div class="row-fluid">   <!-- row-fluid -->    
-		  <div class="span6" style="background-color:yellow">  <!-- Pubtype --> 
-            Publication Type:
-			<select id="pubtype" onchange="alert(4)" class="form-control">
-            <option value="auth_string">Article</option>
-            <option value="year">Book</option>
-            <option value="year_desc">Edited Book</option>
-            </select>
-		  </div> <!-- Pubtype --> 
-		  </div>  <!-- row-fluid -->  
-		  
-		  <div class="row-fluid">  <!-- row-fluid -->  
-		  <div class="span3">  <!-- Journal, Vol, Num --> 
-              <form class="form-inline">
-                <div class="control-group">
-                  <label class="control-label" for="journal">Journal: </label>
-                  <div class="controls"><input type="text" id="journal"></div>
-                </div>
-                
-                <div class="control-group">
-                  <label class="control-label" for="volume">Volume: </label>
-                  <div class="controls"><input type="text" id="volume"></div>
-                </div>
-                
-                <div class="control-group">
-                  <label class="control-label" for="number">Number: </label>
-                  <div class="controls"><input type="text" id="number"></div>
-                </div>      
-              </form>
-          </div> <!-- Journal, Vol, Num --> 
-		  
-		  
-          <div class="span3">  <!-- Pages, Month --> 
-            <form class="form-inline">  
-                <div class="control-group">
-                  <label class="control-label" for="pages">Pages: </label>
-                  <div class="controls"><input type="text" id="pages"></div>
-                </div>
-                
-                <div class="control-group">
-                  <label class="control-label" for="month">Month: </label>
-                  <div class="controls"><input type="text" id="month"></div>
-                </div> 
-            </form>
-          </div>  <!-- Pages, Month --> 
-		  
-      </div> <!-- row-fluid --> 
 
+  <div id="editPane" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editPane" aria-hidden="true">
+    <div class ="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+        <%include file="edit.mako" />
+        </div>
+      </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-      <button class="btn btn-primary">Save changes</button>
-    </div>
-
   </div> 
-    
-
 
    
   </body>

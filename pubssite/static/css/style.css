@@ -1,0 +1,71 @@
+#editPane .container{
+  padding: 5px;
+}
+#editPane .textbox{
+  border: 1px solid;
+  border-radius:5px;
+  height: 30px;
+}
+#editPane .dropdown{
+  border: 1px solid;
+  border-radius:5px;
+  height: 30px;
+}
+#editPane #control-buttons{
+  margin: 10px;
+  text-align:center;
+}
+#editPane #table-buttons{
+  margin: 10px;
+  text-align:center;
+}
+#editPane #preview-rawtext{
+  text-align:left;
+  overflow-y:scroll;
+  height: 100px;
+}
+#editPane #preview-pane{
+  text-align:center;
+}
+#editPane #pubsid{
+  margin:10px;
+}
+
+#editPane .form-group{
+  margin-bottom: 0px;
+}
+
+.radio input[type=radio] {
+  margin-left: 0px;
+  margin-top: 0px;
+}
+
+#editPane thead { font-weight: bold; }
+
+.table-borderless tbody tr td, .table-borderless tbody tr th, .table-borderless thead tr th {
+    border: none;
+}
+
+#editPane td{
+  text-align:center;
+}
+
+#editPane tr td{
+ margin: 0;
+}
+
+#editPane .checkbox-label{
+    display:block;
+}
+#editPane .table{
+    border-collapse: collapse;
+  border-spacing: 0;
+  margin-bottom: 0;
+}
+#editPane .error{
+  border-color: red
+}
+#editPane .disabledPointer{
+  pointer-events: none;
+    opacity: 1.0;
+}

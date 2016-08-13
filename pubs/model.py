@@ -6,21 +6,22 @@ import pubs.config
 
 # Create the database engine from config file
 url = pubs.config.get('sqlalchemy', 'url')
-engine = create_engine(url, echo=False, pool_recycle=3600) 
+engine = create_engine(url, echo=False, pool_recycle=3600,
+                       isolation_level="READ UNCOMMITTED")
 
 # configure the declarative syntax base
 Base = declarative_base()
 Base.metadata.bind = engine
 
 # configure the default Session
-Session = scoped_session(sessionmaker())
-Session.configure(bind=engine)
+Session = scoped_session(sessionmaker(bind=engine))
 
 # Author-related tables
 author_of = Table('author_of', Base.metadata,
     Column('author_id', Integer, ForeignKey('authors.author_id')),
     Column('citation_id', Integer, ForeignKey('citations.citation_id')),
-    Column('position_num', Integer)
+    Column('position_num', Integer),
+    Column('contribution_type', String)
     )
 
 class Author(Base):
@@ -78,7 +79,20 @@ class Citation(Base):
     #user_id = Column(Integer, ForeignKey('users.user_id'))
     citation_id = Column(Integer, primary_key=True, autoincrement=True)
 
-    authors = relationship("Author", secondary=author_of, backref='citations') 
+    authors = relationship("Author", secondary=author_of, backref='citations',
+        primaryjoin="and_(Citation.citation_id==author_of.c.citation_id,"
+                     "author_of.c.contribution_type=='author')",
+        secondaryjoin="Author.author_id==author_of.c.author_id") 
+    
+    translators = relationship("Author", secondary=author_of, backref='citations',
+        primaryjoin="and_(Citation.citation_id==author_of.c.citation_id,"
+                     "author_of.c.contribution_type=='translator')",
+        secondaryjoin="Author.author_id==author_of.c.author_id") 
+    
+    editors = relationship("Author", secondary=author_of, backref='citations',
+        primaryjoin="and_(Citation.citation_id==author_of.c.citation_id,"
+                     "author_of.c.contribution_type=='editor')",
+        secondaryjoin="Author.author_id==author_of.c.author_id") 
 
     possible_matches = relationship("Citation", secondary=similar_to,
         primaryjoin=citation_id==similar_to.c.citation_id1,
