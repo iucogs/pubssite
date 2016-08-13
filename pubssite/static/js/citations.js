@@ -269,9 +269,6 @@ function render_citations(format) {
 }
 
 // need to sort and rethink citation and collection data structures before preceding.
-function populateEditPane(citation_id) {
-	alert(JSON.stringify(current_citations[629]));
-}
 
 function updateSortOrder(new_sort_order) {
 	sort_order = new_sort_order;

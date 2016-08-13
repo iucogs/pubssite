@@ -22,8 +22,8 @@
 
   <!-- Bootstrap -->
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="/static/js/bootstrap-modalmanager.js"></script>
-  <script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>
+<!--  <script type="text/javascript" src="/static/js/bootstrap-modalmanager.js"></script> -->
+<!--  <script type="text/javascript" src="/static/js/bootstrap-modal.js"></script>-->
 
   <!-- Mustache -->
   <script src="/static/js/mustache.js"></script>
@@ -151,7 +151,7 @@
 </div>
   
 <!-- Modal edit pane --> 
-  <div id="pastePane" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="pastePane" aria-hidden="true">
+  <div id="pastePane" class="modal" tabindex="-1" role="dialog" aria-labelledby="pastePane" aria-hidden="true">
     <div id="pasteHeader" class="modal-header">
       <p>&nbsp;<button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button></p>
       <div class="pull-right"><p>Add citations to: <select id="addCollectionsList"></select></p></div>
@@ -163,8 +163,14 @@
     </div>
   </div>
 
-  <div id="editPane" class="modal container hide fade" tabindex="-1" role="dialog" aria-labelledby="editPane" aria-hidden="true">
-    <%include file="edit.mako" />
+  <div id="editPane" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editPane" aria-hidden="true">
+    <div class ="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+        <%include file="edit.mako" />
+        </div>
+      </div>
+    </div>
   </div> 
 
    

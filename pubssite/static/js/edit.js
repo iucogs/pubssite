@@ -6,11 +6,11 @@ var templates = {};
 /**
 TODO: Done Write a validation which doesnt let the user submit without a first name and last name
 **/
-$("document").ready(function () {
 
+function populateEditPane(citation_id) {
   setValidationSettings();
 
-  $.getJSON('https://inpho.cogs.indiana.edu/pubs/citation/43106', function (data) {
+  $.getJSON('/citation/' + citation_id, function (data) {
     currentData = data;
     // Setting global constants
     globalConstants.citation_id = data.citation_id;
@@ -46,9 +46,7 @@ $("document").ready(function () {
     }
 
   });
-  
-});
-
+}
 /**
 Table Methods start
 **/
@@ -56,7 +54,7 @@ Table Methods start
 /**
 - Add a row to the table
 **/
-$(document).on("click", "#add", function (){
+$('#add').click(function (){
   var tableRow = `
   <tr class="contributors">
   <td>
@@ -90,7 +88,7 @@ $(document).on("click", "#add", function (){
 - Checks whether the number of authors are greater than one and removes the author
 - Else, renders an error message to the modal using a template
 **/
-$(document).on("click", "#delete", function () {
+$("#delete").click(function () {
   var noOfAuthors =  getNoOfAuthors();
   if(noOfAuthors > 1) {
     $(".selected").remove();
@@ -106,7 +104,7 @@ $(document).on("click", "#delete", function () {
 - Functionality of the up arrow button, which moves a table row upwards
 - TODO: Update preview 
 **/
-$(document).on("click", "#up", function () {
+$("#up").click(function () {
   $(".selected").prev().before($(".selected"));
   updatePreview();
 });
@@ -115,7 +113,7 @@ $(document).on("click", "#up", function () {
 - Functionality of the down button, which moves a table row downwards
 - TODO: Update preview
 **/
-$(document).on("click", "#down", function () {
+$("#down").click(function () {
   $(".selected").next().after($(".selected"));
   updatePreview();
 });
@@ -124,7 +122,7 @@ $(document).on("click", "#down", function () {
 - Adds the selected class to the selected element on the table
 - which will be used in the deletion and addition of table rows
 **/
-$(document).on("click", "#contributors-table tr", function(event) {
+$("#contributors-table tr").click(function(event) {
   if($(event.target).is('[type="radio"]')){
    $(this).addClass("selected").siblings().removeClass("selected");
  }
@@ -133,14 +131,14 @@ $(document).on("click", "#contributors-table tr", function(event) {
 /**
 - When the contributor type changes in the dropdown
 **/
-$(document).on("change", ".contributor-select", function () {
+$(".contributor-select").change(function () {
   updatePreview();
 });
 
 /**
 - Gets the publication type and renders the appropriate template
 **/
-$(document).on("change", "#pubtype", function () {
+$("#pubstype").change(function () {
   var pubType = this.value.toLowerCase();
   renderDynamicTemplate(currentData,pubType);
   updatePreview();
@@ -159,7 +157,7 @@ $(document).on("keyup", "input", function (e) {
 /**
 - Functionality of the ignore button on the modal, which calls the method to post data on server
 **/
-$(document).on("click", "#ignore-message", function () {
+$("#ignore-message").click(function () {
   putDataToServer();
 });
 
@@ -167,18 +165,18 @@ $(document).on("click", "#ignore-message", function () {
 - Validates the whole page
 - If the page is valid, submits the data to the server
 **/
-$(document).on("click", "#save", function (event) {
+$("#save").click(function (event) {
   if($("#wholeTemplateContainer").valid()) {
     putDataToServer();
   }
 });
 
-$(document).on("click", "#raw-text", function () {
+$("#raw-text").click(function () {
   globalConstants.isPreview = false;
   updatePreview();
 });
 
-$(document).on("click", "#update-preview", function () {
+$("#update-preview").click(function () {
   globalConstants.isPreview = true;
   updatePreview();
 }); 
@@ -200,7 +198,7 @@ function updatePreview () {
       if(templates[currentObject.pubtype] === undefined) {
         $("#preview-rawtext").html(Mustache.render(templates["unknown"], tempCurrentObject));
       } else {
-        console.log(currentObject.pubtype)
+        
         $("#preview-rawtext").html(Mustache.render(templates[currentObject.pubtype], tempCurrentObject));
       }
     }
@@ -394,8 +392,6 @@ function generateOutput () {
         "organization": $("#organization").val() || "",
         "authorEmpty": authorEmpty
       };
-
-      console.log(outputJSON)
       return outputJSON;
     }
 
@@ -554,5 +550,4 @@ function render (data, template, container) {
   var result = Mustache.render(templateContent, data);
   $(container).html(result);
 };
-
 

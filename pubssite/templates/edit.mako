@@ -339,9 +339,9 @@
 
 <script type="text/template" id="dataTemplate">
   
-<div class="container">
+<div class="container-fluid">
   <!--Start of column 1-->
-  <div class="col-sm-6">
+  <div class="col-sm-6 col-xs-12">
     <div class="table table-borderless table-sm">
       <table class="table" id="contributors-table">  
         <thead>
@@ -436,7 +436,7 @@
 
   </div><!--End of column 1-->
 
-  <div class="col-sm-6">
+  <div class="col-sm-6 col-xs-12">
     <div class="form-group">
       <div id="preview-pane">
         <p id="preview-header">Preview:</p>
