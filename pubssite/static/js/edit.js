@@ -29,6 +29,8 @@ function populateEditPane(citation_id) {
       var temp_citation = $.extend({}, data);
       temp_citation.authors = render_apa_authors(temp_citation.authors);
       $("#preview-rawtext").html(Mustache.render(templates[data.pubtype], temp_citation));
+    
+    addClickActions(citation_id);
    });
 
     // Setting the publicationType
@@ -50,136 +52,139 @@ function populateEditPane(citation_id) {
 /**
 Table Methods start
 **/
-
-/**
-- Add a row to the table
-**/
-$('#add').click(function (){
-  var tableRow = `
-  <tr class="contributors">
-  <td>
-  <label class="checkbox-label">
-  <div class="radio">
-  <input type="radio" name="optradio" class="table-radio">
-  </div>
-  </label>
-  </td>
-  <td>
-  <div class="form-group">
-  <select class="form-control input-sm contributor-select">
-  <option value="author">Author</option>
-  <option value="editor">Editor</option>
-  <option value="translator">Translator</option>
-  </select>
-  </div>
-  </td>
-  <td>
-  <div class="form-group">
-  <input class="form-control input-sm name" type="text" name ="ContributorName">
-  </div>
-  </td>
-  </tr>
-  `
-  $('#contributors-table > tbody:last').append(tableRow);  
-});
-
-/**
-- Functionality of the delete arrow button
-- Checks whether the number of authors are greater than one and removes the author
-- Else, renders an error message to the modal using a template
-**/
-$("#delete").click(function () {
-  var noOfAuthors =  getNoOfAuthors();
-  if(noOfAuthors > 1) {
-    $(".selected").remove();
+function addClickActions(citation_id) {
+  /**
+  - Add a row to the table
+  **/
+  $('#add').click(function (){
+    var tableRow = `
+    <tr class="contributors">
+    <td>
+    <label class="checkbox-label">
+    <div class="radio">
+    <input type="radio" name="optradio" class="table-radio">
+    </div>
+    </label>
+    </td>
+    <td>
+    <div class="form-group">
+    <select class="form-control input-sm contributor-select">
+    <option value="author">Author</option>
+    <option value="editor">Editor</option>
+    <option value="translator">Translator</option>
+    </select>
+    </div>
+    </td>
+    <td>
+    <div class="form-group">
+    <input class="form-control input-sm name" type="text" name ="ContributorName">
+    </div>
+    </td>
+    </tr>
+    `
+    $('#contributors-table > tbody:last').append(tableRow);  
+  });
+  
+  /**
+  - Functionality of the delete arrow button
+  - Checks whether the number of authors are greater than one and removes the author
+  - Else, renders an error message to the modal using a template
+  **/
+  $("#delete").click(function () {
+    var noOfAuthors =  getNoOfAuthors();
+    if(noOfAuthors > 1) {
+      $(".selected").remove();
+      updatePreview();
+    } else {
+      render({message: "Minimum one author is required"}, "#simpleErrorModalTemplate", "#errorModalContainer");
+      $("#errorModalContainer").modal();
+    }
+  });
+  
+  
+  /**
+  - Functionality of the up arrow button, which moves a table row upwards
+  - TODO: Update preview 
+  **/
+  $("#up").click(function () {
+    $(".selected").prev().before($(".selected"));
     updatePreview();
-  } else {
-    render({message: "Minimum one author is required"}, "#simpleErrorModalTemplate", "#errorModalContainer");
-    $("#errorModalContainer").modal();
-  }
-});
-
-
-/**
-- Functionality of the up arrow button, which moves a table row upwards
-- TODO: Update preview 
-**/
-$("#up").click(function () {
-  $(".selected").prev().before($(".selected"));
-  updatePreview();
-});
-
-/**
-- Functionality of the down button, which moves a table row downwards
-- TODO: Update preview
-**/
-$("#down").click(function () {
-  $(".selected").next().after($(".selected"));
-  updatePreview();
-});
-
-/**
-- Adds the selected class to the selected element on the table
-- which will be used in the deletion and addition of table rows
-**/
-$("#contributors-table tr").click(function(event) {
-  if($(event.target).is('[type="radio"]')){
-   $(this).addClass("selected").siblings().removeClass("selected");
- }
-});
-
-/**
-- When the contributor type changes in the dropdown
-**/
-$(".contributor-select").change(function () {
-  updatePreview();
-});
-
-/**
-- Gets the publication type and renders the appropriate template
-**/
-$("#pubstype").change(function () {
-  var pubType = this.value.toLowerCase();
-  renderDynamicTemplate(currentData,pubType);
-  updatePreview();
-});
-
-/**Table method ends**/
-
-
-/**
-- Functionality whenever the data is changed on the form, the preview is updated
-**/
-$(document).on("keyup", "input", function (e) {
-  updatePreview();
-});
-
-/**
-- Functionality of the ignore button on the modal, which calls the method to post data on server
-**/
-$("#ignore-message").click(function () {
-  putDataToServer();
-});
-
-/**
-- Validates the whole page
-- If the page is valid, submits the data to the server
-**/
-$("#save").click(function (event) {
-  if($("#wholeTemplateContainer").valid()) {
+  });
+  
+  /**
+  - Functionality of the down button, which moves a table row downwards
+  - TODO: Update preview
+  **/
+  $("#down").click(function () {
+    $(".selected").next().after($(".selected"));
+    updatePreview();
+  });
+  
+  /**
+  - Adds the selected class to the selected element on the table
+  - which will be used in the deletion and addition of table rows
+  **/
+  $("#contributors-table tr").click(function(event) {
+    if($(event.target).is('[type="radio"]')){
+     $(this).addClass("selected").siblings().removeClass("selected");
+   }
+  });
+  
+  /**
+  - When the contributor type changes in the dropdown
+  **/
+  $(".contributor-select").change(function () {
+    updatePreview();
+  });
+  
+  /**
+  - Gets the publication type and renders the appropriate template
+  **/
+  $("#pubstype").change(function () {
+    var pubType = this.value.toLowerCase();
+    renderDynamicTemplate(currentData,pubType);
+    updatePreview();
+  });
+  
+  /**Table method ends**/
+  
+  
+  /**
+  - Functionality whenever the data is changed on the form, the preview is updated
+  **/
+  $(document).on("keyup", "input", function (e) {
+    updatePreview();
+  });
+  
+  /**
+  - Functionality of the ignore button on the modal, which calls the method to post data on server
+  **/
+  $("#ignore-message").click(function () {
     putDataToServer();
-  }
-});
-
-$("#raw-text").click(function () {
-  globalConstants.isPreview = false;
-  updatePreview();
-});
-
-$("#update-preview").click(function () {
-  globalConstants.isPreview = true;
-  updatePreview();
-}); 
+  });
+  
+  /**
+  - Validates the whole page
+  - If the page is valid, submits the data to the server
+  **/
+  $("#save").click(function (event) {
+    if($("#wholeTemplateContainer").valid()) {
+      putDataToServer(citation_id);
+    } else {
+      console.log("Invalid data");  
+    }
+  });
+  
+  $("#raw-text").click(function () {
+    globalConstants.isPreview = false;
+    updatePreview();
+  });
+  
+  $("#update-preview").click(function () {
+    globalConstants.isPreview = true;
+    updatePreview();
+  }); 
+}
 
 /**
 TODO: Ask Jaimie, what happens when we have just firstName/lastName of the author, should we render?
@@ -210,13 +215,15 @@ function updatePreview () {
 /**
 TODO: Write AJAX call which sends the data to the server
 **/
-function putDataToServer () {
+function putDataToServer(citation_id) {
+  var data = generateOutput(); 
+  delete data.authorEmpty;
   $.ajax({
     type: 'PUT',
     dataType: 'json',
-    url: "http://nupubs.cogs.indiana.edu/citation/43106",
+    url: "/citation/" + citation_id,
     headers: {"X-HTTP-Method-Override": "PUT"},
-    data: JSON.stringify(generateOutput()),
+    data: JSON.stringify(data),
     success: function (result, status, xhr){
       console.log(result)
     },
@@ -316,16 +323,16 @@ function generateOutput () {
         var contributorType = $(this).find("select.contributor-select").val();
         var fullName = $(this).find("input.name").val();
         if (fullName != "") {
-          contriObject = createContributors (fullName)
-          authorEmpty = contriObject.authorEmpty
+          contriObject = createContributors(fullName);
+          authorEmpty = contriObject.authorEmpty;
           switch(contributorType) {
             case "editor" :
             var editor = {
               lastname: contriObject.lastName,
               author_id: "",
               firstname: contriObject.firstName
-            }
-            editors.push(editor)
+            };
+            editors.push(editor);
             break;
 
             case "translator" :
@@ -333,8 +340,8 @@ function generateOutput () {
               lastname: contriObject.lastName,
               author_id: "",
               firstname: contriObject.firstName
-            }
-            translators.push(translator)
+            };
+            translators.push(translator);
             break;
 
             case "author" :
@@ -342,7 +349,7 @@ function generateOutput () {
               lastname: contriObject.lastName,
               author_id: "",
               firstname: contriObject.firstName
-            }
+            };
             authString = authString + fullName + ", ";
             authors.push(author);
             break;
