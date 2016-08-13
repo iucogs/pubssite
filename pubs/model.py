@@ -6,15 +6,15 @@ import pubs.config
 
 # Create the database engine from config file
 url = pubs.config.get('sqlalchemy', 'url')
-engine = create_engine(url, echo=False, pool_recycle=3600) 
+engine = create_engine(url, echo=False, pool_recycle=3600,
+                       isolation_level="READ UNCOMMITTED")
 
 # configure the declarative syntax base
 Base = declarative_base()
 Base.metadata.bind = engine
 
 # configure the default Session
-Session = scoped_session(sessionmaker())
-Session.configure(bind=engine)
+Session = scoped_session(sessionmaker(bind=engine))
 
 # Author-related tables
 author_of = Table('author_of', Base.metadata,
