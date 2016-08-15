@@ -20,9 +20,15 @@ Session = scoped_session(sessionmaker(bind=engine))
 author_of = Table('author_of', Base.metadata,
     Column('author_id', Integer, ForeignKey('authors.author_id')),
     Column('citation_id', Integer, ForeignKey('citations.citation_id')),
-    Column('position_num', Integer),
-    Column('contribution_type', String)
-    )
+    Column('position_num', Integer))
+editor_of = Table('editor_of', Base.metadata,
+    Column('author_id', Integer, ForeignKey('authors.author_id')),
+    Column('citation_id', Integer, ForeignKey('citations.citation_id')),
+    Column('position_num', Integer))
+translator_of = Table('translator_of', Base.metadata,
+    Column('author_id', Integer, ForeignKey('authors.author_id')),
+    Column('citation_id', Integer, ForeignKey('citations.citation_id')),
+    Column('position_num', Integer))
 
 class Author(Base):
     __tablename__ = 'authors'
@@ -79,20 +85,11 @@ class Citation(Base):
     #user_id = Column(Integer, ForeignKey('users.user_id'))
     citation_id = Column(Integer, primary_key=True, autoincrement=True)
 
-    authors = relationship("Author", secondary=author_of, backref='citations',
-        primaryjoin="and_(Citation.citation_id==author_of.c.citation_id,"
-                     "author_of.c.contribution_type=='author')",
-        secondaryjoin="Author.author_id==author_of.c.author_id") 
-    
-    translators = relationship("Author", secondary=author_of, backref='translations',
-        primaryjoin="and_(Citation.citation_id==author_of.c.citation_id,"
-                     "author_of.c.contribution_type=='translator')",
-        secondaryjoin="Author.author_id==author_of.c.author_id") 
-    
-    editors = relationship("Author", secondary=author_of, backref='edited_volumes',
-        primaryjoin="and_(Citation.citation_id==author_of.c.citation_id,"
-                     "author_of.c.contribution_type=='editor')",
-        secondaryjoin="Author.author_id==author_of.c.author_id") 
+    authors = relationship("Author", secondary=author_of, backref='citations') 
+    translators = relationship("Author", secondary=translator_of,
+        backref='translations')
+    editors = relationship("Author", secondary=editor_of,
+        backref='edited_volumes')
 
     possible_matches = relationship("Citation", secondary=similar_to,
         primaryjoin=citation_id==similar_to.c.citation_id1,
@@ -117,7 +114,9 @@ class Citation(Base):
              'pages', 'publisher', 'location', 'school', 'series', 'title',
              'type', 'volume', 'year', 'raw', 'verified', 'last_modified',
              'entryTime', 'citation_id']
-        struct = { 'authors' : [a.json for a in self.authors] }
+        struct = { 'authors' : [a.json for a in self.authors],
+            'editors' : [e.json for e in self.editors],
+            'translators' : [t.json for t in self.translators]}
         for attr in attrs:
             struct[attr] = getattr(self, attr, None)
         
@@ -193,4 +192,5 @@ class User(Base):
     def __repr__(self):
         return u"<User %d: %s>".format(self.id, self.username)
 
+#TODO: Figure out what this line does
 Session.close()
