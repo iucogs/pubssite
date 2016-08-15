@@ -141,12 +141,24 @@ def citation_update(request):
     del new_citation['citation_id']
 
     new_cit_authors = new_citation['authors'] 
+    new_cit_editors = new_citation['editors'] 
+    new_cit_translators = new_citation['translators'] 
     # following try/catch clean up the citation dict for update, making the
     # incoming dict isomorphic to the table mapping.
     # TODO: Fix this to also have authors, editors, and translators all follow
     # the same cleanup procedure for each role.
     try:
         del new_citation['authors']
+    except KeyError:
+        pass
+    
+    try:
+        del new_citation['editors']
+    except KeyError:
+        pass
+    
+    try:
+        del new_citation['translators']
     except KeyError:
         pass
 
@@ -162,8 +174,18 @@ def citation_update(request):
     Session.execute(update(Citation).where(Citation.citation_id == id).values(new_citation))
     
     # list of tuples of the citation's current authors
+    process_authors(current_citation, new_cit_authors)
+    process_editors(current_citation, new_cit_editors)
+    process_translators(current_citation, new_cit_translators)
+
+    Session.flush()
+    Session.commit()
+    Session.expire(current_citation)
+    updated_cit = Session.query(Citation).get(id)
+    return updated_cit.json
+
+def process_authors(current_citation, new_cit_authors):
     current_authors = [auth for auth in current_citation.authors]
-    
     # iterate over the new authors to see if we're updating or adding a new
     # author
     # Worth noting: we use the lastname/firstname filter because occasionally the author won't have
@@ -188,11 +210,57 @@ def citation_update(request):
         if current_author.author_id not in [author.get('author_id', []) for author in new_cit_authors]:
             current_citation.authors.remove(current_author)
 
-    Session.flush()
-    Session.commit()
-    Session.expire(current_citation)
-    updated_cit = Session.query(Citation).get(new_citation['citation_id'])
-    return updated_cit.json
+def process_editors(current_citation, new_cit_editors):
+    current_editors = [auth for auth in current_citation.editors]
+    # iterate over the new editors to see if we're updating or adding a new
+    # author
+    # Worth noting: we use the lastname/firstname filter because occasionally the author won't have
+    # an author_id if said author is new.
+    for author in new_cit_editors:
+        author_exists = Session.query(Author).filter(and_(Author.lastname.like(author['lastname']), Author.firstname.like(author['firstname'])))                
+        if author_exists.all():
+            if author.get('author_id', None) in [current_author.author_id for current_author in current_editors]:
+                pass
+            else:
+                current_citation.editors.append(author_exists.first())
+                              
+        else:
+            new_author = Author(author['firstname'], author['lastname'])
+            Session.add(new_author)
+            Session.commit() 
+            new_author = Session.query(Author).filter(and_(Author.lastname.like(new_author.lastname), Author.firstname.like(new_author.firstname))).first()          
+            current_citation.editors.append(new_author)
+    
+    # Removes editors no longer part of the citation
+    for current_author in current_editors:
+        if current_author.author_id not in [author.get('author_id', []) for author in new_cit_editors]:
+            current_citation.editors.remove(current_author)
+
+def process_translators(current_citation, new_cit_translators):
+    current_translators = [auth for auth in current_citation.translators]
+    # iterate over the new translators to see if we're updating or adding a new
+    # author
+    # Worth noting: we use the lastname/firstname filter because occasionally the author won't have
+    # an author_id if said author is new.
+    for author in new_cit_translators:
+        author_exists = Session.query(Author).filter(and_(Author.lastname.like(author['lastname']), Author.firstname.like(author['firstname'])))                
+        if author_exists.all():
+            if author.get('author_id', None) in [current_author.author_id for current_author in current_translators]:
+                pass
+            else:
+                current_citation.translators.append(author_exists.first())
+                              
+        else:
+            new_author = Author(author['firstname'], author['lastname'])
+            Session.add(new_author)
+            Session.commit() 
+            new_author = Session.query(Author).filter(and_(Author.lastname.like(new_author.lastname), Author.firstname.like(new_author.firstname))).first()          
+            current_citation.translators.append(new_author)
+    
+    # Removes translators no longer part of the citation
+    for current_author in current_translators:
+        if current_author.author_id not in [author.get('author_id', []) for author in new_cit_translators]:
+            current_citation.translators.remove(current_author)
 
 # deletes a citation
 # INPUT: A request object containing the citation id of the citation to be
