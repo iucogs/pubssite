@@ -108,12 +108,11 @@ class Citation(Base):
     def json(self):
         attrs =\
             ['pubtype', 'abstract', 'keywords', 'doi', 'url', 'address',
-             'booktitle', 'chapter', 'crossref', 'edition', 'editor',
-             'translator', 'howpublished', 'institution', 'journal',
-             'bibtex_key', 'month', 'note', 'number', 'organization',
-             'pages', 'publisher', 'location', 'school', 'series', 'title',
-             'type', 'volume', 'year', 'raw', 'verified', 'last_modified',
-             'entryTime', 'citation_id']
+             'booktitle', 'chapter', 'crossref', 'edition', 'howpublished',
+             'institution', 'journal', 'bibtex_key', 'month', 'note', 'number',
+             'organization', 'pages', 'publisher', 'location', 'school',
+             'series', 'title', 'type', 'volume', 'year', 'raw', 'verified',
+             'last_modified', 'entryTime', 'citation_id']
         struct = { 'authors' : [a.json for a in self.authors],
             'editors' : [e.json for e in self.editors],
             'translators' : [t.json for t in self.translators]}
