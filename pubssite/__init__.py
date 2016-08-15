@@ -57,8 +57,7 @@ def main(global_config, **settings):
         
     # Collection routes
     config.add_route('add_citation_to_collection', '/collection/add/existing')
-    config.add_route('update_collection', '/collection/{id:[0-9]+}/{new_name:.*}')
-    config.add_route('add_collection', '/collection/add/new')
+    config.add_route('add_new_collection', '/collection/add/new')
     config.add_route('collection_by_id', '/collection/{id:\d+}')
     config.add_route('collections_by_owner', '/collection/owner/{owner:.*}')
     config.add_route('collection_delete', '/collection/delete/{id:\d+}')

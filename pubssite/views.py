@@ -484,13 +484,11 @@ def add_citation_to_collection(request):
     Session.commit()
     return "Success"
 
-@view_config(route_name='add_collection',request_method='POST', renderer='pubs_json')
-def add_collection(request):
+@view_config(route_name='add_new_collection',request_method='POST', renderer='pubs_json')
+def add_new_collection(request):
     myjson = request.json_body
     collection_name = str(myjson.get("collection_name"))
-    print collection_name
     user_id = int(myjson.get("user_id"))
-
     submitter = myjson.get("submitter")
     owner = myjson.get("owner")
 
