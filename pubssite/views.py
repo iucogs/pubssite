@@ -559,8 +559,15 @@ def add_new_collection(request):
     user_id = int(myjson.get("user_id"))
     submitter = myjson.get("submitter")
     owner = myjson.get("owner")
-
+    cit_ids= myjson.get("cit_ids")
     
     Session.execute(insert(Collection).values(collection_name=collection_name, user_id=user_id,submitter=submitter, owner=owner))
+    coll_id = Session.query(Collection).filter(Collection.collection_name.in_([collection_name]))
+    for row in coll_id:
+        coll_id= int(row.collection_id)
+
+    print coll_id
+    for x in cit_ids:
+        Session.execute(member_of_collection.insert().values(collection_id=coll_id, citation_id=x))
     Session.commit()
     return "Success"
