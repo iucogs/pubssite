@@ -565,9 +565,16 @@ def add_new_collection(request):
     coll_id = Session.query(Collection).filter(Collection.collection_name.in_([collection_name]))
     for row in coll_id:
         coll_id= int(row.collection_id)
-
-    print coll_id
     for x in cit_ids:
         Session.execute(member_of_collection.insert().values(collection_id=coll_id, citation_id=x))
     Session.commit()
     return "Success"
+
+@view_config(route_name='collection_rename',request_method='POST', renderer='pubs_json')
+def collection_rename(request):
+    myjson = request.json_body
+    collection_name = str(myjson.get("collection_name"))
+    coll_id = int(myjson.get("collection_id"))
+    Session.execute(update(Collection).where(Collection.collection_id==coll_id).values(collection_name=collection_name))
+    Session.commit()
+    return "success"
