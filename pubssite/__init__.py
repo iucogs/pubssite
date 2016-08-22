@@ -10,7 +10,7 @@ from .models import DBSession
 from pyramid.events import NewRequest
 
 
-
+"""
 def add_cors_headers_response_callback(event):
     def cors_headers(request, response):
         response.headers.update({
@@ -21,6 +21,7 @@ def add_cors_headers_response_callback(event):
         'Access-Control-Max-Age': '1728000',
         })
     event.request.add_response_callback(cors_headers)
+"""
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
@@ -32,10 +33,12 @@ def main(global_config, **settings):
     authz_policy = ACLAuthorizationPolicy()
     config = Configurator(settings=settings)
     config.include('pyramid_mako')
+    config.include('.cors')
 
+    config.add_cors_preflight_handler()
     config.set_authentication_policy(authn_policy)
     config.set_authorization_policy(authz_policy)
-    config.add_subscriber(add_cors_headers_response_callback, NewRequest)
+    # config.add_subscriber(add_cors_headers_response_callback, NewRequest)
 
     config.add_renderer('pubs_json', 'pubssite.renderers.PubsJSONRenderer')
     config.add_static_view('static', 'static', cache_max_age=3600)
