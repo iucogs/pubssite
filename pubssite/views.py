@@ -269,6 +269,7 @@ def process_translators(current_citation, new_cit_translators):
 # OUTPUT: A response indicating the success of the operation
 # TODO: match user with citation owner so that only owners can delete
 # citations to prevent total academic anarchy
+
 @view_config(route_name='citation_delete', request_method='DELETE',renderer='pubs_json')
 def delete_citation(request):
     
@@ -373,6 +374,7 @@ def author_most_recent(request):
 # INPUT: request object containing the ID of the collection to be deleted
 # OUTPUT: A message relaying the success of the operation
 # TODO: make sure the user can only delete their own collections
+
 @view_config(route_name='collection_delete', request_method='DELETE', renderer='pubs_json')
 def delete_collection(request):
     id = int(request.matchdict.get('id', -1))
@@ -578,6 +580,7 @@ def collection_rename(request):
     myjson = request.json_body
     collection_name = str(myjson.get("collection_name"))
     coll_id = int(myjson.get("collection_id"))
+
     if coll_id:
         Session.execute(update(Collection).where(Collection.collection_id==coll_id).values(collection_name=collection_name))
         Session.commit()
@@ -588,3 +591,4 @@ def collection_rename(request):
 @view_config(route_name = 'merge_collections', request_method='POST', renderer='pubs_json')
 def merge_collections(request):
     return "hi"
+
