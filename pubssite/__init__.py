@@ -66,6 +66,7 @@ def main(global_config, **settings):
     config.add_route('collection_delete', '/collection/delete/{id:\d+}')
     config.add_route('collection_rename', '/collection/rename')
     config.add_route('remove_citation_from_collection', '/collection/delete/{coll_id:[0-9]+}/{cit_id:[0-9]+}')
+    config.add_route('merge_collections', '/collection/merge')
     
     #autocomplete and search routes
     config.add_route('get_user_by_name', '/users/names/{user:.*}')

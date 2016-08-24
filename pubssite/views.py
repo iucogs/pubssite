@@ -578,6 +578,13 @@ def collection_rename(request):
     myjson = request.json_body
     collection_name = str(myjson.get("collection_name"))
     coll_id = int(myjson.get("collection_id"))
-    Session.execute(update(Collection).where(Collection.collection_id==coll_id).values(collection_name=collection_name))
-    Session.commit()
-    return "success"
+    if coll_id:
+        Session.execute(update(Collection).where(Collection.collection_id==coll_id).values(collection_name=collection_name))
+        Session.commit()
+        return "success"
+    else: 
+        return HTTPNotFound("Collection id does not exist")
+
+@view_config(route_name = 'merge_collections', request_method='POST', renderer='pubs_json')
+def merge_collections(request):
+    return "hi"
