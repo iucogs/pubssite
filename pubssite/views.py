@@ -611,6 +611,23 @@ def merge_collections(request):
             Session.execute(member_of_collection.insert().values(collection_id=pivot_collection, citation_id=item))
             Session.commit()
     
-        
+    if new_collection_name:
+        user_id = int(myjson.get("user_id"))
+        submitter = myjson.get("submitter")
+        owner = myjson.get("owner")
+    
+        Session.execute(insert(Collection).values(collection_name=new_collection_name, user_id=user_id,submitter=submitter, owner=owner))
+        for x in collections_to_merge:
+            citation_ids = Session.execute(select([member_of_collection.columns.citation_id]).where(member_of_collection.columns.collection_id==x))
+            
+            merge_citations=[]
+            for row in citation_ids:
+                merge_citations.append(row)
+                
+            merge_citations= [int(x[0]) for x in merge_citations]
+        for item in merge_citations:
+            Session.execute(member_of_collection.insert().values(collection_id=pivot_collection, citation_id=item))
+            Session.commit()
+            
     return "success"
     
