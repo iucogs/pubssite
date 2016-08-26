@@ -14,7 +14,6 @@ from sqlalchemy import (update, insert, and_)
 from .models import *
 from .citation_format import *
 from sqlalchemy.sql import select
-from gdata.contentforshopping.data import Permission
 
 # Dev note: flushes at the beginning of get views are for consistency between
 # developer versions.
@@ -590,5 +589,28 @@ def collection_rename(request):
 
 @view_config(route_name = 'merge_collections', request_method='POST', renderer='pubs_json')
 def merge_collections(request):
-    return "hi"
-
+    myjson = request.json_body
+    collections_to_merge =  myjson.get("collections_to_merge")
+    pivot_collection =  myjson.get("pivot_collection")
+    new_collection_name = myjson.get("new_collection_name")
+    
+    if pivot_collection:
+        piv_coll_query = Session.execute(select([member_of_collection.columns.citation_id]).where(member_of_collection.columns.collection_id==pivot_collection))
+        pivot_citations=[]
+        for row in piv_coll_query:
+            pivot_citations.append(row)
+        for x in collections_to_merge:
+            citation_ids = Session.execute(select([member_of_collection.columns.citation_id]).where(member_of_collection.columns.collection_id==x))
+            
+            merge_citations=[]
+            for row in citation_ids:
+                merge_citations.append(row)
+                
+            merge_citations= [int(x[0]) for x in merge_citations if x not in pivot_citations]
+        for item in merge_citations:
+            Session.execute(member_of_collection.insert().values(collection_id=pivot_collection, citation_id=item))
+            Session.commit()
+    
+        
+    return "success"
+    
