@@ -1,3 +1,4 @@
+<%namespace file="collections_add.mako" import="*" />
 <!DOCTYPE html>
 <html>
 
@@ -32,6 +33,7 @@
   <script type="text/javascript" src='/static/js/edit.js'></script>
   <script type="text/javascript" src="/static/js/citations.js"></script>
   <script type="text/javascript" src='/static/js/insert_citations.js'></script>
+  <script type="text/javascript" src='/static/js/collections.js'></script>
 
 
 
@@ -115,6 +117,7 @@
 
 <div class="container-fluid" id="collections-content">
   <h2>My Citations</h2>
+  <div class="row">
   <div class="col-md-4">
     <div class="form-inline form-group">
       <label for="sel1">Display Format</label>
@@ -126,7 +129,7 @@
       </select>
     </div>
   </div>
-  <div class="col-md-4 col-md-offset-4">
+  <div class="col-md-offset-4 col-md-4">
     <div class="btn-group" role="group">
       <div class="btn-group dropdown">
         <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-share-alt"></i></a>
@@ -148,6 +151,11 @@
     </div>
     <a href="#pastePane" id="pasteButton" role="button" class="btn dropdown" data-toggle="modal">Add citations</a>
   </div>
+  </div>
+</div>
+
+<div class="col-md-4">
+    ${add_to_collection_control()}
 </div>
   
 <!-- Modal edit pane --> 
@@ -173,7 +181,9 @@
     </div>
   </div> 
 
-   
+  ${collection_modals()}
+
+  ${collection_templates()}
   </body>
 
 </html>
