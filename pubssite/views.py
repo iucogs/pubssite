@@ -269,6 +269,7 @@ def process_translators(current_citation, new_cit_translators):
 # TODO: match user with citation owner so that only owners can delete
 # citations to prevent total academic anarchy
 
+
 @view_config(route_name='citation_delete', request_method='DELETE',renderer='pubs_json')
 def delete_citation(request):
     
@@ -594,7 +595,7 @@ def merge_collections(request):
     pivot_collection =  myjson.get("pivot_collection")
     new_collection_name = myjson.get("new_collection_name")
     
-    if pivot_collection:
+    if pivot_collection!= -1 :
         piv_coll_query = Session.execute(select([member_of_collection.columns.citation_id]).where(member_of_collection.columns.collection_id==pivot_collection))
         pivot_citations=[]
         for row in piv_coll_query:
@@ -609,25 +610,48 @@ def merge_collections(request):
             merge_citations= [int(x[0]) for x in merge_citations if x not in pivot_citations]
         for item in merge_citations:
             Session.execute(member_of_collection.insert().values(collection_id=pivot_collection, citation_id=item))
-            Session.commit()
+            
+        for item in collections_to_merge:
+            collection = Session.query(Collection).get(item)
+            if collection:
+                Session.delete(collection)
+                Session.commit()
+                return 'collection deleted'
+            else:
+                return HTTPNotFound('collection not found')
     
-    if new_collection_name:
+    if new_collection_name!=-1:
         user_id = int(myjson.get("user_id"))
         submitter = myjson.get("submitter")
         owner = myjson.get("owner")
     
         Session.execute(insert(Collection).values(collection_name=new_collection_name, user_id=user_id,submitter=submitter, owner=owner))
+        Session.commit() 
+        coll_id = Session.query(Collection).filter(Collection.collection_name.in_([new_collection_name]))
+        for row in coll_id:
+            coll_id= int(row.collection_id)
+        merge_citations=[]
         for x in collections_to_merge:
             citation_ids = Session.execute(select([member_of_collection.columns.citation_id]).where(member_of_collection.columns.collection_id==x))
-            
-            merge_citations=[]
             for row in citation_ids:
                 merge_citations.append(row)
-                
-            merge_citations= [int(x[0]) for x in merge_citations]
+            
+        merge_citations= list(set([int(x[0]) for x in merge_citations]))
+        print "coll_id", coll_id
+        print merge_citations
         for item in merge_citations:
-            Session.execute(member_of_collection.insert().values(collection_id=pivot_collection, citation_id=item))
+            Session.execute(member_of_collection.insert().values(collection_id=coll_id, citation_id=item))
             Session.commit()
             
+        for item in collections_to_merge:
+            
+            collection = Session.query(Collection).get(item)
+            if collection:
+                Session.delete(collection)
+                
+                return 'collection deleted'
+            else:
+                return HTTPNotFound("collection id wrong")
+            Session.commit()
     return "success"
     
